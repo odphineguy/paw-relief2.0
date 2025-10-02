@@ -5,6 +5,7 @@ import { SymptomLog, Reminder } from '../types';
 import { getSymptomLogs, getReminders } from '../services/api';
 import { format, isWithinInterval } from 'date-fns';
 import { ArrowLeftIcon, PawIcon, CalendarIcon } from '../components/icons';
+import Header from '../components/Header';
 
 type DateRangeOption = '7d' | '30d' | '90d';
 
@@ -169,11 +170,7 @@ const VetReport: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
-            <header className="sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm z-10 p-4 border-b border-border-light dark:border-border-dark flex items-center">
-                <button onClick={() => navigate(-1)} className="mr-4 p-2 rounded-full hover:bg-card-light dark:hover:bg-card-dark">
-                    <ArrowLeftIcon className="w-6 h-6 text-foreground-light dark:text-foreground-dark"/>
-                </button>
-            </header>
+            <Header title="Vet Report" showBackButton={true} />
 
             <div className="p-4 space-y-6">
                 {/* Report Details Section */}

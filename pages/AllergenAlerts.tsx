@@ -84,11 +84,7 @@ const AllergenAlerts: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
-            <header className="sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm z-10 p-4 border-b border-border-light dark:border-border-dark flex items-center">
-                <button onClick={() => navigate(-1)} className="mr-4 p-2 rounded-full hover:bg-card-light dark:hover:bg-card-dark">
-                    <ArrowLeftIcon className="w-6 h-6 text-foreground-light dark:text-foreground-dark"/>
-                </button>
-            </header>
+            <Header title="Allergen Alerts" showBackButton={true} />
 
             <div className="flex-1 p-4 space-y-6 overflow-y-auto">
                 {/* Map Section */}
