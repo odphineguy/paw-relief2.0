@@ -84,9 +84,12 @@ const AllergenAlerts: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
-            <Header title="Allergen Alerts" showBackButton={true} />
+            <Header title="" showBackButton={true} />
 
             <div className="flex-1 p-4 space-y-6 overflow-y-auto">
+                {/* Page Title */}
+                <h1 className="text-2xl font-bold text-foreground-light dark:text-foreground-dark">Allergen Alerts</h1>
+                
                 {/* Map Section */}
                 <div className="relative bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden h-60 shadow-md">
                     {/* Phoenix, AZ Map Mock */}

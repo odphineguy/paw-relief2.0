@@ -170,9 +170,12 @@ const VetReport: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
-            <Header title="Vet Report" showBackButton={true} />
+            <Header title="" showBackButton={true} />
 
             <div className="p-4 space-y-6">
+                {/* Page Title */}
+                <h1 className="text-2xl font-bold text-foreground-light dark:text-foreground-dark">Vet Report</h1>
+                
                 {/* Report Details Section */}
                 <div className="space-y-4">
                     <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">Report Details</h2>
