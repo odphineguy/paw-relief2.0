@@ -7,7 +7,10 @@ import { ArrowLeftIcon, PawIcon } from '../components/icons';
 
 const CreateDogProfile: React.FC = () => {
     const navigate = useNavigate();
-    const { dogs, addDog } = useDogs();
+    const dogContext = useDogs();
+    const dogs = dogContext.dogs;
+    const addDog = dogContext.addDog;
+
     const [isAddingNew, setIsAddingNew] = useState(false);
     const [editingDog, setEditingDog] = useState<Dog | null>(null);
     const [formData, setFormData] = useState({
@@ -24,12 +27,12 @@ const CreateDogProfile: React.FC = () => {
     const [imagePreview, setImagePreview] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleInputChange = useCallback((field: string, value: string) => {
+    const handleInputChange = (field: string, value: string) => {
         setFormData(prev => ({
             ...prev,
             [field]: value
         }));
-    }, []);
+    };
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -206,25 +209,18 @@ const CreateDogProfile: React.FC = () => {
         </div>
     );
 
-    const InputRow = ({ label, field, type = "text", placeholder = "" }: { 
-        label: string; 
-        field: keyof typeof formData; 
+    const InputRow = ({ label, field, type = "text", placeholder = "" }: {
+        label: string;
+        field: keyof typeof formData;
         type?: string;
         placeholder?: string;
     }) => {
-        const inputRef = useRef<HTMLInputElement>(null);
-        
-        // Use a key to force re-render when the form data changes (for editing)
-        const inputKey = `${field}-${editingDog?.id || 'new'}`;
-        
         return (
             <div className="py-3 border-b border-border-light dark:border-border-dark last:border-b-0">
                 <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">{label}</label>
                 <input
-                    key={inputKey}
-                    ref={inputRef}
                     type={type}
-                    defaultValue={formData[field]}
+                    value={formData[field]}
                     onChange={(e) => handleInputChange(field, e.target.value)}
                     placeholder={placeholder}
                     className="w-full text-base font-semibold text-foreground-light dark:text-foreground-dark bg-transparent border-none outline-none placeholder-subtle-light dark:placeholder-subtle-dark"
@@ -274,11 +270,47 @@ const CreateDogProfile: React.FC = () => {
                                     {editingDog ? 'Edit Dog Profile' : 'Basic Information'}
                                 </h3>
                             </div>
-                            <div className="p-4 space-y-0">
-                                <InputRow label="Name" field="name" placeholder="Enter dog's name" />
-                                <InputRow label="Breed" field="breed" placeholder="Enter breed" />
-                                <InputRow label="Age" field="age" type="number" placeholder="Enter age in years" />
-                                <InputRow label="Weight" field="weight" type="number" placeholder="Enter weight in lb" />
+                            <div className="p-4 space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Name</label>
+                                    <input
+                                        type="text"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                        placeholder="Enter dog's name"
+                                        className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Breed</label>
+                                    <input
+                                        type="text"
+                                        value={formData.breed}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, breed: e.target.value }))}
+                                        placeholder="Enter breed"
+                                        className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Age</label>
+                                    <input
+                                        type="number"
+                                        value={formData.age}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, age: e.target.value }))}
+                                        placeholder="Enter age in years"
+                                        className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Weight</label>
+                                    <input
+                                        type="number"
+                                        value={formData.weight}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+                                        placeholder="Enter weight in lb"
+                                        className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                    />
+                                </div>
                             </div>
                         </div>
 

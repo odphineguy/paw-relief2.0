@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { Dog } from '../types';
 import { getDogs, addDog as apiAddDog, updateDog as apiUpdateDog } from '../services/api';
 
@@ -35,11 +35,11 @@ export const DogProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         fetchDogs();
     }, []);
 
-    const setSelectedDog = (dog: Dog) => {
+    const setSelectedDog = useCallback((dog: Dog) => {
         setSelectedDogState(dog);
-    };
+    }, []);
 
-    const addDog = async (dogData: Omit<Dog, 'id'> & { id?: string }) => {
+    const addDog = useCallback(async (dogData: Omit<Dog, 'id'> & { id?: string }) => {
         try {
             // Set default values for required fields
             const dogWithDefaults = {
@@ -82,10 +82,15 @@ export const DogProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             console.error('Failed to add/update dog', error);
             throw error;
         }
-    };
-    
+    }, [dogs, selectedDog]);
+
+    const value = useMemo(
+        () => ({ dogs, selectedDog, setSelectedDog, addDog, loading }),
+        [dogs, selectedDog, setSelectedDog, addDog, loading]
+    );
+
     return (
-        <DogContext.Provider value={{ dogs, selectedDog, setSelectedDog, addDog, loading }}>
+        <DogContext.Provider value={value}>
             {children}
         </DogContext.Provider>
     );
