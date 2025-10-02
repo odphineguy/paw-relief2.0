@@ -1,238 +1,333 @@
-import { Dog, SymptomLog, SymptomType, TriggerType, Reminder, ReminderType, AllergenAlerts, ProductInfo } from '../types';
-// FIX: Consolidate date-fns imports to use named exports from the main package.
-// FIX: Removed `setYear` from import as it caused an error.
-import { addYears, isPast, isToday } from 'date-fns';
+import { Dog, SymptomLog, Reminder, AllergenAlerts, ProductInfo } from '../types';
+import { supabase } from '../lib/supabase';
 
-// Mock Data
-const MOCK_DOGS: Dog[] = [
-    {
-        id: '1',
-        userId: 'user-123',
-        name: 'Rocko',
-        breed: 'Golden Retriever',
-        age: 5,
-        weight: 75,
-        photoUrl: '/assets/Rocko.png',
-        knownAllergies: ['Chicken', 'Pollen', 'Corn'],
-        birthday: '2019-05-15T00:00:00.000Z',
-    },
-    {
-        id: '2',
-        userId: 'user-123',
-        name: 'Lucy',
-        breed: 'Beagle',
-        age: 3,
-        weight: 25,
-        photoUrl: '/assets/Lucy.png',
-        knownAllergies: ['Beef', 'Dust Mites', 'Wheat'],
-        birthday: '2021-08-20T00:00:00.000Z',
-    },
-    {
-        id: '3',
-        userId: 'user-123',
-        name: 'Kitty',
-        breed: 'Mixed Breed',
-        age: 2,
-        weight: 30,
-        photoUrl: '/assets/Kitty.png',
-        knownAllergies: ['Fish', 'Dust'],
-        birthday: '2022-03-10T00:00:00.000Z',
-    },
-];
-
-const MOCK_SYMPTOM_LOGS: SymptomLog[] = [
-    {
-        id: 's1',
-        dogId: '1',
-        symptomType: SymptomType.EXCESSIVE_SCRATCHING,
-        severity: 4,
-        triggers: [TriggerType.POLLEN],
-        notes: 'Very itchy after our walk in the park.',
-        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-        id: 's2',
-        dogId: '1',
-        symptomType: SymptomType.PAW_LICKING,
-        severity: 3,
-        triggers: [TriggerType.WALK_LOCATION],
-        notes: 'Licking paws a lot tonight.',
-        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-        id: 's3',
-        dogId: '2',
-        symptomType: SymptomType.DIGESTIVE_ISSUES,
-        severity: 5,
-        triggers: [TriggerType.FOOD],
-        notes: 'Ate something with beef, had a bad reaction.',
-        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-];
-
-const MOCK_REMINDERS: Reminder[] = [
-    {
-        id: 'r1',
-        dogId: '1',
-        type: ReminderType.MEDICATION,
-        name: 'Apoquel',
-        dosage: '1 tablet',
-        nextDue: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-        repeatInterval: 'daily',
-        completed: false,
-    },
-    {
-        id: 'r2',
-        dogId: '1',
-        type: ReminderType.PAW_WIPES,
-        name: 'Wipe paws after walk',
-        nextDue: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
-        repeatInterval: 'daily',
-        completed: false,
-    },
-     {
-        id: 'r3',
-        dogId: '2',
-        type: ReminderType.VET_VISIT,
-        name: 'Annual Checkup',
-        nextDue: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-        repeatInterval: null,
-        completed: false,
-    },
-];
-
-const MOCK_ALERTS: AllergenAlerts = {
-    pollenCount: {
-        level: 'High',
-        value: 9.7,
-    },
-    airQuality: {
-        level: 'Moderate',
-        value: 68,
-    },
+// Helper function to get current user ID
+// For now, we'll use a temporary user ID until we add authentication
+const getCurrentUserId = (): string => {
+  // TODO: Replace with actual auth when implemented
+  return '00000000-0000-0000-0000-000000000001';
 };
 
-const MOCK_PRODUCTS: ProductInfo[] = [
-    {
-        barcode: '123456789',
-        name: 'Healthy Paws Chicken & Rice Formula',
-        imageUrl: 'https://picsum.photos/seed/dogfood1/200/200',
-        ingredients: ['Deboned Chicken', 'Brown Rice', 'Peas', 'Carrots', 'Chicken Meal', 'Corn Gluten Meal', 'Salt'],
-    },
-     {
-        barcode: '987654321',
-        name: 'Grain-Free Beef & Sweet Potato Bites',
-        imageUrl: 'https://picsum.photos/seed/dogfood2/200/200',
-        ingredients: ['Beef', 'Sweet Potato', 'Lentils', 'Flaxseed', 'Dried Kelp', 'Wheat Flour', 'Rosemary Extract'],
-    }
-];
-
-// Simulate API delay
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+// ===== DOG FUNCTIONS =====
 
 export const getDogs = async (): Promise<Dog[]> => {
-    await delay(500);
-    
-    // Check if we have saved dogs in localStorage
-    const savedDogs = localStorage.getItem('paw-relief-dogs');
-    if (savedDogs) {
-        return JSON.parse(savedDogs);
-    }
-    
-    // Return mock data if no saved data
-    return MOCK_DOGS;
-};
+  const userId = getCurrentUserId();
 
-export const getSymptomLogs = async (dogId: string): Promise<SymptomLog[]> => {
-    await delay(700);
-    return MOCK_SYMPTOM_LOGS.filter(log => log.dogId === dogId).sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-};
+  const { data, error } = await supabase
+    .from('dogs')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
 
-export const addSymptomLog = async (log: Omit<SymptomLog, 'id' | 'createdAt'>): Promise<SymptomLog> => {
-    await delay(1000);
-    const newLog: SymptomLog = {
-        ...log,
-        id: `s${Math.random()}`,
-        createdAt: new Date().toISOString(),
-    };
-    MOCK_SYMPTOM_LOGS.unshift(newLog);
-    return newLog;
-};
+  if (error) {
+    console.error('Error fetching dogs:', error);
+    throw error;
+  }
 
-export const getReminders = async (dogId: string): Promise<Reminder[]> => {
-    await delay(600);
-    
-    // Only return medication-related reminders, no birthday reminders
-    const standardReminders = MOCK_REMINDERS.filter(r => r.dogId === dogId);
-    
-    return standardReminders.sort((a,b) => new Date(a.nextDue).getTime() - new Date(b.nextDue).getTime());
-};
-
-export const updateReminder = async(reminderId: string, completed: boolean): Promise<Reminder> => {
-    await delay(300);
-    const reminder = MOCK_REMINDERS.find(r => r.id === reminderId);
-    if (!reminder) throw new Error("Reminder not found");
-    reminder.completed = completed;
-    return reminder;
-}
-
-export const getLocalAllergenAlerts = async (): Promise<AllergenAlerts> => {
-    await delay(1200);
-    return MOCK_ALERTS;
-};
-
-export const scanBarcode = async (barcode: string): Promise<ProductInfo | null> => {
-    await delay(1500);
-    const product = MOCK_PRODUCTS.find(p => p.barcode === barcode);
-    // In this mock, we'll just return a random product to simulate a successful scan
-    return MOCK_PRODUCTS[Math.floor(Math.random() * MOCK_PRODUCTS.length)];
-};
-
-// New functions for persistent dog storage
-export const saveDogs = async (dogs: Dog[]): Promise<void> => {
-    await delay(300);
-    localStorage.setItem('paw-relief-dogs', JSON.stringify(dogs));
+  // Map database fields to match our TypeScript interface
+  return (data || []).map(dog => ({
+    id: dog.id,
+    userId: dog.user_id,
+    name: dog.name,
+    breed: dog.breed,
+    age: dog.age,
+    weight: dog.weight,
+    photoUrl: dog.photo_url,
+    knownAllergies: dog.known_allergies || [],
+    birthday: dog.birthday,
+  }));
 };
 
 export const addDog = async (dog: Omit<Dog, 'id'> & { id?: string }): Promise<Dog> => {
-    await delay(500);
-    
-    // Get current dogs
-    const currentDogs = await getDogs();
-    
-    // Create new dog with ID
-    const newDog: Dog = {
-        ...dog,
-        id: dog.id || `dog-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        userId: dog.userId || 'user-123', // Default user ID
-    };
-    
-    // Add to current dogs
-    const updatedDogs = [...currentDogs, newDog];
-    
-    // Save to localStorage
-    await saveDogs(updatedDogs);
-    
-    return newDog;
+  const userId = getCurrentUserId();
+
+  const dogData = {
+    user_id: userId,
+    name: dog.name,
+    breed: dog.breed,
+    age: dog.age,
+    weight: dog.weight,
+    photo_url: dog.photoUrl || `https://picsum.photos/seed/${dog.name}/200/200`,
+    known_allergies: dog.knownAllergies || [],
+    birthday: dog.birthday,
+  };
+
+  const { data, error } = await supabase
+    .from('dogs')
+    .insert([dogData])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding dog:', error);
+    throw error;
+  }
+
+  return {
+    id: data.id,
+    userId: data.user_id,
+    name: data.name,
+    breed: data.breed,
+    age: data.age,
+    weight: data.weight,
+    photoUrl: data.photo_url,
+    knownAllergies: data.known_allergies || [],
+    birthday: data.birthday,
+  };
 };
 
 export const updateDog = async (dogId: string, updates: Partial<Dog>): Promise<Dog> => {
-    await delay(500);
-    
-    // Get current dogs
-    const currentDogs = await getDogs();
-    
-    // Find and update the dog
-    const dogIndex = currentDogs.findIndex(d => d.id === dogId);
-    if (dogIndex === -1) {
-        throw new Error('Dog not found');
+  const updateData: any = {};
+
+  if (updates.name !== undefined) updateData.name = updates.name;
+  if (updates.breed !== undefined) updateData.breed = updates.breed;
+  if (updates.age !== undefined) updateData.age = updates.age;
+  if (updates.weight !== undefined) updateData.weight = updates.weight;
+  if (updates.photoUrl !== undefined) updateData.photo_url = updates.photoUrl;
+  if (updates.knownAllergies !== undefined) updateData.known_allergies = updates.knownAllergies;
+  if (updates.birthday !== undefined) updateData.birthday = updates.birthday;
+
+  const { data, error } = await supabase
+    .from('dogs')
+    .update(updateData)
+    .eq('id', dogId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating dog:', error);
+    throw error;
+  }
+
+  return {
+    id: data.id,
+    userId: data.user_id,
+    name: data.name,
+    breed: data.breed,
+    age: data.age,
+    weight: data.weight,
+    photoUrl: data.photo_url,
+    knownAllergies: data.known_allergies || [],
+    birthday: data.birthday,
+  };
+};
+
+// ===== SYMPTOM LOG FUNCTIONS =====
+
+export const getSymptomLogs = async (dogId: string): Promise<SymptomLog[]> => {
+  const { data, error } = await supabase
+    .from('symptom_logs')
+    .select('*')
+    .eq('dog_id', dogId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching symptom logs:', error);
+    throw error;
+  }
+
+  return (data || []).map(log => ({
+    id: log.id,
+    dogId: log.dog_id,
+    symptomType: log.symptom_type,
+    severity: log.severity,
+    triggers: log.triggers || [],
+    notes: log.notes || '',
+    photoUrl: log.photo_url,
+    createdAt: log.created_at,
+  }));
+};
+
+export const addSymptomLog = async (log: Omit<SymptomLog, 'id' | 'createdAt'>): Promise<SymptomLog> => {
+  const logData = {
+    dog_id: log.dogId,
+    symptom_type: log.symptomType,
+    severity: log.severity,
+    triggers: log.triggers || [],
+    notes: log.notes || '',
+    photo_url: log.photoUrl,
+  };
+
+  const { data, error } = await supabase
+    .from('symptom_logs')
+    .insert([logData])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding symptom log:', error);
+    throw error;
+  }
+
+  return {
+    id: data.id,
+    dogId: data.dog_id,
+    symptomType: data.symptom_type,
+    severity: data.severity,
+    triggers: data.triggers || [],
+    notes: data.notes || '',
+    photoUrl: data.photo_url,
+    createdAt: data.created_at,
+  };
+};
+
+// ===== REMINDER FUNCTIONS =====
+
+export const getReminders = async (dogId: string): Promise<Reminder[]> => {
+  const { data, error } = await supabase
+    .from('reminders')
+    .select('*')
+    .eq('dog_id', dogId)
+    .order('next_due', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching reminders:', error);
+    throw error;
+  }
+
+  return (data || []).map(reminder => ({
+    id: reminder.id,
+    dogId: reminder.dog_id,
+    type: reminder.type,
+    name: reminder.name,
+    dosage: reminder.dosage,
+    nextDue: reminder.next_due,
+    repeatInterval: reminder.repeat_interval,
+    completed: reminder.completed,
+  }));
+};
+
+export const addReminder = async (reminder: Omit<Reminder, 'id'>): Promise<Reminder> => {
+  const reminderData = {
+    dog_id: reminder.dogId,
+    type: reminder.type,
+    name: reminder.name,
+    dosage: reminder.dosage,
+    next_due: reminder.nextDue,
+    repeat_interval: reminder.repeatInterval,
+    completed: reminder.completed || false,
+  };
+
+  const { data, error } = await supabase
+    .from('reminders')
+    .insert([reminderData])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding reminder:', error);
+    throw error;
+  }
+
+  return {
+    id: data.id,
+    dogId: data.dog_id,
+    type: data.type,
+    name: data.name,
+    dosage: data.dosage,
+    nextDue: data.next_due,
+    repeatInterval: data.repeat_interval,
+    completed: data.completed,
+  };
+};
+
+export const updateReminder = async (reminderId: string, completed: boolean): Promise<Reminder> => {
+  const { data, error } = await supabase
+    .from('reminders')
+    .update({ completed })
+    .eq('id', reminderId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating reminder:', error);
+    throw error;
+  }
+
+  return {
+    id: data.id,
+    dogId: data.dog_id,
+    type: data.type,
+    name: data.name,
+    dosage: data.dosage,
+    nextDue: data.next_due,
+    repeatInterval: data.repeat_interval,
+    completed: data.completed,
+  };
+};
+
+// ===== ALLERGEN ALERTS =====
+// These remain mock for now as they typically come from external APIs
+const MOCK_ALERTS: AllergenAlerts = {
+  pollenCount: {
+    level: 'High',
+    value: 9.7,
+  },
+  airQuality: {
+    level: 'Moderate',
+    value: 68,
+  },
+};
+
+export const getLocalAllergenAlerts = async (): Promise<AllergenAlerts> => {
+  // TODO: Integrate with real weather/pollen API
+  return MOCK_ALERTS;
+};
+
+// ===== PRODUCT FUNCTIONS =====
+
+export const scanBarcode = async (barcode: string): Promise<ProductInfo | null> => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('barcode', barcode)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      // Not found
+      return null;
     }
-    
-    const updatedDog = { ...currentDogs[dogIndex], ...updates };
-    currentDogs[dogIndex] = updatedDog;
-    
-    // Save to localStorage
-    await saveDogs(currentDogs);
-    
-    return updatedDog;
+    console.error('Error scanning barcode:', error);
+    throw error;
+  }
+
+  return {
+    barcode: data.barcode,
+    name: data.name,
+    imageUrl: data.image_url,
+    ingredients: data.ingredients || [],
+  };
+};
+
+export const addProduct = async (product: ProductInfo): Promise<ProductInfo> => {
+  const productData = {
+    barcode: product.barcode,
+    name: product.name,
+    image_url: product.imageUrl,
+    ingredients: product.ingredients || [],
+  };
+
+  const { data, error } = await supabase
+    .from('products')
+    .insert([productData])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding product:', error);
+    throw error;
+  }
+
+  return {
+    barcode: data.barcode,
+    name: data.name,
+    imageUrl: data.image_url,
+    ingredients: data.ingredients || [],
+  };
+};
+
+// Legacy localStorage functions - keeping for backwards compatibility
+export const saveDogs = async (dogs: Dog[]): Promise<void> => {
+  console.warn('saveDogs is deprecated - data now stored in Supabase');
 };

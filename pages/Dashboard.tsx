@@ -96,16 +96,16 @@ const Dashboard: React.FC = () => {
             <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
               Trigger Detective
             </h2>
-            <div className="bg-card-light dark:bg-card-dark p-4 rounded-xl shadow-sm">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
               <div className="flex items-start gap-4">
-                <div className="flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-12">
-                  <svg className="lucide lucide-search-check" fill="none" height="28" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 256 256" width="28">
-                    <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"></path>
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="text-base font-semibold text-foreground-light dark:text-foreground-dark">Recent Insight</p>
-                  <p className="text-sm text-subtle-light dark:text-subtle-dark mt-1">
+                  <h3 className="font-semibold text-gray-900 dark:text-white">Recent Insight</h3>
+                  <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
                     High pollen count seems to correlate with increased sneezing after park visits.
                   </p>
                 </div>
@@ -113,13 +113,13 @@ const Dashboard: React.FC = () => {
               <div className="mt-4 flex gap-3">
                 <button 
                   onClick={() => navigate('/trigger-detective')}
-                  className="flex-1 h-10 px-4 bg-primary/20 dark:bg-primary/30 text-primary rounded-xl font-bold text-sm shadow-lg shadow-primary/30"
+                  className="flex-1 bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   Add Trigger Info
                 </button>
                 <button 
                   onClick={() => navigate('/allergen-alerts')}
-                  className="flex-1 h-10 px-4 bg-primary/20 dark:bg-primary/30 text-primary rounded-xl font-bold text-sm shadow-lg shadow-primary/30"
+                  className="flex-1 bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   View Analysis
                 </button>
@@ -134,15 +134,15 @@ const Dashboard: React.FC = () => {
             </h2>
             <div className="space-y-3">
               {recentSymptoms.map((log) => (
-                <div key={log.id} className="flex items-center gap-4 bg-card-light dark:bg-card-dark p-3 rounded-xl shadow-sm">
-                  <div className="flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-12 text-primary">
-                    <svg fill="currentColor" height="28" viewBox="0 0 256 256" width="28">
-                      <path d="M188,100a8,8,0,1,1-8,8,8,8,0,0,1,8-8H188.34133.84,53.26,53.26,0,0,1-8.8H11.32a8,8,0,0,1-8,8h0,0,1-8.8H11.32,104.11,104.11,0,0,0,128,24Z"></path>
+                <div key={log.id} className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center text-red-600 dark:text-red-400">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-base font-semibold text-foreground-light dark:text-foreground-dark">{log.symptomType}</p>
-                    <p className="text-sm text-subtle-light dark:text-subtle-dark">{log.notes || 'No notes'}</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">{log.symptomType}</h3>
+                    <p className="text-sm text-blue-600 dark:text-blue-400">{log.notes || 'No notes'}</p>
                   </div>
                 </div>
               ))}
@@ -156,15 +156,15 @@ const Dashboard: React.FC = () => {
             </h2>
             <div className="space-y-3">
               {upcomingReminders.map((reminder) => (
-                <div key={reminder.id} className="flex items-center gap-4 bg-card-light dark:bg-card-dark p-3 rounded-xl shadow-sm">
-                  <div className="flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-12 text-primary">
-                    <svg fill="currentColor" height="28" viewBox="0 0 256 256" width="28">
-                      <path d="M224,104h-8.37a88,88,0,0,0-175.26,0H32a8,8,0,0,0-8,8,88.1,88.1,0,0,0,88,88h0a88.1,88.1,0,0,0,88-88A8,8,0,0,0,224,104Zm-96,72a72.08,72.08,0,0,1-71.87-68h143.74A72.08,72.08,0,0,1,128,176Z"></path>
+                <div key={reminder.id} className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center text-green-600 dark:text-green-400">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="text-base font-semibold text-foreground-light dark:text-foreground-dark">{reminder.title}</p>
-                    <p className="text-sm text-subtle-light dark:text-subtle-dark">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">{reminder.title}</h3>
+                    <p className="text-sm text-blue-600 dark:text-blue-400">
                       {reminder.date ? (() => {
                         try {
                           return format(new Date(reminder.date), 'MMM d, h:mm a');
@@ -185,7 +185,7 @@ const Dashboard: React.FC = () => {
               <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
                 Symptom Distribution
               </h2>
-              <div className="bg-card-light dark:bg-card-dark p-4 rounded-xl shadow-sm">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
@@ -213,10 +213,10 @@ const Dashboard: React.FC = () => {
           {/* Action Buttons */}
           <section className="mb-8">
             <div className="flex gap-4">
-              <button className="flex-1 h-12 px-6 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/30">
+              <button className="flex-1 bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors">
                 Log Symptom
               </button>
-              <button className="flex-1 h-12 px-6 bg-primary/20 dark:bg-primary/30 text-primary rounded-xl font-bold text-sm">
+              <button className="flex-1 bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors">
                 Manage Reminders
               </button>
             </div>

@@ -87,7 +87,7 @@ const Meds: React.FC = () => {
             {/* Floating Action Button */}
             <button className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 transition-colors z-10">
                 <PlusCircleIcon className="w-5 h-5" />
-                <span className="font-medium">New Reminder</span>
+                <span className="font-medium">New Medication</span>
             </button>
         </div>
     );
