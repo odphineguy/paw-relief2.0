@@ -235,9 +235,12 @@ const CreateDogProfile: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
-            <Header title="Pet Management" showBackButton={true} />
+            <Header title="" showBackButton={true} />
 
             <div className="flex-1 p-4 space-y-6 overflow-y-auto">
+                {/* Page Title */}
+                <h1 className="text-2xl font-bold text-foreground-light dark:text-foreground-dark">Pet Management</h1>
+                
                 {/* Your Dogs Section */}
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
