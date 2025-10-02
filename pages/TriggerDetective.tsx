@@ -83,9 +83,6 @@ const TriggerDetective: React.FC = () => {
             <Header title="" showBackButton={true} />
 
             <div className="flex-1 p-4 space-y-8 overflow-y-auto">
-                {/* Page Title */}
-                <h1 className="text-2xl font-bold text-foreground-light dark:text-foreground-dark">Trigger Detective</h1>
-                
                 {/* Log New Trigger Section */}
                 <div className="space-y-4">
                     <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">Log New Trigger</h2>
