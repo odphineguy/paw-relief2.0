@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDogs } from '../context/DogContext';
 import Header from '../components/Header';
 import { SymptomLog, Reminder, AllergenAlerts, SymptomType, ReminderType } from '../types';
@@ -27,6 +28,7 @@ const getSeverityColor = (severity: number) => {
 const PIE_CHART_COLORS = ['#71c4ef', '#a7f3d0', '#f87171', '#fdba74', '#d4eaf7', '#b6c9f0'];
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { selectedDog } = useDogs();
   const { theme } = useTheme();
   const [logs, setLogs] = useState<SymptomLog[]>([]);
@@ -109,10 +111,16 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
               <div className="mt-4 flex gap-3">
-                <button className="flex-1 h-10 px-4 bg-primary/20 dark:bg-primary/30 text-primary rounded-xl font-bold text-sm shadow-lg shadow-primary/30">
+                <button 
+                  onClick={() => navigate('/trigger-detective')}
+                  className="flex-1 h-10 px-4 bg-primary/20 dark:bg-primary/30 text-primary rounded-xl font-bold text-sm shadow-lg shadow-primary/30"
+                >
                   Add Trigger Info
                 </button>
-                <button className="flex-1 h-10 px-4 bg-primary/20 dark:bg-primary/30 text-primary rounded-xl font-bold text-sm shadow-lg shadow-primary/30">
+                <button 
+                  onClick={() => navigate('/allergen-alerts')}
+                  className="flex-1 h-10 px-4 bg-primary/20 dark:bg-primary/30 text-primary rounded-xl font-bold text-sm shadow-lg shadow-primary/30"
+                >
                   View Analysis
                 </button>
               </div>
