@@ -29,6 +29,11 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = true }) => {
         <header className="sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm z-10 p-4 border-b border-border-light dark:border-border-dark">
             <div className="flex items-center justify-between">
                 <div className="flex items-center">
+                    {showBackButton && (
+                        <button onClick={() => navigate(-1)} className="mr-4 p-2 rounded-full hover:bg-card-light dark:hover:bg-card-dark">
+                            <ArrowLeftIcon className="w-6 h-6 text-foreground-light dark:text-foreground-dark"/>
+                        </button>
+                    )}
                     {/* Logo */}
                     <div className="mr-4">
                         <img 
@@ -37,11 +42,6 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = true }) => {
                             className="h-8 w-auto"
                         />
                     </div>
-                    {showBackButton && (
-                        <button onClick={() => navigate(-1)} className="mr-4 p-2 rounded-full hover:bg-card-light dark:hover:bg-card-dark">
-                            <ArrowLeftIcon className="w-6 h-6 text-foreground-light dark:text-foreground-dark"/>
-                        </button>
-                    )}
                     <h1 className="text-2xl font-bold text-foreground-light dark:text-foreground-dark">{title}</h1>
                 </div>
                 {selectedDog && (
