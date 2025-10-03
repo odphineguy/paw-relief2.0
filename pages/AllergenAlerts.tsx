@@ -223,60 +223,82 @@ const AllergenAlerts: React.FC = () => {
                 </div>
                 
                 {/* Location Section */}
-                <div className="relative bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-900 rounded-xl overflow-hidden shadow-lg">
+                <div className="relative rounded-xl overflow-hidden shadow-lg">
                     {loading ? (
-                        <div className="w-full h-full flex items-center justify-center p-8">
+                        <div className="w-full h-60 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                             <div className="text-white">Loading location...</div>
                         </div>
                     ) : (
-                        <div className="p-6 text-white">
-                            {/* Location Pin Icon */}
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h2 className="text-2xl font-bold">{location?.city || 'Your Location'}</h2>
-                                    <p className="text-white/80 text-sm">
-                                        {location?.country ? `${location.country.toUpperCase()}` : 'Current Location'}
-                                    </p>
-                                </div>
-                            </div>
+                        <>
+                            {/* Static Map Background */}
+                            {location?.lat && location?.lon && (
+                                <div className="relative h-60 w-full">
+                                    <img
+                                        src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+3b82f6(${location.lon},${location.lat})/${location.lon},${location.lat},12,0/600x300@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw`}
+                                        alt="Location Map"
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            // Fallback to OpenStreetMap tiles if MapBox fails
+                                            const target = e.target as HTMLImageElement;
+                                            const zoom = 12;
+                                            const tileSize = 256;
+                                            const x = Math.floor((location.lon + 180) / 360 * Math.pow(2, zoom));
+                                            const y = Math.floor((1 - Math.log(Math.tan(location.lat * Math.PI / 180) + 1 / Math.cos(location.lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom));
+                                            target.src = `https://tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
+                                        }}
+                                    />
 
-                            {/* Weather Info */}
-                            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mt-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                {weather?.description === 'Clear' || weather?.description === 'Sunny' ? (
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                                                ) : (
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                                                )}
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p className="text-3xl font-bold">{weather?.temp || '--'}°F</p>
-                                            <p className="text-white/80">{weather?.description || 'Loading...'}</p>
-                                        </div>
+                                    {/* Gradient overlay for better text readability */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+
+                                    {/* Location Pin Marker */}
+                                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full">
+                                        <svg className="w-10 h-10 text-blue-500 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 0C7.802 0 4.403 3.403 4.403 7.602c0 6.243 7.597 16.398 7.597 16.398s7.597-10.155 7.597-16.398C19.597 3.403 16.198 0 12 0zm0 11.25c-2.07 0-3.75-1.68-3.75-3.75S9.93 3.75 12 3.75s3.75 1.68 3.75 3.75-1.68 3.75-3.75 3.75z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Location and Weather Info Overlay */}
+                            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div>
+                                        <h2 className="text-2xl font-bold drop-shadow-md">{location?.city || 'Your Location'}</h2>
+                                        <p className="text-white/90 text-sm drop-shadow">
+                                            {location?.country ? `${location.country.toUpperCase()}` : 'Current Location'}
+                                        </p>
                                     </div>
                                     {location?.lat && location?.lon && (
                                         <a
                                             href={`https://www.google.com/maps?q=${location.lat},${location.lon}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-white/80 hover:text-white text-sm underline"
+                                            className="bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm hover:bg-white/30 transition-colors"
                                         >
-                                            View on Map →
+                                            Open Map →
                                         </a>
                                     )}
                                 </div>
+
+                                {/* Weather Info */}
+                                <div className="bg-white/20 backdrop-blur-md rounded-lg p-3 flex items-center gap-3">
+                                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            {weather?.description === 'Clear' || weather?.description === 'Sunny' ? (
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                            ) : (
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                                            )}
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p className="text-2xl font-bold">{weather?.temp || '--'}°F</p>
+                                        <p className="text-white/90 text-sm">{weather?.description || 'Loading...'}</p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </>
                     )}
                 </div>
 
