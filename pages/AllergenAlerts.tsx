@@ -56,17 +56,24 @@ const AllergenAlerts: React.FC = () => {
             const { latitude, longitude } = position.coords;
             console.log("Got position:", latitude, longitude);
 
-            // Fetch location name and weather data using Open-Meteo (free, no API key needed)
-            // First, get location name from reverse geocoding
+            // Use BigDataCloud reverse geocoding (free, no API key, no CORS issues)
             console.log("Fetching location name...");
-            const geoResponse = await fetch(
-                `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${latitude}&longitude=${longitude}`
-            );
-            const geoData = await geoResponse.json();
-            console.log("Geocoding response:", geoData);
+            let cityName = 'Your Location';
+            let countryCode = '';
 
-            const cityName = geoData.results?.[0]?.name || 'Your Location';
-            const countryCode = geoData.results?.[0]?.country_code || '';
+            try {
+                const geoResponse = await fetch(
+                    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+                );
+                const geoData = await geoResponse.json();
+                console.log("Geocoding response:", geoData);
+
+                cityName = geoData.city || geoData.locality || geoData.principalSubdivision || 'Your Location';
+                countryCode = geoData.countryCode || '';
+            } catch (geoError) {
+                console.error("Geocoding error (non-fatal):", geoError);
+                // Continue without city name
+            }
 
             setLocation({
                 city: cityName,
