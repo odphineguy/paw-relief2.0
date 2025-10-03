@@ -106,11 +106,11 @@ const TriggerDetective: React.FC = () => {
 
     // Map trigger types to chart data with colors
     const chartData = [
-        { label: 'FOOD', count: triggerCounts[TriggerType.FOOD] || 0, color: 'bg-blue-500' },
-        { label: 'LOCATION', count: triggerCounts[TriggerType.WALK_LOCATION] || 0, color: 'bg-green-500' },
-        { label: 'WEATHER', count: triggerCounts[TriggerType.WEATHER] || 0, color: 'bg-purple-500' },
-        { label: 'POLLEN', count: triggerCounts[TriggerType.POLLEN] || 0, color: 'bg-orange-500' },
-        { label: 'PRODUCTS', count: triggerCounts[TriggerType.HOUSEHOLD_PRODUCT] || 0, color: 'bg-pink-500' },
+        { label: 'FOOD', count: triggerCounts[TriggerType.FOOD] || 0, color: '#3b82f6' },
+        { label: 'LOCATION', count: triggerCounts[TriggerType.WALK_LOCATION] || 0, color: '#10b981' },
+        { label: 'WEATHER', count: triggerCounts[TriggerType.WEATHER] || 0, color: '#a855f7' },
+        { label: 'POLLEN', count: triggerCounts[TriggerType.POLLEN] || 0, color: '#f97316' },
+        { label: 'PRODUCTS', count: triggerCounts[TriggerType.HOUSEHOLD_PRODUCT] || 0, color: '#ec4899' },
     ];
 
     const maxCount = Math.max(...chartData.map(d => d.count), 1);
@@ -178,8 +178,11 @@ const TriggerDetective: React.FC = () => {
                                             <div key={item.label} className="flex-1 flex flex-col items-center gap-2">
                                                 <div className="w-full h-full flex flex-col justify-end">
                                                     <div
-                                                        className={`w-full ${item.color} rounded-t-lg transition-all`}
-                                                        style={{ height: `${Math.max((item.count / maxCount) * 100, item.count > 0 ? 15 : 0)}%` }}
+                                                        className="w-full rounded-t-lg transition-all"
+                                                        style={{
+                                                            height: `${Math.max((item.count / maxCount) * 100, item.count > 0 ? 15 : 0)}%`,
+                                                            backgroundColor: item.color
+                                                        }}
                                                     ></div>
                                                 </div>
                                                 <div className="text-center mt-2">
