@@ -79,3 +79,16 @@ export interface ProductInfo {
     imageUrl: string;
     ingredients: string[];
 }
+
+export interface TriggerLog {
+    id: string;
+    dogId: string;
+    triggerType: TriggerType;
+    details: Record<string, any>;
+    location?: string;
+    weatherConditions?: string;
+    pollenLevel?: string;
+    notes?: string;
+    loggedDate: string; // ISO string
+    createdAt: string; // ISO string
+}

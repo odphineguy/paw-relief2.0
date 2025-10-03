@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDogs } from '../context/DogContext';
-import { getSymptomLogs } from '../services/api';
-import { SymptomLog, TriggerType } from '../types';
+import { getTriggerLogs } from '../services/api';
+import { TriggerLog, TriggerType } from '../types';
 import Header from '../components/Header';
 import { ChevronRightIcon } from '../components/icons';
+import TriggerLoggerModal from '../components/TriggerLoggerModal';
 
 const TriggerDetective: React.FC = () => {
     const navigate = useNavigate();
     const { selectedDog } = useDogs();
-    const [selectedTrigger, setSelectedTrigger] = useState<string | null>(null);
-    const [logs, setLogs] = useState<SymptomLog[]>([]);
+    const [selectedTrigger, setSelectedTrigger] = useState<{ type: TriggerType; title: string } | null>(null);
+    const [logs, setLogs] = useState<TriggerLog[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+    const fetchTriggerLogs = () => {
         if (selectedDog) {
             setLoading(true);
-            getSymptomLogs(selectedDog.id)
+            getTriggerLogs(selectedDog.id)
                 .then(setLogs)
                 .catch(err => console.error("Failed to fetch logs", err))
                 .finally(() => setLoading(false));
         }
+    };
+
+    useEffect(() => {
+        fetchTriggerLogs();
     }, [selectedDog]);
 
     const triggerTypes = [
         {
             id: 'food',
+            type: TriggerType.FOOD,
             title: 'Food Eaten',
             description: 'Record what your dog ate today',
             icon: (
@@ -36,6 +42,7 @@ const TriggerDetective: React.FC = () => {
         },
         {
             id: 'location',
+            type: TriggerType.WALK_LOCATION,
             title: 'Walking Locations',
             description: 'Note where you walked your dog',
             icon: (
@@ -47,6 +54,7 @@ const TriggerDetective: React.FC = () => {
         },
         {
             id: 'weather',
+            type: TriggerType.WEATHER,
             title: 'Weather Conditions',
             description: 'Track weather conditions during walks',
             icon: (
@@ -57,6 +65,7 @@ const TriggerDetective: React.FC = () => {
         },
         {
             id: 'pollen',
+            type: TriggerType.POLLEN,
             title: 'Pollen Levels',
             description: 'Monitor pollen levels in your area',
             icon: (
@@ -67,6 +76,7 @@ const TriggerDetective: React.FC = () => {
         },
         {
             id: 'products',
+            type: TriggerType.HOUSEHOLD_PRODUCT,
             title: 'Household Products',
             description: 'List household products used',
             icon: (
@@ -77,6 +87,7 @@ const TriggerDetective: React.FC = () => {
         },
         {
             id: 'environment',
+            type: TriggerType.ENVIRONMENTAL_CHANGE,
             title: 'Environmental Changes',
             description: 'Document environmental changes',
             icon: (
@@ -87,18 +98,13 @@ const TriggerDetective: React.FC = () => {
         }
     ];
 
-    const handleTriggerSelect = (triggerId: string) => {
-        setSelectedTrigger(triggerId);
-        // Here you would navigate to a specific trigger logging page
-        // For now, we'll just show an alert
-        alert(`Logging ${triggerTypes.find(t => t.id === triggerId)?.title} trigger`);
+    const handleTriggerSelect = (triggerType: TriggerType, title: string) => {
+        setSelectedTrigger({ type: triggerType, title });
     };
 
-    // Calculate trigger patterns from symptom logs
+    // Calculate trigger patterns from trigger logs
     const triggerCounts = logs.reduce((acc, log) => {
-        log.triggers.forEach(trigger => {
-            acc[trigger] = (acc[trigger] || 0) + 1;
-        });
+        acc[log.triggerType] = (acc[log.triggerType] || 0) + 1;
         return acc;
     }, {} as Record<TriggerType, number>);
 
@@ -137,7 +143,7 @@ const TriggerDetective: React.FC = () => {
                         {triggerTypes.map((trigger) => (
                             <div
                                 key={trigger.id}
-                                onClick={() => handleTriggerSelect(trigger.id)}
+                                onClick={() => handleTriggerSelect(trigger.type, trigger.title)}
                                 className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
                                 <div className="flex-shrink-0 w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-lg flex items-center justify-center text-white">
@@ -213,6 +219,16 @@ const TriggerDetective: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Trigger Logger Modal */}
+            {selectedTrigger && (
+                <TriggerLoggerModal
+                    isOpen={!!selectedTrigger}
+                    onClose={() => setSelectedTrigger(null)}
+                    triggerType={selectedTrigger.type}
+                    triggerTitle={selectedTrigger.title}
+                />
+            )}
         </div>
     );
 };

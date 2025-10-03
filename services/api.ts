@@ -1,4 +1,4 @@
-import { Dog, SymptomLog, Reminder, AllergenAlerts, ProductInfo } from '../types';
+import { Dog, SymptomLog, Reminder, AllergenAlerts, ProductInfo, TriggerLog, TriggerType } from '../types';
 import { supabase } from '../lib/supabase';
 
 // Helper function to get current user ID
@@ -374,6 +374,71 @@ export const addProduct = async (product: ProductInfo): Promise<ProductInfo> => 
     name: data.name,
     imageUrl: data.image_url,
     ingredients: data.ingredients || [],
+  };
+};
+
+// ===== TRIGGER LOG FUNCTIONS =====
+
+export const getTriggerLogs = async (dogId: string): Promise<TriggerLog[]> => {
+  const { data, error } = await supabase
+    .from('trigger_logs')
+    .select('*')
+    .eq('dog_id', dogId)
+    .order('logged_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching trigger logs:', error);
+    throw error;
+  }
+
+  return data.map(log => ({
+    id: log.id,
+    dogId: log.dog_id,
+    triggerType: log.trigger_type as TriggerType,
+    details: log.details || {},
+    location: log.location,
+    weatherConditions: log.weather_conditions,
+    pollenLevel: log.pollen_level,
+    notes: log.notes,
+    loggedDate: log.logged_date,
+    createdAt: log.created_at,
+  }));
+};
+
+export const addTriggerLog = async (triggerLog: Omit<TriggerLog, 'id' | 'createdAt'>): Promise<TriggerLog> => {
+  const logData = {
+    dog_id: triggerLog.dogId,
+    trigger_type: triggerLog.triggerType,
+    details: triggerLog.details || {},
+    location: triggerLog.location,
+    weather_conditions: triggerLog.weatherConditions,
+    pollen_level: triggerLog.pollenLevel,
+    notes: triggerLog.notes,
+    logged_date: triggerLog.loggedDate,
+  };
+
+  const { data, error } = await supabase
+    .from('trigger_logs')
+    .insert([logData])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding trigger log:', error);
+    throw error;
+  }
+
+  return {
+    id: data.id,
+    dogId: data.dog_id,
+    triggerType: data.trigger_type as TriggerType,
+    details: data.details || {},
+    location: data.location,
+    weatherConditions: data.weather_conditions,
+    pollenLevel: data.pollen_level,
+    notes: data.notes,
+    loggedDate: data.logged_date,
+    createdAt: data.created_at,
   };
 };
 

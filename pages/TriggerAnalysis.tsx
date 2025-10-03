@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDogs } from '../context/DogContext';
-import { getSymptomLogs } from '../services/api';
-import { SymptomLog, TriggerType, SymptomType } from '../types';
+import { getTriggerLogs } from '../services/api';
+import { TriggerLog, TriggerType } from '../types';
 import Header from '../components/Header';
 import { ChevronRightIcon } from '../components/icons';
 
 const TriggerAnalysis: React.FC = () => {
     const navigate = useNavigate();
     const { selectedDog } = useDogs();
-    const [logs, setLogs] = useState<SymptomLog[]>([]);
+    const [logs, setLogs] = useState<TriggerLog[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (selectedDog) {
             setLoading(true);
-            getSymptomLogs(selectedDog.id)
+            getTriggerLogs(selectedDog.id)
                 .then(setLogs)
                 .catch(err => console.error("Failed to fetch logs", err))
                 .finally(() => setLoading(false));
@@ -24,25 +24,9 @@ const TriggerAnalysis: React.FC = () => {
 
     // Calculate trigger patterns
     const triggerCounts = logs.reduce((acc, log) => {
-        log.triggers.forEach(trigger => {
-            acc[trigger] = (acc[trigger] || 0) + 1;
-        });
+        acc[log.triggerType] = (acc[log.triggerType] || 0) + 1;
         return acc;
     }, {} as Record<TriggerType, number>);
-
-    // Calculate trigger-symptom correlations
-    const triggerSymptomCorrelations = logs.reduce((acc, log) => {
-        log.triggers.forEach(trigger => {
-            if (!acc[trigger]) {
-                acc[trigger] = {};
-            }
-            if (!acc[trigger][log.symptomType]) {
-                acc[trigger][log.symptomType] = 0;
-            }
-            acc[trigger][log.symptomType]++;
-        });
-        return acc;
-    }, {} as Record<TriggerType, Record<SymptomType, number>>);
 
     // Sort triggers by frequency
     const sortedTriggers = Object.entries(triggerCounts)
@@ -50,7 +34,6 @@ const TriggerAnalysis: React.FC = () => {
         .map(([trigger, count]) => ({
             trigger: trigger as TriggerType,
             count,
-            symptoms: triggerSymptomCorrelations[trigger as TriggerType] || {}
         }));
 
     const totalTriggers = Object.values(triggerCounts).reduce((sum, count) => sum + count, 0);
@@ -107,11 +90,8 @@ const TriggerAnalysis: React.FC = () => {
                         <div className="space-y-4">
                             <h2 className="text-xl text-foreground-light dark:text-foreground-dark">Trigger Breakdown</h2>
 
-                            {sortedTriggers.map(({ trigger, count, symptoms }, index) => {
+                            {sortedTriggers.map(({ trigger, count }, index) => {
                                 const percentage = ((count / totalTriggers) * 100).toFixed(1);
-                                const topSymptoms = Object.entries(symptoms)
-                                    .sort(([, a], [, b]) => b - a)
-                                    .slice(0, 3);
 
                                 // Color scheme for different triggers
                                 const colors = [
@@ -151,25 +131,6 @@ const TriggerAnalysis: React.FC = () => {
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
                                         </div>
-
-                                        {/* Associated Symptoms */}
-                                        {topSymptoms.length > 0 && (
-                                            <div>
-                                                <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
-                                                    Most Common Symptoms:
-                                                </p>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {topSymptoms.map(([symptom, symptomCount]) => (
-                                                        <span
-                                                            key={symptom}
-                                                            className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium"
-                                                        >
-                                                            {symptom} ({symptomCount})
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
                                 );
                             })}
