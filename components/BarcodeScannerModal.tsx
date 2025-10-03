@@ -45,6 +45,16 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
         try {
             setStatus('scanning');
 
+            // Wait for DOM to be ready
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            // Check if scanner element exists
+            const scannerElement = document.getElementById("barcode-scanner");
+            if (!scannerElement) {
+                console.error("Scanner element not found in DOM");
+                throw new Error("Scanner element not ready");
+            }
+
             // Check if we're in a secure context
             console.log("Is secure context:", window.isSecureContext);
             console.log("Protocol:", window.location.protocol);
@@ -157,14 +167,14 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
         await stopScanner();
 
         // Reset state
-        setStatus('scanning');
         setProduct(null);
         setAllergens([]);
+        setStatus('scanning');
 
-        // Small delay to ensure cleanup is complete
+        // Wait for React to re-render before starting scanner
         setTimeout(() => {
             startScanner();
-        }, 100);
+        }, 200);
     };
 
     const renderContent = () => {
