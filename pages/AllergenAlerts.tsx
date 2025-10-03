@@ -203,44 +203,73 @@ const AllergenAlerts: React.FC = () => {
 
             <div className="flex-1 p-4 space-y-6 overflow-y-auto">
                 {/* Page Title */}
-                <h1 className="text-2xl font-bold text-foreground-light dark:text-foreground-dark">Allergen Alerts</h1>
+                <div className="flex items-center justify-between">
+                    <h1 className="text-2xl font-bold text-foreground-light dark:text-foreground-dark">Allergen Alerts</h1>
+                    {error && (
+                        <button
+                            onClick={fetchLocationAndWeather}
+                            className="text-sm bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600"
+                        >
+                            Retry Location
+                        </button>
+                    )}
+                </div>
                 
-                {/* Map Section */}
-                <div className="relative bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden h-60 shadow-md">
+                {/* Location Section */}
+                <div className="relative bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-900 rounded-xl overflow-hidden shadow-lg">
                     {loading ? (
-                        <div className="w-full h-full flex items-center justify-center">
-                            <div className="text-gray-600 dark:text-gray-300">Loading location...</div>
+                        <div className="w-full h-full flex items-center justify-center p-8">
+                            <div className="text-white">Loading location...</div>
                         </div>
                     ) : (
-                        <>
-                            <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 flex items-center justify-center">
-                                <div className="text-center">
-                                    <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-4 mx-auto">
-                                        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                    </div>
-                                    <p className="text-blue-800 dark:text-blue-200 font-semibold">
-                                        {location?.city || 'Your Location'}
-                                    </p>
-                                    <p className="text-blue-600 dark:text-blue-300 text-sm">
+                        <div className="p-6 text-white">
+                            {/* Location Pin Icon */}
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-bold">{location?.city || 'Your Location'}</h2>
+                                    <p className="text-white/80 text-sm">
                                         {location?.country ? `${location.country.toUpperCase()}` : 'Current Location'}
                                     </p>
                                 </div>
                             </div>
 
-                            {/* Location and Weather Overlay */}
-                            <div className="absolute bottom-4 left-4 text-white">
-                                <p className="text-xl font-bold">{location?.city || 'Loading...'}</p>
-                                <p className="text-lg font-semibold flex items-center">
-                                    <SunIcon />
-                                    <span className="ml-1">
-                                        {weather?.description || 'Loading...'}, {weather?.temp || '--'}°F
-                                    </span>
-                                </p>
+                            {/* Weather Info */}
+                            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mt-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                {weather?.description === 'Clear' || weather?.description === 'Sunny' ? (
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                                ) : (
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                                                )}
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p className="text-3xl font-bold">{weather?.temp || '--'}°F</p>
+                                            <p className="text-white/80">{weather?.description || 'Loading...'}</p>
+                                        </div>
+                                    </div>
+                                    {location?.lat && location?.lon && (
+                                        <a
+                                            href={`https://www.google.com/maps?q=${location.lat},${location.lon}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-white/80 hover:text-white text-sm underline"
+                                        >
+                                            View on Map →
+                                        </a>
+                                    )}
+                                </div>
                             </div>
-                        </>
+                        </div>
                     )}
                 </div>
 
