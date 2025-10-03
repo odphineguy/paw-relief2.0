@@ -211,7 +211,7 @@ const AllergenAlerts: React.FC = () => {
             <div className="flex-1 p-4 space-y-6 overflow-y-auto">
                 {/* Page Title */}
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold text-foreground-light dark:text-foreground-dark">Allergen Alerts</h1>
+                    <h1 className="text-2xl text-foreground-light dark:text-foreground-dark">Allergen Alerts</h1>
                     {error && (
                         <button
                             onClick={fetchLocationAndWeather}
