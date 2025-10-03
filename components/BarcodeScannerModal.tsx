@@ -223,10 +223,10 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
                 );
             case 'error':
                  return (
-                    <div className="text-center p-8">
+                    <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg m-4">
                         <PawIcon className="w-12 h-12 text-red-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-bold text-text-200 dark:text-text-100">Product Not Found</h3>
-                        <p className="text-gray-500 dark:text-gray-400">This product isn't in our database yet. Try scanning a different product or contact support to add it.</p>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Product Not Found</h3>
+                        <p className="text-gray-700 dark:text-gray-300">This product isn't in our database yet. Try scanning a different product or contact support to add it.</p>
                     </div>
                 );
         }
