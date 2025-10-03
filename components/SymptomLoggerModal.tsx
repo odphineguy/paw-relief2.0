@@ -3,12 +3,33 @@ import { useDogs } from '../context/DogContext';
 import { SymptomType, TriggerType } from '../types';
 import { ALL_SYMPTOMS, ALL_TRIGGERS } from '../constants';
 import { addSymptomLog } from '../services/api';
-import { XIcon } from './icons';
+import { XIcon, EarIcon, ScanEyeIcon, ToiletIcon, PawPrintIcon, AlertTriangleIcon, FlameIcon } from './icons';
 
 interface SymptomLoggerModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
+
+// Function to get icon for each symptom type
+const getSymptomIcon = (symptom: SymptomType) => {
+    switch (symptom) {
+        case SymptomType.EAR_INFECTIONS:
+            return <EarIcon className="w-5 h-5" />;
+        case SymptomType.WATERY_EYES:
+            return <ScanEyeIcon className="w-5 h-5" />;
+        case SymptomType.DIGESTIVE_ISSUES:
+            return <ToiletIcon className="w-5 h-5" />;
+        case SymptomType.PAW_LICKING:
+            return <PawPrintIcon className="w-5 h-5" />;
+        case SymptomType.HOT_SPOTS:
+            return <FlameIcon className="w-5 h-5" />;
+        case SymptomType.EXCESSIVE_SCRATCHING:
+        case SymptomType.RED_IRRITATED_SKIN:
+        case SymptomType.SNEEZING:
+        default:
+            return <AlertTriangleIcon className="w-5 h-5" />;
+    }
+};
 
 const SymptomLoggerModal: React.FC<SymptomLoggerModalProps> = ({ isOpen, onClose }) => {
     const { selectedDog } = useDogs();
@@ -120,13 +141,8 @@ const SymptomLoggerModal: React.FC<SymptomLoggerModalProps> = ({ isOpen, onClose
                     <div>
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Date & Time</h3>
                         <div className="relative">
-                            <input
-                                type="datetime-local"
-                                value={dateTime.toISOString().slice(0, 16)}
-                                onChange={(e) => setDateTime(new Date(e.target.value))}
-                                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                            <div className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white flex items-center justify-between">
+                                <span>{formatDateTime(dateTime)}</span>
                                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
@@ -137,21 +153,26 @@ const SymptomLoggerModal: React.FC<SymptomLoggerModalProps> = ({ isOpen, onClose
                     {/* Symptoms Section */}
                     <div>
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Symptoms</h3>
-                        <div className="space-y-2">
+                        <div className="grid grid-cols-2 gap-3">
                             {ALL_SYMPTOMS.map(symptom => (
                                 <div key={symptom} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                                    <span className="text-gray-900 dark:text-white font-medium">{symptom}</span>
+                                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                                        <div className="text-gray-600 dark:text-gray-400 flex-shrink-0">
+                                            {getSymptomIcon(symptom)}
+                                        </div>
+                                        <span className="text-gray-900 dark:text-white font-medium text-sm truncate">{symptom}</span>
+                                    </div>
                                     <button
                                         type="button"
                                         onClick={() => handleSymptomToggle(symptom)}
-                                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors flex-shrink-0 ml-2 ${
                                             selectedSymptoms.has(symptom)
                                                 ? 'bg-blue-500 border-blue-500'
                                                 : 'border-gray-300 dark:border-gray-600'
                                         }`}
                                     >
                                         {selectedSymptoms.has(symptom) && (
-                                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                             </svg>
                                         )}
