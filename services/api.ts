@@ -277,27 +277,104 @@ export const getLocalAllergenAlerts = async (): Promise<AllergenAlerts> => {
 // ===== PRODUCT FUNCTIONS =====
 
 export const scanBarcode = async (barcode: string): Promise<ProductInfo | null> => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('barcode', barcode)
-    .single();
+  try {
+    // First try OpenFoodFacts API
+    console.log('Fetching product from OpenFoodFacts:', barcode);
+    const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`);
 
-  if (error) {
-    if (error.code === 'PGRST116') {
-      // Not found
+    if (!response.ok) {
+      throw new Error(`OpenFoodFacts API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.status === 1 && data.product) {
+      const product = data.product;
+
+      // Extract ingredients list
+      let ingredients: string[] = [];
+      if (product.ingredients_text) {
+        // Split by common separators and clean up
+        ingredients = product.ingredients_text
+          .split(/[,;]/)
+          .map((ing: string) => ing.trim())
+          .filter((ing: string) => ing.length > 0);
+      } else if (product.ingredients) {
+        // If ingredients is an array of objects
+        ingredients = product.ingredients.map((ing: any) => ing.text || ing.id || '').filter(Boolean);
+      }
+
+      const productInfo: ProductInfo = {
+        barcode: barcode,
+        name: product.product_name || product.product_name_en || 'Unknown Product',
+        imageUrl: product.image_url || product.image_front_url || 'https://via.placeholder.com/200x200?text=No+Image',
+        ingredients: ingredients,
+      };
+
+      // Cache the product in our database for faster future lookups
+      try {
+        await addProduct(productInfo);
+      } catch (cacheError) {
+        console.log('Could not cache product (may already exist):', cacheError);
+      }
+
+      return productInfo;
+    }
+
+    // If not found in OpenFoodFacts, check our local database
+    console.log('Product not found in OpenFoodFacts, checking local database');
+    const { data: localData, error: localError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('barcode', barcode)
+      .single();
+
+    if (localError) {
+      if (localError.code === 'PGRST116') {
+        // Not found anywhere
+        console.log('Product not found in local database either');
+        return null;
+      }
+      console.error('Error checking local database:', localError);
+      throw localError;
+    }
+
+    return {
+      barcode: localData.barcode,
+      name: localData.name,
+      imageUrl: localData.image_url,
+      ingredients: localData.ingredients || [],
+    };
+
+  } catch (error) {
+    console.error('Error scanning barcode:', error);
+
+    // Fallback to local database on any error
+    try {
+      const { data: localData, error: localError } = await supabase
+        .from('products')
+        .select('*')
+        .eq('barcode', barcode)
+        .single();
+
+      if (localError) {
+        if (localError.code === 'PGRST116') {
+          return null;
+        }
+        throw localError;
+      }
+
+      return {
+        barcode: localData.barcode,
+        name: localData.name,
+        imageUrl: localData.image_url,
+        ingredients: localData.ingredients || [],
+      };
+    } catch (fallbackError) {
+      console.error('Fallback to local database also failed:', fallbackError);
       return null;
     }
-    console.error('Error scanning barcode:', error);
-    throw error;
   }
-
-  return {
-    barcode: data.barcode,
-    name: data.name,
-    imageUrl: data.image_url,
-    ingredients: data.ingredients || [],
-  };
 };
 
 export const addProduct = async (product: ProductInfo): Promise<ProductInfo> => {
