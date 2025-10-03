@@ -8,11 +8,11 @@ const ThemeSwitch: React.FC = () => {
     return (
         <button
             onClick={toggleTheme}
-            className="relative inline-flex items-center h-6 rounded-full w-11 transition-colors bg-gray-200 dark:bg-gray-700 focus:outline-none"
+            className="relative inline-flex items-center h-6 rounded-full w-11 transition-colors bg-gray-200 dark:bg-gray-700 focus:outline-none flex-shrink-0"
         >
             <span
                 className={`${
-                    theme === 'light' ? 'translate-x-0.5' : 'translate-x-5'
+                    theme === 'light' ? 'translate-x-1' : 'translate-x-[26px]'
                 } inline-block w-4 h-4 transform bg-white rounded-full transition-transform flex items-center justify-center`}
             >
                 {theme === 'light' ? (

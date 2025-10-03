@@ -138,7 +138,7 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onToggle }) => {
             </div>
 
             {/* Toggle Switch */}
-            <div className="ml-4">
+            <div className="ml-4 flex-shrink-0">
                 <button
                     onClick={() => onToggle(reminder.id, reminder.completed)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
@@ -147,7 +147,7 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onToggle }) => {
                 >
                     <span
                         className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            reminder.completed ? 'translate-x-6' : 'translate-x-1'
+                            reminder.completed ? 'translate-x-[26px]' : 'translate-x-1'
                         }`}
                     />
                 </button>
