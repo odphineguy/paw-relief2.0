@@ -33,21 +33,37 @@ const AllergenAlerts: React.FC = () => {
 
             // Get user's geolocation
             if (!navigator.geolocation) {
+                console.error("Geolocation is not supported by your browser");
                 throw new Error("Geolocation is not supported by your browser");
             }
 
+            console.log("Requesting geolocation...");
             const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject);
+                navigator.geolocation.getCurrentPosition(
+                    resolve,
+                    (error) => {
+                        console.error("Geolocation error:", error);
+                        reject(error);
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 10000,
+                        maximumAge: 300000 // 5 minutes
+                    }
+                );
             });
 
             const { latitude, longitude } = position.coords;
+            console.log("Got position:", latitude, longitude);
 
             // Fetch location name and weather data using Open-Meteo (free, no API key needed)
             // First, get location name from reverse geocoding
+            console.log("Fetching location name...");
             const geoResponse = await fetch(
                 `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${latitude}&longitude=${longitude}`
             );
             const geoData = await geoResponse.json();
+            console.log("Geocoding response:", geoData);
 
             const cityName = geoData.results?.[0]?.name || 'Your Location';
             const countryCode = geoData.results?.[0]?.country_code || '';
@@ -60,22 +76,28 @@ const AllergenAlerts: React.FC = () => {
             });
 
             // Fetch weather and air quality from Open-Meteo
+            console.log("Fetching weather...");
             const weatherResponse = await fetch(
                 `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=auto`
             );
             const weatherData = await weatherResponse.json();
+            console.log("Weather response:", weatherData);
 
             // Fetch air quality
+            console.log("Fetching air quality...");
             const airResponse = await fetch(
                 `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=us_aqi,pm10,pm2_5`
             );
             const airData = await airResponse.json();
+            console.log("Air quality response:", airData);
 
             setWeather({
                 temp: Math.round(weatherData.current.temperature_2m),
                 description: getWeatherDescription(weatherData.current.weather_code),
                 aqi: airData.current.us_aqi || 0
             });
+
+            console.log("Successfully loaded location and weather data");
 
         } catch (err) {
             console.error("Error fetching location/weather data:", err);
