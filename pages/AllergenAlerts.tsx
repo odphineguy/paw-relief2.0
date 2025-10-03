@@ -282,7 +282,7 @@ const AllergenAlerts: React.FC = () => {
                                 </div>
 
                                 {/* Weather Info */}
-                                <div className="bg-white/20 backdrop-blur-md rounded-lg p-3 flex items-center gap-3">
+                                <div className="bg-black/50 backdrop-blur-md rounded-lg p-3 flex items-center gap-3 border border-white/20">
                                     <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
                                         <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             {weather?.description === 'Clear' || weather?.description === 'Sunny' ? (
@@ -293,8 +293,8 @@ const AllergenAlerts: React.FC = () => {
                                         </svg>
                                     </div>
                                     <div>
-                                        <p className="text-2xl font-bold">{weather?.temp || '--'}°F</p>
-                                        <p className="text-white/90 text-sm">{weather?.description || 'Loading...'}</p>
+                                        <p className="text-2xl font-bold text-white drop-shadow-lg">{weather?.temp || '--'}°F</p>
+                                        <p className="text-white/90 text-sm drop-shadow">{weather?.description || 'Loading...'}</p>
                                     </div>
                                 </div>
                             </div>
