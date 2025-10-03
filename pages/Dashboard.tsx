@@ -7,6 +7,7 @@ import { getSymptomLogs, getReminders, getLocalAllergenAlerts } from '../service
 import { format } from 'date-fns';
 import { PieChart, Pie, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 import { useTheme } from '../context/ThemeContext';
+import { ChartCombinedIcon, EarIcon, ScanEyeIcon, ToiletIcon, PawIcon, AlertTriangleIcon, FlameIcon } from '../components/icons';
 
 const getSeverityColor = (severity: number) => {
   switch (severity) {
@@ -26,6 +27,27 @@ const getSeverityColor = (severity: number) => {
 };
 
 const PIE_CHART_COLORS = ['#71c4ef', '#a7f3d0', '#f87171', '#fdba74', '#d4eaf7', '#b6c9f0'];
+
+// Function to get icon for each symptom type
+const getSymptomIcon = (symptom: SymptomType) => {
+  switch (symptom) {
+    case SymptomType.EAR_INFECTIONS:
+      return <EarIcon className="w-6 h-6" />;
+    case SymptomType.WATERY_EYES:
+      return <ScanEyeIcon className="w-6 h-6" />;
+    case SymptomType.DIGESTIVE_ISSUES:
+      return <ToiletIcon className="w-6 h-6" />;
+    case SymptomType.PAW_LICKING:
+      return <PawIcon className="w-6 h-6" />;
+    case SymptomType.HOT_SPOTS:
+      return <FlameIcon className="w-6 h-6" />;
+    case SymptomType.EXCESSIVE_SCRATCHING:
+    case SymptomType.RED_IRRITATED_SKIN:
+    case SymptomType.SNEEZING:
+    default:
+      return <AlertTriangleIcon className="w-6 h-6" />;
+  }
+};
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -98,10 +120,8 @@ const Dashboard: React.FC = () => {
             </h2>
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                  <ChartCombinedIcon className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 dark:text-white">Recent Insight</h3>
@@ -135,10 +155,8 @@ const Dashboard: React.FC = () => {
             <div className="space-y-3">
               {recentSymptoms.map((log) => (
                 <div key={log.id} className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center text-red-600 dark:text-red-400">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                    </svg>
+                  <div className="flex-shrink-0 w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                    {getSymptomIcon(log.symptomType)}
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 dark:text-white">{log.symptomType}</h3>
@@ -157,7 +175,7 @@ const Dashboard: React.FC = () => {
             <div className="space-y-3">
               {upcomingReminders.map((reminder) => (
                 <div key={reminder.id} className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center text-green-600 dark:text-green-400">
+                  <div className="flex-shrink-0 w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-lg flex items-center justify-center text-white">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
