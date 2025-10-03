@@ -172,7 +172,7 @@ const TriggerDetective: React.FC = () => {
                         {/* Dynamic Chart */}
                         <div className="mb-6">
                             {hasData ? (
-                                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                                     <div className="h-40 flex items-end justify-between gap-3">
                                         {chartData.map((item) => (
                                             <div key={item.label} className="flex-1 flex flex-col items-center gap-2">
