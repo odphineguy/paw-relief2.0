@@ -172,21 +172,23 @@ const TriggerDetective: React.FC = () => {
                         {/* Dynamic Chart */}
                         <div className="mb-6">
                             {hasData ? (
-                                <div className="h-40 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-end justify-between space-x-2">
-                                    {chartData.map((item) => (
-                                        <div key={item.label} className="flex-1 flex flex-col items-center space-y-2">
-                                            <div className="w-full flex flex-col items-center" style={{ height: '100%' }}>
-                                                <div
-                                                    className={`w-full ${item.color} rounded-t transition-all`}
-                                                    style={{ height: `${(item.count / maxCount) * 100}%`, minHeight: item.count > 0 ? '20%' : '0' }}
-                                                ></div>
+                                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                                    <div className="h-40 flex items-end justify-between gap-3">
+                                        {chartData.map((item) => (
+                                            <div key={item.label} className="flex-1 flex flex-col items-center gap-2">
+                                                <div className="w-full h-full flex flex-col justify-end">
+                                                    <div
+                                                        className={`w-full ${item.color} rounded-t-lg transition-all`}
+                                                        style={{ height: `${Math.max((item.count / maxCount) * 100, item.count > 0 ? 15 : 0)}%` }}
+                                                    ></div>
+                                                </div>
+                                                <div className="text-center mt-2">
+                                                    <div className="text-sm font-bold text-gray-900 dark:text-white">{item.count}</div>
+                                                    <span className="text-xs text-gray-600 dark:text-gray-400">{item.label}</span>
+                                                </div>
                                             </div>
-                                            <div className="text-center">
-                                                <div className="text-xs font-bold text-gray-900 dark:text-white">{item.count}</div>
-                                                <span className="text-xs text-gray-600 dark:text-gray-400">{item.label}</span>
-                                            </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="h-32 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-center justify-center">
