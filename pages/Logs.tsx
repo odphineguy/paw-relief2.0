@@ -4,7 +4,29 @@ import Header from '../components/Header';
 import { SymptomLog } from '../types';
 import { getSymptomLogs } from '../services/api';
 import { format } from 'date-fns';
-import { PawIcon } from '../components/icons';
+import { PawIcon, PawPrintIcon, EarIcon, ScanEyeIcon, ToiletIcon, AlertTriangleIcon, FlameIcon } from '../components/icons';
+import { SymptomType } from '../types';
+
+// Function to get icon for each symptom type
+const getSymptomIcon = (symptom: SymptomType) => {
+    switch (symptom) {
+        case SymptomType.EAR_INFECTIONS:
+            return <EarIcon className="w-6 h-6" />;
+        case SymptomType.WATERY_EYES:
+            return <ScanEyeIcon className="w-6 h-6" />;
+        case SymptomType.DIGESTIVE_ISSUES:
+            return <ToiletIcon className="w-6 h-6" />;
+        case SymptomType.PAW_LICKING:
+            return <PawPrintIcon className="w-6 h-6" />;
+        case SymptomType.HOT_SPOTS:
+            return <FlameIcon className="w-6 h-6" />;
+        case SymptomType.EXCESSIVE_SCRATCHING:
+        case SymptomType.RED_IRRITATED_SKIN:
+        case SymptomType.SNEEZING:
+        default:
+            return <AlertTriangleIcon className="w-6 h-6" />;
+    }
+};
 
 const Logs: React.FC = () => {
     const { selectedDog } = useDogs();
@@ -50,7 +72,12 @@ const Logs: React.FC = () => {
                             <div key={log.id} className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                                 <div className="flex justify-between items-start mb-3">
                                     <div className="flex-1">
-                                        <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-1">{log.symptomType}</h3>
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <div className="text-gray-600 dark:text-gray-400">
+                                                {getSymptomIcon(log.symptomType)}
+                                            </div>
+                                            <h3 className="font-bold text-lg text-gray-900 dark:text-white">{log.symptomType}</h3>
+                                        </div>
                                         <p className="text-sm text-gray-500 dark:text-gray-400">
                                             {format(new Date(log.createdAt), 'MMM d, yyyy')} at {format(new Date(log.createdAt), 'h:mm a')}
                                         </p>
