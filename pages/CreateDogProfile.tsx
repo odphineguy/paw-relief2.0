@@ -4,6 +4,7 @@ import { useDogs } from '../context/DogContext';
 import { Dog } from '../types';
 import Header from '../components/Header';
 import { ArrowLeftIcon, PawIcon } from '../components/icons';
+import { format } from 'date-fns';
 
 const CreateDogProfile: React.FC = () => {
     const navigate = useNavigate();
@@ -406,62 +407,73 @@ const CreateDogProfile: React.FC = () => {
                 {!isAddingNew && dogs.length > 0 && (
                     <div className="space-y-6">
                         {dogs.map((dog) => (
-                            <div key={dog.id} className="bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden">
-                                {/* Pet Image */}
-                                <div className="p-6 text-center">
-                                    <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-primary">
-                                        <img 
-                                            src={dog.photoUrl} 
-                                            alt={dog.name}
-                                            className="w-full h-full object-cover"
-                                        />
+                            <div key={dog.id} className="bg-card-light dark:bg-card-dark rounded-2xl overflow-hidden shadow-lg">
+                                {/* Pet Image - Large Hero Style */}
+                                <div className="relative h-64 bg-gradient-to-br from-primary/20 to-primary/5">
+                                    <img
+                                        src={dog.photoUrl}
+                                        alt={dog.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                                        <h3 className="text-2xl font-bold text-white mb-1">{dog.name}</h3>
+                                        <p className="text-white/90 text-lg">{dog.breed}</p>
                                     </div>
-                                    <h3 className="text-xl font-bold text-foreground-light dark:text-foreground-dark mb-2">{dog.name}</h3>
-                                    <p className="text-gray-600 dark:text-gray-400">{dog.breed}</p>
                                 </div>
 
                                 {/* All Pet Information */}
-                                <div className="p-4 space-y-4">
+                                <div className="p-6 space-y-5">
                                     {/* Basic Information */}
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Age</p>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-white">{dog.age ? `${dog.age} years` : 'Not set'}</p>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="bg-background-light dark:bg-background-dark rounded-lg p-4">
+                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Age</p>
+                                            <p className="text-xl font-bold text-gray-900 dark:text-white">{dog.age ? `${dog.age} years` : 'Not set'}</p>
                                         </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Weight</p>
-                                            <p className="text-base font-semibold text-gray-900 dark:text-white">{dog.weight ? `${dog.weight} lb` : 'Not set'}</p>
+                                        <div className="bg-background-light dark:bg-background-dark rounded-lg p-4">
+                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Weight</p>
+                                            <p className="text-xl font-bold text-gray-900 dark:text-white">{dog.weight ? `${dog.weight} lb` : 'Not set'}</p>
                                         </div>
+                                    </div>
+
+                                    {/* Birthday */}
+                                    <div className="bg-background-light dark:bg-background-dark rounded-lg p-4">
+                                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Birthday</p>
+                                        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                                            {dog.birthday ? format(new Date(dog.birthday), 'MMMM d, yyyy') : 'Not set'}
+                                        </p>
                                     </div>
 
                                     {/* Health Information */}
-                                    <div>
-                                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Known Allergies</p>
-                                        <p className="text-base font-semibold text-gray-900 dark:text-white">{dog.knownAllergies?.join(', ') || 'None'}</p>
+                                    <div className="bg-background-light dark:bg-background-dark rounded-lg p-4">
+                                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Known Allergies</p>
+                                        {dog.knownAllergies && dog.knownAllergies.length > 0 ? (
+                                            <div className="flex flex-wrap gap-2">
+                                                {dog.knownAllergies.map((allergy, idx) => (
+                                                    <span key={idx} className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-sm font-medium">
+                                                        {allergy}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-base font-semibold text-gray-900 dark:text-white">None</p>
+                                        )}
                                     </div>
 
-                                    <div>
+                                    <div className="bg-background-light dark:bg-background-dark rounded-lg p-4">
                                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Current Medications</p>
                                         <p className="text-base font-semibold text-gray-900 dark:text-white">{dog.currentMedications || 'None'}</p>
                                     </div>
 
-                                    <div>
-                                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Birthday</p>
-                                        <p className="text-base font-semibold text-gray-900 dark:text-white">{dog.birthday || 'Not set'}</p>
-                                    </div>
-
                                     {/* Edit Button */}
-                                    <div className="pt-4 border-t border-border-light dark:border-border-dark">
-                                        <button 
-                                            onClick={() => handleEditDog(dog)}
-                                            className="w-full bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary/90 transition-colors flex items-center justify-center space-x-2"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                            <span>Edit Pet</span>
-                                        </button>
-                                    </div>
+                                    <button
+                                        onClick={() => handleEditDog(dog)}
+                                        className="w-full bg-primary text-white px-6 py-4 rounded-xl font-bold text-lg hover:bg-primary/90 transition-colors flex items-center justify-center space-x-2 shadow-lg shadow-primary/30"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                        <span>Edit Pet Profile</span>
+                                    </button>
                                 </div>
                             </div>
                         ))}
