@@ -107,11 +107,11 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onToggle }) => {
     };
 
     return (
-        <div className="bg-card-light dark:bg-card-dark rounded-xl p-4 shadow-sm flex items-center">
+        <div className="bg-card-light dark:bg-card-dark rounded-xl p-4 shadow-sm flex items-center gap-4">
             {/* Icon */}
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center mr-4 ${
-                reminder.completed 
-                    ? 'bg-gray-100 dark:bg-gray-700' 
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                reminder.completed
+                    ? 'bg-gray-100 dark:bg-gray-700'
                     : 'bg-blue-50 dark:bg-blue-900/20'
             }`}>
                 <div className={reminder.completed ? 'text-gray-400' : 'text-blue-600'}>
@@ -120,17 +120,17 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onToggle }) => {
             </div>
 
             {/* Content */}
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
                 <h3 className={`font-semibold ${
-                    reminder.completed 
-                        ? 'line-through text-gray-400 dark:text-gray-500' 
+                    reminder.completed
+                        ? 'line-through text-gray-400 dark:text-gray-500'
                         : 'text-gray-900 dark:text-white'
                 }`}>
                     {reminder.name}
                 </h3>
                 <p className={`text-sm ${
-                    reminder.completed 
-                        ? 'text-gray-400 dark:text-gray-500' 
+                    reminder.completed
+                        ? 'text-gray-400 dark:text-gray-500'
                         : 'text-gray-500 dark:text-gray-400'
                 }`}>
                     {reminder.dosage || reminder.type}
@@ -138,10 +138,10 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onToggle }) => {
             </div>
 
             {/* Toggle Switch */}
-            <div className="ml-4 flex-shrink-0">
+            <div className="flex-shrink-0">
                 <button
                     onClick={() => onToggle(reminder.id, reminder.completed)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
                         reminder.completed ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
                     }`}
                 >
