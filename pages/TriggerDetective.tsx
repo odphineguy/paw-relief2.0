@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { ArrowLeftIcon } from '../components/icons';
+import { ChevronRightIcon } from '../components/icons';
 
 const TriggerDetective: React.FC = () => {
     const navigate = useNavigate();
@@ -80,12 +80,20 @@ const TriggerDetective: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
-            <Header title="" showBackButton={true} />
+            <Header title="" showBackButton={false} />
 
             <div className="flex-1 p-4 space-y-8 overflow-y-auto">
                 {/* Log New Trigger Section */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">Log New Trigger</h2>
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-xl text-foreground-light dark:text-foreground-dark">Log New Trigger</h2>
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="p-2 rounded-full hover:bg-card-light dark:hover:bg-card-dark transition-colors"
+                        >
+                            <ChevronRightIcon className="w-6 h-6 text-foreground-light dark:text-foreground-dark"/>
+                        </button>
+                    </div>
                     
                     <div className="space-y-3">
                         {triggerTypes.map((trigger) => (
@@ -94,7 +102,7 @@ const TriggerDetective: React.FC = () => {
                                 onClick={() => handleTriggerSelect(trigger.id)}
                                 className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
-                                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                <div className="flex-shrink-0 w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-lg flex items-center justify-center text-white">
                                     {trigger.icon}
                                 </div>
                                 <div className="flex-1">
