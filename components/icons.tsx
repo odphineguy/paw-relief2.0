@@ -108,3 +108,30 @@ export const SyringeIcon: React.FC<{ className?: string }> = ({ className = "w-6
         <path d="M12 4v4M12 16v4" />
     </Icon>
 );
+
+// Pet-specific icons
+export const DogIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+        <path d="M18 4h-1V3c0-.6-.4-1-1-1s-1 .4-1 1v1h-4V3c0-.6-.4-1-1-1S9 2.4 9 3v1H8c-1.1 0-2 .9-2 2v3c0 1.1.9 2 2 2v7c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-7c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/>
+    </svg>
+);
+
+export const BowlIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <Icon className={className}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 11h18M4 11c0 3.3 2.7 6 6 6h4c3.3 0 6-2.7 6-6M7 11V8c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v3" />
+    </Icon>
+);
+
+export const VetIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <Icon className={className}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        <circle cx="12" cy="12" r="10" />
+    </Icon>
+);
+
+export const TreatIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <Icon className={className}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6 8l6-5 6 5v11a2 2 0 01-2 2H8a2 2 0 01-2-2V8z" />
+        <path d="M12 3v5M9 11h6M9 15h6" />
+    </Icon>
+);
