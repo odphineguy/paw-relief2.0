@@ -415,10 +415,12 @@ const CreateDogProfile: React.FC = () => {
                                         alt={dog.name}
                                         className="w-full h-full object-cover"
                                     />
-                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                                        <h3 className="text-2xl font-bold text-white mb-1">{dog.name}</h3>
-                                        <p className="text-white/90 text-lg">{dog.breed}</p>
-                                    </div>
+                                </div>
+
+                                {/* Pet Name and Breed */}
+                                <div className="px-6 pt-6 pb-4 border-b border-border-light dark:border-border-dark">
+                                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{dog.name}</h3>
+                                    <p className="text-gray-600 dark:text-gray-400 text-lg">{dog.breed}</p>
                                 </div>
 
                                 {/* All Pet Information */}
