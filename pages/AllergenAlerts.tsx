@@ -1,10 +1,103 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { ArrowLeftIcon } from '../components/icons';
 
+interface LocationData {
+    city: string;
+    country: string;
+    lat: number;
+    lon: number;
+}
+
+interface WeatherData {
+    temp: number;
+    description: string;
+    aqi: number;
+}
+
 const AllergenAlerts: React.FC = () => {
     const navigate = useNavigate();
+    const [location, setLocation] = useState<LocationData | null>(null);
+    const [weather, setWeather] = useState<WeatherData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetchLocationAndWeather();
+    }, []);
+
+    const fetchLocationAndWeather = async () => {
+        try {
+            setLoading(true);
+
+            // Get user's geolocation
+            if (!navigator.geolocation) {
+                throw new Error("Geolocation is not supported by your browser");
+            }
+
+            const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject);
+            });
+
+            const { latitude, longitude } = position.coords;
+
+            // Fetch location name and weather data using Open-Meteo (free, no API key needed)
+            // First, get location name from reverse geocoding
+            const geoResponse = await fetch(
+                `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${latitude}&longitude=${longitude}`
+            );
+            const geoData = await geoResponse.json();
+
+            const cityName = geoData.results?.[0]?.name || 'Your Location';
+            const countryCode = geoData.results?.[0]?.country_code || '';
+
+            setLocation({
+                city: cityName,
+                country: countryCode,
+                lat: latitude,
+                lon: longitude
+            });
+
+            // Fetch weather and air quality from Open-Meteo
+            const weatherResponse = await fetch(
+                `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=auto`
+            );
+            const weatherData = await weatherResponse.json();
+
+            // Fetch air quality
+            const airResponse = await fetch(
+                `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=us_aqi,pm10,pm2_5`
+            );
+            const airData = await airResponse.json();
+
+            setWeather({
+                temp: Math.round(weatherData.current.temperature_2m),
+                description: getWeatherDescription(weatherData.current.weather_code),
+                aqi: airData.current.us_aqi || 0
+            });
+
+        } catch (err) {
+            console.error("Error fetching location/weather data:", err);
+            setError(err instanceof Error ? err.message : "Failed to load location data");
+            // Set default Phoenix data as fallback
+            setLocation({ city: 'Phoenix', country: 'US', lat: 33.4484, lon: -112.0740 });
+            setWeather({ temp: 95, description: 'Sunny', aqi: 65 });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getWeatherDescription = (code: number): string => {
+        // WMO Weather interpretation codes
+        if (code === 0) return 'Clear';
+        if (code <= 3) return 'Partly Cloudy';
+        if (code <= 48) return 'Foggy';
+        if (code <= 67) return 'Rainy';
+        if (code <= 77) return 'Snowy';
+        if (code <= 99) return 'Stormy';
+        return 'Clear';
+    };
 
     // Icon components
     const SunIcon = () => (
@@ -92,51 +185,86 @@ const AllergenAlerts: React.FC = () => {
                 
                 {/* Map Section */}
                 <div className="relative bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden h-60 shadow-md">
-                    {/* Phoenix, AZ Map Mock */}
-                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 flex items-center justify-center">
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-4 mx-auto">
-                                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                            </div>
-                            <p className="text-blue-800 dark:text-blue-200 font-semibold">Phoenix, AZ</p>
-                            <p className="text-blue-600 dark:text-blue-300 text-sm">Metropolitan Area</p>
+                    {loading ? (
+                        <div className="w-full h-full flex items-center justify-center">
+                            <div className="text-gray-600 dark:text-gray-300">Loading location...</div>
                         </div>
-                    </div>
-                    
-                    {/* Location and Weather Overlay */}
-                    <div className="absolute bottom-4 left-4 text-white">
-                        <p className="text-xl font-bold">Phoenix, AZ</p>
-                        <p className="text-lg font-semibold flex items-center">
-                            <SunIcon />
-                            <span className="ml-1">Sunny, 95°F</span>
-                        </p>
-                    </div>
+                    ) : (
+                        <>
+                            <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 flex items-center justify-center">
+                                <div className="text-center">
+                                    <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-4 mx-auto">
+                                        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-blue-800 dark:text-blue-200 font-semibold">
+                                        {location?.city || 'Your Location'}
+                                    </p>
+                                    <p className="text-blue-600 dark:text-blue-300 text-sm">
+                                        {location?.country ? `${location.country.toUpperCase()}` : 'Current Location'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Location and Weather Overlay */}
+                            <div className="absolute bottom-4 left-4 text-white">
+                                <p className="text-xl font-bold">{location?.city || 'Loading...'}</p>
+                                <p className="text-lg font-semibold flex items-center">
+                                    <SunIcon />
+                                    <span className="ml-1">
+                                        {weather?.description || 'Loading...'}, {weather?.temp || '--'}°F
+                                    </span>
+                                </p>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* Today's Allergens */}
                 <div className="space-y-4">
                     <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">Today's Allergens</h2>
-                    
-                    <AllergenCard
-                        icon={PollenIcon}
-                        title="High Pollen"
-                        subtitle="Pollen Count: 8.2"
-                        level={8.2}
-                        maxLevel={10}
-                        colorClass="bg-red-500"
-                    />
-                    
-                    <AllergenCard
-                        icon={AirQualityIcon}
-                        title="Moderate Air Quality"
-                        subtitle="AQI: 65"
-                        level={65}
-                        maxLevel={150}
-                        colorClass="bg-yellow-500"
-                    />
+
+                    {weather && (
+                        <>
+                            <AllergenCard
+                                icon={PollenIcon}
+                                title={(() => {
+                                    const pollenLevel = Math.min(10, Math.round((weather.aqi / 15) * 1.2));
+                                    if (pollenLevel >= 7) return "High Pollen";
+                                    if (pollenLevel >= 4) return "Moderate Pollen";
+                                    return "Low Pollen";
+                                })()}
+                                subtitle={`Estimated from air quality`}
+                                level={Math.min(10, Math.round((weather.aqi / 15) * 1.2))}
+                                maxLevel={10}
+                                colorClass={(() => {
+                                    const pollenLevel = Math.min(10, Math.round((weather.aqi / 15) * 1.2));
+                                    if (pollenLevel >= 7) return "bg-red-500";
+                                    if (pollenLevel >= 4) return "bg-yellow-500";
+                                    return "bg-green-500";
+                                })()}
+                            />
+
+                            <AllergenCard
+                                icon={AirQualityIcon}
+                                title={(() => {
+                                    if (weather.aqi >= 100) return "Unhealthy Air Quality";
+                                    if (weather.aqi >= 50) return "Moderate Air Quality";
+                                    return "Good Air Quality";
+                                })()}
+                                subtitle={`AQI: ${weather.aqi}`}
+                                level={weather.aqi}
+                                maxLevel={150}
+                                colorClass={(() => {
+                                    if (weather.aqi >= 100) return "bg-red-500";
+                                    if (weather.aqi >= 50) return "bg-yellow-500";
+                                    return "bg-green-500";
+                                })()}
+                            />
+                        </>
+                    )}
                 </div>
 
                 {/* Recommendations */}
