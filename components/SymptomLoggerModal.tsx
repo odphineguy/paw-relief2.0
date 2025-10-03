@@ -70,10 +70,8 @@ const SymptomLoggerModal: React.FC<SymptomLoggerModalProps> = ({ isOpen, onClose
             // For now, we'll create one log entry per symptom
             // In a real app, you might want to create multiple entries or a single entry with multiple symptoms
             for (const symptom of selectedSymptoms) {
-                let photoUrl: string | undefined = undefined;
-                if (photos.length > 0) {
-                    photoUrl = `https://picsum.photos/seed/${Date.now()}/400/300`;
-                }
+                // TODO: Implement actual photo upload when needed
+                // For now, don't set photoUrl to avoid random placeholder images
 
                 await addSymptomLog({
                     dogId: selectedDog.id,
@@ -81,7 +79,7 @@ const SymptomLoggerModal: React.FC<SymptomLoggerModalProps> = ({ isOpen, onClose
                     severity: 3, // Default severity
                     triggers: [], // No triggers in the new design
                     notes,
-                    photoUrl,
+                    photoUrl: undefined,
                 });
             }
 
