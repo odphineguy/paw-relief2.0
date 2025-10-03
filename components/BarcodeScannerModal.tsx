@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
 import { useDogs } from '../context/DogContext';
 import { ProductInfo } from '../types';
 import { scanBarcode } from '../services/api';
@@ -16,32 +17,124 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
     const [status, setStatus] = useState<ScanStatus>('scanning');
     const [product, setProduct] = useState<ProductInfo | null>(null);
     const [allergens, setAllergens] = useState<string[]>([]);
+    const scannerRef = useRef<Html5Qrcode | null>(null);
+    const isScanning = useRef(false);
 
     useEffect(() => {
         if (isOpen) {
-            performScan();
+            startScanner();
         } else {
+            stopScanner();
             // Reset state when modal is closed
             setStatus('scanning');
             setProduct(null);
             setAllergens([]);
         }
+
+        return () => {
+            stopScanner();
+        };
     }, [isOpen]);
 
-    const performScan = async () => {
-        setStatus('scanning');
+    const startScanner = async () => {
+        if (!selectedDog || isScanning.current) {
+            console.log("Cannot start scanner:", { selectedDog, isScanning: isScanning.current });
+            return;
+        }
+
+        try {
+            setStatus('scanning');
+
+            // Check if we're in a secure context
+            console.log("Is secure context:", window.isSecureContext);
+            console.log("Protocol:", window.location.protocol);
+
+            // Request camera permission first
+            console.log("Requesting camera permission...");
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                console.log("Camera permission granted");
+                // Stop the test stream
+                stream.getTracks().forEach(track => track.stop());
+            } catch (permErr) {
+                console.error("Camera permission error:", permErr);
+                throw new Error(`Camera permission denied: ${permErr instanceof Error ? permErr.message : 'Unknown error'}`);
+            }
+
+            const scanner = new Html5Qrcode("barcode-scanner");
+            scannerRef.current = scanner;
+
+            console.log("Getting available cameras...");
+            const cameras = await Html5Qrcode.getCameras();
+            console.log("Available cameras:", cameras);
+
+            if (!cameras || cameras.length === 0) {
+                throw new Error("No cameras found on this device");
+            }
+
+            // Try to find the back camera, otherwise use the first available
+            const backCamera = cameras.find(camera =>
+                camera.label.toLowerCase().includes('back') ||
+                camera.label.toLowerCase().includes('rear')
+            );
+            const cameraId = backCamera ? backCamera.id : cameras[cameras.length - 1].id;
+
+            console.log("Starting camera with ID:", cameraId);
+            await scanner.start(
+                cameraId,
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 150 },
+                    formatsToSupport: [0, 1, 2, 3, 4, 5, 6, 7, 8] // Support all barcode formats
+                },
+                async (decodedText) => {
+                    // Success callback when barcode is scanned
+                    console.log("Barcode detected:", decodedText);
+                    isScanning.current = false;
+                    await stopScanner();
+                    await processBarcode(decodedText);
+                },
+                (errorMessage) => {
+                    // Error callback - we can ignore most scanning errors
+                    // as they happen frequently while searching for a code
+                }
+            );
+
+            console.log("Camera started successfully");
+            isScanning.current = true;
+        } catch (err) {
+            console.error("Scanner initialization error:", err);
+            const errorMsg = err instanceof Error ? err.message : JSON.stringify(err);
+            alert(`Camera error: ${errorMsg}\n\nNote: Camera requires HTTPS or localhost. You're accessing via: ${window.location.href}`);
+            setStatus('error');
+        }
+    };
+
+    const stopScanner = async () => {
+        if (scannerRef.current && isScanning.current) {
+            try {
+                await scannerRef.current.stop();
+                scannerRef.current.clear();
+                scannerRef.current = null;
+                isScanning.current = false;
+            } catch (err) {
+                console.error("Error stopping scanner:", err);
+            }
+        }
+    };
+
+    const processBarcode = async (barcode: string) => {
         if (!selectedDog) {
             setStatus('error');
             return;
         }
 
         try {
-            // Simulate scanning a random barcode
-            const result = await scanBarcode('123456789');
+            const result = await scanBarcode(barcode);
             if (result) {
                 setProduct(result);
-                const foundAllergens = result.ingredients.filter(ingredient => 
-                    selectedDog.knownAllergies.some(known => 
+                const foundAllergens = result.ingredients.filter(ingredient =>
+                    selectedDog.knownAllergies.some(known =>
                         ingredient.toLowerCase().includes(known.toLowerCase())
                     )
                 );
@@ -56,15 +149,19 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
         }
     };
 
+    const handleScanAgain = async () => {
+        setStatus('scanning');
+        setProduct(null);
+        setAllergens([]);
+        await startScanner();
+    };
+
     const renderContent = () => {
         switch (status) {
             case 'scanning':
                 return (
-                    <div className="text-center p-8">
-                        <div className="relative w-48 h-32 mx-auto overflow-hidden rounded-lg">
-                            <BarcodeIcon className="w-full h-full text-gray-300 dark:text-gray-600" />
-                            <div className="absolute left-0 w-full h-1 bg-red-500 scanner-line"></div>
-                        </div>
+                    <div className="text-center p-4">
+                        <div id="barcode-scanner" className="w-full rounded-lg overflow-hidden"></div>
                         <p className="mt-4 font-semibold text-text-200 dark:text-text-100">Scanning for barcode...</p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">Please center the barcode in the frame.</p>
                     </div>
@@ -128,14 +225,16 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
                     {renderContent()}
                 </div>
 
-                <div className="p-4 border-t border-bg-200 dark:border-bg-300">
-                    <button 
-                        onClick={performScan} 
-                        className="w-full bg-accent-200 text-white font-bold py-3 px-4 rounded-lg hover:bg-accent-100 transition-colors"
-                    >
-                        Scan Again
-                    </button>
-                </div>
+                {status === 'result' || status === 'error' ? (
+                    <div className="p-4 border-t border-bg-200 dark:border-bg-300">
+                        <button
+                            onClick={handleScanAgain}
+                            className="w-full bg-accent-200 text-white font-bold py-3 px-4 rounded-lg hover:bg-accent-100 transition-colors"
+                        >
+                            Scan Again
+                        </button>
+                    </div>
+                ) : null}
             </div>
         </div>
     );
