@@ -147,6 +147,37 @@ const Dashboard: React.FC = () => {
             </div>
           </section>
 
+          {/* Symptom Distribution Chart */}
+          {pieChartData.length > 0 && (
+            <section className="mb-8">
+              <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
+                Symptom Distribution
+              </h2>
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={pieChartData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label
+                    >
+                      {pieChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          )}
+
           {/* Recent Symptoms */}
           <section className="mb-8">
             <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
@@ -196,37 +227,6 @@ const Dashboard: React.FC = () => {
               ))}
             </div>
           </section>
-
-          {/* Symptom Distribution Chart */}
-          {pieChartData.length > 0 && (
-            <section className="mb-8">
-              <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
-                Symptom Distribution
-              </h2>
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={pieChartData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label
-                    >
-                      {pieChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={tooltipStyle} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </section>
-          )}
 
           {/* Action Buttons */}
           <section className="mb-8">
