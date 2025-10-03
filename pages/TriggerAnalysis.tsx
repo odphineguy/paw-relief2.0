@@ -107,11 +107,21 @@ const TriggerAnalysis: React.FC = () => {
                         <div className="space-y-4">
                             <h2 className="text-xl text-foreground-light dark:text-foreground-dark">Trigger Breakdown</h2>
 
-                            {sortedTriggers.map(({ trigger, count, symptoms }) => {
+                            {sortedTriggers.map(({ trigger, count, symptoms }, index) => {
                                 const percentage = ((count / totalTriggers) * 100).toFixed(1);
                                 const topSymptoms = Object.entries(symptoms)
                                     .sort(([, a], [, b]) => b - a)
                                     .slice(0, 3);
+
+                                // Color scheme for different triggers
+                                const colors = [
+                                    { bg: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400', light: 'bg-blue-50 dark:bg-blue-900/20' },
+                                    { bg: 'bg-green-500', text: 'text-green-600 dark:text-green-400', light: 'bg-green-50 dark:bg-green-900/20' },
+                                    { bg: 'bg-purple-500', text: 'text-purple-600 dark:text-purple-400', light: 'bg-purple-50 dark:bg-purple-900/20' },
+                                    { bg: 'bg-orange-500', text: 'text-orange-600 dark:text-orange-400', light: 'bg-orange-50 dark:bg-orange-900/20' },
+                                    { bg: 'bg-pink-500', text: 'text-pink-600 dark:text-pink-400', light: 'bg-pink-50 dark:bg-pink-900/20' },
+                                ];
+                                const color = colors[index % colors.length];
 
                                 return (
                                     <div
@@ -119,25 +129,25 @@ const TriggerAnalysis: React.FC = () => {
                                         className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700"
                                     >
                                         <div className="flex items-center justify-between mb-3">
-                                            <div>
+                                            <div className="flex-1">
                                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                                     {trigger}
                                                 </h3>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    {count} occurrence{count !== 1 ? 's' : ''} ({percentage}%)
+                                                    {count} occurrence{count !== 1 ? 's' : ''}
                                                 </p>
                                             </div>
-                                            <div className="text-right">
-                                                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                                                    {count}
+                                            <div className={`px-4 py-2 ${color.light} rounded-lg text-right`}>
+                                                <div className={`text-2xl font-bold ${color.text}`}>
+                                                    {percentage}%
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/* Progress bar */}
-                                        <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mb-3">
+                                        {/* Colorful progress bar */}
+                                        <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 overflow-hidden">
                                             <div
-                                                className="h-full bg-blue-500 rounded-full transition-all"
+                                                className={`h-full ${color.bg} rounded-full transition-all`}
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
                                         </div>

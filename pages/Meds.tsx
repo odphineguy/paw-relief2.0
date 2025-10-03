@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import { Reminder, ReminderType } from '../types';
 import { getReminders, updateReminder } from '../services/api';
 import { format, isToday } from 'date-fns';
-import { PawIcon, PillIcon, SyringeIcon, PlusCircleIcon } from '../components/icons';
+import { PawIcon, PillBottleIcon, SyringeIcon, PlusCircleIcon, EarIcon, ToiletIcon, CalendarIcon, UserIcon, BowlIcon } from '../components/icons';
 
 const Meds: React.FC = () => {
     const { selectedDog } = useDogs();
@@ -101,9 +101,22 @@ interface ReminderCardProps {
 const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onToggle }) => {
     // Determine icon based on reminder type
     const getIcon = () => {
-        if (reminder.type === ReminderType.MEDICATION) return <PillIcon className="w-6 h-6" />;
-        if (reminder.type === ReminderType.TOPICAL_TREATMENT) return <SyringeIcon className="w-6 h-6" />;
-        return <PillIcon className="w-6 h-6" />;
+        switch (reminder.type) {
+            case ReminderType.MEDICATION:
+                return <PillBottleIcon className="w-6 h-6" />;
+            case ReminderType.TOPICAL_TREATMENT:
+                return <SyringeIcon className="w-6 h-6" />;
+            case ReminderType.EAR_CLEANING:
+                return <EarIcon className="w-6 h-6" />;
+            case ReminderType.PAW_WIPES:
+                return <BowlIcon className="w-6 h-6" />;
+            case ReminderType.VET_VISIT:
+                return <CalendarIcon className="w-6 h-6" />;
+            case ReminderType.BIRTHDAY:
+                return <CalendarIcon className="w-6 h-6" />;
+            default:
+                return <PillBottleIcon className="w-6 h-6" />;
+        }
     };
 
     return (
@@ -112,9 +125,9 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onToggle }) => {
             <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
                 reminder.completed
                     ? 'bg-gray-100 dark:bg-gray-700'
-                    : 'bg-blue-50 dark:bg-blue-900/20'
+                    : 'bg-blue-500 dark:bg-blue-600'
             }`}>
-                <div className={reminder.completed ? 'text-gray-400' : 'text-blue-600'}>
+                <div className={reminder.completed ? 'text-gray-400' : 'text-white'}>
                     {getIcon()}
                 </div>
             </div>

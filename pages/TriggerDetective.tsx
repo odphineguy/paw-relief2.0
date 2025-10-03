@@ -104,13 +104,13 @@ const TriggerDetective: React.FC = () => {
 
     const totalTriggers = Object.values(triggerCounts).reduce((sum, count) => sum + count, 0);
 
-    // Map trigger types to chart data
+    // Map trigger types to chart data with colors
     const chartData = [
-        { label: 'FOOD', count: triggerCounts[TriggerType.FOOD] || 0 },
-        { label: 'LOCATION', count: triggerCounts[TriggerType.WALK_LOCATION] || 0 },
-        { label: 'WEATHER', count: triggerCounts[TriggerType.WEATHER] || 0 },
-        { label: 'POLLEN', count: triggerCounts[TriggerType.POLLEN] || 0 },
-        { label: 'PRODUCTS', count: triggerCounts[TriggerType.HOUSEHOLD_PRODUCT] || 0 },
+        { label: 'FOOD', count: triggerCounts[TriggerType.FOOD] || 0, color: 'bg-blue-500' },
+        { label: 'LOCATION', count: triggerCounts[TriggerType.WALK_LOCATION] || 0, color: 'bg-green-500' },
+        { label: 'WEATHER', count: triggerCounts[TriggerType.WEATHER] || 0, color: 'bg-purple-500' },
+        { label: 'POLLEN', count: triggerCounts[TriggerType.POLLEN] || 0, color: 'bg-orange-500' },
+        { label: 'PRODUCTS', count: triggerCounts[TriggerType.HOUSEHOLD_PRODUCT] || 0, color: 'bg-pink-500' },
     ];
 
     const maxCount = Math.max(...chartData.map(d => d.count), 1);
@@ -172,13 +172,15 @@ const TriggerDetective: React.FC = () => {
                         {/* Dynamic Chart */}
                         <div className="mb-6">
                             {hasData ? (
-                                <div className="h-32 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-end justify-between space-x-2">
+                                <div className="h-40 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-end justify-between space-x-2">
                                     {chartData.map((item) => (
                                         <div key={item.label} className="flex-1 flex flex-col items-center space-y-2">
-                                            <div
-                                                className="w-full bg-blue-500 rounded-t transition-all"
-                                                style={{ height: `${(item.count / maxCount) * 100}%` }}
-                                            ></div>
+                                            <div className="w-full flex flex-col items-center" style={{ height: '100%' }}>
+                                                <div
+                                                    className={`w-full ${item.color} rounded-t transition-all`}
+                                                    style={{ height: `${(item.count / maxCount) * 100}%`, minHeight: item.count > 0 ? '20%' : '0' }}
+                                                ></div>
+                                            </div>
                                             <div className="text-center">
                                                 <div className="text-xs font-bold text-gray-900 dark:text-white">{item.count}</div>
                                                 <span className="text-xs text-gray-600 dark:text-gray-400">{item.label}</span>

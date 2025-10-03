@@ -26,7 +26,7 @@ const getSeverityColor = (severity: number) => {
   }
 };
 
-const PIE_CHART_COLORS = ['#71c4ef', '#a7f3d0', '#f87171', '#fdba74', '#d4eaf7', '#b6c9f0'];
+const PIE_CHART_COLORS = ['#3b82f6', '#10b981', '#a855f7', '#f97316', '#ec4899', '#06b6d4'];
 
 // Function to get icon for each symptom type
 const getSymptomIcon = (symptom: SymptomType) => {
