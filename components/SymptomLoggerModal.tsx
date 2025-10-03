@@ -115,32 +115,23 @@ const SymptomLoggerModal: React.FC<SymptomLoggerModalProps> = ({ isOpen, onClose
                 <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
                     {/* Symptoms Section */}
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Symptoms</h3>
                         <div className="grid grid-cols-2 gap-3">
                             {ALL_SYMPTOMS.map(symptom => (
-                                <div key={symptom} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                                        <div className="text-gray-600 dark:text-gray-400 flex-shrink-0">
-                                            {getSymptomIcon(symptom)}
-                                        </div>
-                                        <span className="text-gray-900 dark:text-white font-medium text-sm truncate">{symptom}</span>
+                                <button
+                                    key={symptom}
+                                    type="button"
+                                    onClick={() => handleSymptomToggle(symptom)}
+                                    className={`flex items-center gap-2 p-3 rounded-xl transition-colors ${
+                                        selectedSymptoms.has(symptom)
+                                            ? 'bg-blue-500 text-white'
+                                            : 'bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                                    }`}
+                                >
+                                    <div className={`flex-shrink-0 ${selectedSymptoms.has(symptom) ? 'text-white' : 'text-gray-600 dark:text-gray-400'}`}>
+                                        {getSymptomIcon(symptom)}
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleSymptomToggle(symptom)}
-                                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors flex-shrink-0 ml-2 ${
-                                            selectedSymptoms.has(symptom)
-                                                ? 'bg-blue-500 border-blue-500'
-                                                : 'border-gray-300 dark:border-gray-600'
-                                        }`}
-                                    >
-                                        {selectedSymptoms.has(symptom) && (
-                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        )}
-                                    </button>
-                                </div>
+                                    <span className="font-medium text-sm truncate">{symptom}</span>
+                                </button>
                             ))}
                         </div>
                     </div>
