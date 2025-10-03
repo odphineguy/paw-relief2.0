@@ -34,7 +34,6 @@ const getSymptomIcon = (symptom: SymptomType) => {
 const SymptomLoggerModal: React.FC<SymptomLoggerModalProps> = ({ isOpen, onClose }) => {
     const { selectedDog } = useDogs();
     const [selectedSymptoms, setSelectedSymptoms] = useState<Set<SymptomType>>(new Set());
-    const [dateTime, setDateTime] = useState(new Date());
     const [notes, setNotes] = useState('');
     const [photos, setPhotos] = useState<File[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,28 +59,6 @@ const SymptomLoggerModal: React.FC<SymptomLoggerModalProps> = ({ isOpen, onClose
         setPhotos(prev => prev.filter((_, i) => i !== index));
     };
 
-    const formatDateTime = (date: Date) => {
-        const today = new Date();
-        const isToday = date.toDateString() === today.toDateString();
-        
-        if (isToday) {
-            return `Today, ${date.toLocaleTimeString('en-US', { 
-                hour: 'numeric', 
-                minute: '2-digit',
-                hour12: true 
-            })}`;
-        } else {
-            return date.toLocaleDateString('en-US', { 
-                weekday: 'long',
-                month: 'short', 
-                day: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            });
-        }
-    };
-    
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedDog || selectedSymptoms.size === 0) {
@@ -107,10 +84,9 @@ const SymptomLoggerModal: React.FC<SymptomLoggerModalProps> = ({ isOpen, onClose
                     photoUrl,
                 });
             }
-            
+
             // Reset form
             setSelectedSymptoms(new Set());
-            setDateTime(new Date());
             setNotes('');
             setPhotos([]);
             onClose();
@@ -137,19 +113,6 @@ const SymptomLoggerModal: React.FC<SymptomLoggerModalProps> = ({ isOpen, onClose
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
-                    {/* Date & Time Section */}
-                    <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Date & Time</h3>
-                        <div className="relative">
-                            <div className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white flex items-center justify-between">
-                                <span>{formatDateTime(dateTime)}</span>
-                                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
                     {/* Symptoms Section */}
                     <div>
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Symptoms</h3>
