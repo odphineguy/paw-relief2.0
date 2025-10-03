@@ -19,6 +19,7 @@ import TermsAndPrivacy from './pages/TermsAndPrivacy';
 import Login from './pages/Login';
 import CreateDogProfile from './pages/CreateDogProfile';
 import TriggerDetective from './pages/TriggerDetective';
+import TriggerAnalysis from './pages/TriggerAnalysis';
 import AllergenAlerts from './pages/AllergenAlerts';
 import BottomNav from './components/BottomNav';
 import { DogProvider } from './context/DogContext';
@@ -53,6 +54,7 @@ const App: React.FC = () => {
                                     <Route path="/login" element={<Login />} />
                                     <Route path="/create-dog-profile" element={<CreateDogProfile />} />
                                     <Route path="/trigger-detective" element={<TriggerDetective />} />
+                                    <Route path="/trigger-analysis" element={<TriggerAnalysis />} />
                                     <Route path="/allergen-alerts" element={<AllergenAlerts />} />
                                 </Routes>
                             </div>

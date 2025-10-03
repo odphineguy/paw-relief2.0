@@ -1,11 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDogs } from '../context/DogContext';
+import { getSymptomLogs } from '../services/api';
+import { SymptomLog, TriggerType } from '../types';
 import Header from '../components/Header';
 import { ChevronRightIcon } from '../components/icons';
 
 const TriggerDetective: React.FC = () => {
     const navigate = useNavigate();
+    const { selectedDog } = useDogs();
     const [selectedTrigger, setSelectedTrigger] = useState<string | null>(null);
+    const [logs, setLogs] = useState<SymptomLog[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (selectedDog) {
+            setLoading(true);
+            getSymptomLogs(selectedDog.id)
+                .then(setLogs)
+                .catch(err => console.error("Failed to fetch logs", err))
+                .finally(() => setLoading(false));
+        }
+    }, [selectedDog]);
 
     const triggerTypes = [
         {
@@ -78,6 +94,28 @@ const TriggerDetective: React.FC = () => {
         alert(`Logging ${triggerTypes.find(t => t.id === triggerId)?.title} trigger`);
     };
 
+    // Calculate trigger patterns from symptom logs
+    const triggerCounts = logs.reduce((acc, log) => {
+        log.triggers.forEach(trigger => {
+            acc[trigger] = (acc[trigger] || 0) + 1;
+        });
+        return acc;
+    }, {} as Record<TriggerType, number>);
+
+    const totalTriggers = Object.values(triggerCounts).reduce((sum, count) => sum + count, 0);
+
+    // Map trigger types to chart data
+    const chartData = [
+        { label: 'FOOD', count: triggerCounts[TriggerType.FOOD] || 0 },
+        { label: 'LOCATION', count: triggerCounts[TriggerType.WALK_LOCATION] || 0 },
+        { label: 'WEATHER', count: triggerCounts[TriggerType.WEATHER] || 0 },
+        { label: 'POLLEN', count: triggerCounts[TriggerType.POLLEN] || 0 },
+        { label: 'PRODUCTS', count: triggerCounts[TriggerType.HOUSEHOLD_PRODUCT] || 0 },
+    ];
+
+    const maxCount = Math.max(...chartData.map(d => d.count), 1);
+    const hasData = totalTriggers > 0;
+
     return (
         <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
             <Header title="" showBackButton={false} />
@@ -116,48 +154,53 @@ const TriggerDetective: React.FC = () => {
 
                 {/* Identified Patterns Section */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">Identified Patterns</h2>
+                    <h2 className="text-xl text-foreground-light dark:text-foreground-dark">Identified Patterns</h2>
                     
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
                         <div className="mb-4">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Trigger vs. Symptoms</h3>
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center space-x-2">
-                                    <span className="text-2xl font-bold text-gray-900 dark:text-white">High</span>
-                                    <span className="text-lg font-semibold text-green-600">+15%</span>
+                                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        {hasData ? `${totalTriggers} Tracked` : 'No Data'}
+                                    </span>
                                 </div>
-                                <span className="text-sm text-gray-500 dark:text-gray-400">Last 30 Days</span>
+                                <span className="text-sm text-gray-500 dark:text-gray-400">All Time</span>
                             </div>
                         </div>
 
-                        {/* Mock Chart */}
+                        {/* Dynamic Chart */}
                         <div className="mb-6">
-                            <div className="h-32 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-end justify-between space-x-2">
-                                {/* Chart bars */}
-                                <div className="flex-1 flex flex-col items-center space-y-2">
-                                    <div className="w-full bg-blue-500 rounded-t" style={{ height: '60%' }}></div>
-                                    <span className="text-xs text-gray-600 dark:text-gray-400">FOOD</span>
+                            {hasData ? (
+                                <div className="h-32 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-end justify-between space-x-2">
+                                    {chartData.map((item) => (
+                                        <div key={item.label} className="flex-1 flex flex-col items-center space-y-2">
+                                            <div
+                                                className="w-full bg-blue-500 rounded-t transition-all"
+                                                style={{ height: `${(item.count / maxCount) * 100}%` }}
+                                            ></div>
+                                            <div className="text-center">
+                                                <div className="text-xs font-bold text-gray-900 dark:text-white">{item.count}</div>
+                                                <span className="text-xs text-gray-600 dark:text-gray-400">{item.label}</span>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="flex-1 flex flex-col items-center space-y-2">
-                                    <div className="w-full bg-blue-500 rounded-t" style={{ height: '80%' }}></div>
-                                    <span className="text-xs text-gray-600 dark:text-gray-400">LOCATION</span>
+                            ) : (
+                                <div className="h-32 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-center justify-center">
+                                    <p className="text-gray-500 dark:text-gray-400 text-center">
+                                        No trigger data yet.<br/>
+                                        <span className="text-sm">Log symptoms with triggers to see patterns.</span>
+                                    </p>
                                 </div>
-                                <div className="flex-1 flex flex-col items-center space-y-2">
-                                    <div className="w-full bg-blue-500 rounded-t" style={{ height: '40%' }}></div>
-                                    <span className="text-xs text-gray-600 dark:text-gray-400">WEATHER</span>
-                                </div>
-                                <div className="flex-1 flex flex-col items-center space-y-2">
-                                    <div className="w-full bg-blue-500 rounded-t" style={{ height: '90%' }}></div>
-                                    <span className="text-xs text-gray-600 dark:text-gray-400">POLLEN</span>
-                                </div>
-                                <div className="flex-1 flex flex-col items-center space-y-2">
-                                    <div className="w-full bg-blue-500 rounded-t" style={{ height: '30%' }}></div>
-                                    <span className="text-xs text-gray-600 dark:text-gray-400">PRODUCTS</span>
-                                </div>
-                            </div>
+                            )}
                         </div>
 
-                        <button className="w-full bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors">
+                        <button
+                            onClick={() => navigate('/trigger-analysis')}
+                            disabled={!hasData}
+                            className="w-full bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        >
                             View Detailed Analysis
                         </button>
                     </div>
