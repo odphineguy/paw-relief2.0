@@ -111,14 +111,17 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
     };
 
     const stopScanner = async () => {
-        if (scannerRef.current && isScanning.current) {
+        if (scannerRef.current) {
             try {
-                await scannerRef.current.stop();
+                if (isScanning.current) {
+                    await scannerRef.current.stop();
+                }
                 scannerRef.current.clear();
-                scannerRef.current = null;
-                isScanning.current = false;
             } catch (err) {
                 console.error("Error stopping scanner:", err);
+            } finally {
+                scannerRef.current = null;
+                isScanning.current = false;
             }
         }
     };
@@ -150,10 +153,18 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
     };
 
     const handleScanAgain = async () => {
+        // First stop any existing scanner
+        await stopScanner();
+
+        // Reset state
         setStatus('scanning');
         setProduct(null);
         setAllergens([]);
-        await startScanner();
+
+        // Small delay to ensure cleanup is complete
+        setTimeout(() => {
+            startScanner();
+        }, 100);
     };
 
     const renderContent = () => {
@@ -204,8 +215,8 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
                  return (
                     <div className="text-center p-8">
                         <PawIcon className="w-12 h-12 text-red-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-bold text-text-200 dark:text-text-100">Scan Failed</h3>
-                        <p className="text-gray-500 dark:text-gray-400">Could not read barcode. Please try again.</p>
+                        <h3 className="text-lg font-bold text-text-200 dark:text-text-100">Product Not Found</h3>
+                        <p className="text-gray-500 dark:text-gray-400">This product isn't in our database yet. Try scanning a different product or contact support to add it.</p>
                     </div>
                 );
         }

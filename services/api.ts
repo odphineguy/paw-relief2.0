@@ -278,7 +278,25 @@ export const getLocalAllergenAlerts = async (): Promise<AllergenAlerts> => {
 
 export const scanBarcode = async (barcode: string): Promise<ProductInfo | null> => {
   try {
-    // First try OpenFoodFacts API
+    // First check our local database for cached products
+    console.log('Checking local database for cached product:', barcode);
+    const { data: localData, error: localError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('barcode', barcode)
+      .single();
+
+    if (!localError && localData) {
+      console.log('Found product in local cache');
+      return {
+        barcode: localData.barcode,
+        name: localData.name,
+        imageUrl: localData.image_url,
+        ingredients: localData.ingredients || [],
+      };
+    }
+
+    // Try OpenFoodFacts API
     console.log('Fetching product from OpenFoodFacts:', barcode);
     const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`);
 
