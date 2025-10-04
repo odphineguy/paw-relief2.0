@@ -79,131 +79,71 @@ const VetReport: React.FC = () => {
             // Generate PDF
             const pdf = new jsPDF();
             const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
             let yPos = 20;
 
-            // Header
-            pdf.setFontSize(20);
-            pdf.setFont('helvetica', 'bold');
-            pdf.text('Paw Relief', pageWidth / 2, yPos, { align: 'center' });
-            yPos += 10;
-
-            pdf.setFontSize(16);
-            pdf.text('Veterinarian Report', pageWidth / 2, yPos, { align: 'center' });
-            yPos += 15;
-
-            // Pet Info
-            pdf.setFontSize(12);
-            pdf.setFont('helvetica', 'normal');
-            pdf.text(`Pet: ${selectedDog.name}`, 20, yPos);
-            yPos += 7;
-            pdf.text(`Date Range: ${format(startDate, 'MMM d, yyyy')} - ${format(endDate, 'MMM d, yyyy')}`, 20, yPos);
-            yPos += 15;
-
-            // Symptom Frequency
+            // Symptom Occurrences Section
             if (reportOptions.symptomFrequency) {
-                pdf.setFontSize(14);
+                // Title in gray
+                pdf.setFontSize(11);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(150, 150, 150);
+                pdf.text('Symptom Occurrences', 20, yPos);
+                yPos += 10;
+
+                // Count in large bold black
+                pdf.setFontSize(36);
                 pdf.setFont('helvetica', 'bold');
-                pdf.text('Symptom Frequency', 20, yPos);
+                pdf.setTextColor(0, 0, 0);
+                pdf.text(filteredLogs.length.toString(), 20, yPos);
                 yPos += 8;
 
-                pdf.setFontSize(10);
+                // Date range subtitle in cyan
+                pdf.setFontSize(11);
                 pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(100, 200, 220);
+                pdf.text(`Last ${dateRange === '7d' ? '7' : dateRange === '90d' ? '90' : '30'} Days`, 20, yPos);
+                yPos += 15;
 
+                // Bar chart
                 if (filteredLogs.length > 0) {
                     const symptomCounts: Record<string, number> = {};
                     filteredLogs.forEach(log => {
                         symptomCounts[log.symptomType] = (symptomCounts[log.symptomType] || 0) + 1;
                     });
 
+                    const maxCount = Math.max(...Object.values(symptomCounts));
+                    const barWidth = 30;
+                    const maxBarHeight = 50;
+                    const barSpacing = 10;
+                    let barX = 20;
+
                     Object.entries(symptomCounts).forEach(([symptom, count]) => {
-                        if (yPos > 270) {
-                            pdf.addPage();
-                            yPos = 20;
-                        }
-                        pdf.text(`• ${symptom}: ${count} occurrence${count > 1 ? 's' : ''}`, 25, yPos);
-                        yPos += 6;
+                        // Draw bar in light cyan
+                        const barHeight = (count / maxCount) * maxBarHeight;
+                        pdf.setFillColor(200, 230, 240);
+                        pdf.rect(barX, yPos + maxBarHeight - barHeight, barWidth, barHeight, 'F');
+
+                        barX += barWidth + barSpacing;
                     });
-                } else {
-                    pdf.text('No symptoms logged in this period.', 25, yPos);
-                    yPos += 6;
+
+                    yPos += maxBarHeight + 8;
+
+                    // Labels below bars
+                    barX = 20;
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(100, 200, 220);
+                    Object.entries(symptomCounts).forEach(([symptom]) => {
+                        pdf.text(symptom, barX + barWidth/2, yPos, { align: 'center', maxWidth: barWidth });
+                        barX += barWidth + barSpacing;
+                    });
+
+                    yPos += 15;
                 }
-                yPos += 10;
             }
 
             // Suspected Triggers
             if (reportOptions.suspectedTriggers) {
-                if (yPos > 250) {
-                    pdf.addPage();
-                    yPos = 20;
-                }
-
-                pdf.setFontSize(14);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('Suspected Triggers', 20, yPos);
-                yPos += 8;
-
-                pdf.setFontSize(10);
-                pdf.setFont('helvetica', 'normal');
-
-                if (filteredTriggers.length > 0) {
-                    const triggerCounts: Record<string, number> = {};
-                    filteredTriggers.forEach(trigger => {
-                        triggerCounts[trigger.triggerType] = (triggerCounts[trigger.triggerType] || 0) + 1;
-                    });
-
-                    Object.entries(triggerCounts).forEach(([trigger, count]) => {
-                        if (yPos > 270) {
-                            pdf.addPage();
-                            yPos = 20;
-                        }
-                        pdf.text(`• ${trigger}: ${count} occurrence${count > 1 ? 's' : ''}`, 25, yPos);
-                        yPos += 6;
-                    });
-                } else {
-                    pdf.text('No triggers identified in this period.', 25, yPos);
-                    yPos += 6;
-                }
-                yPos += 10;
-            }
-
-            // Medications Given
-            if (reportOptions.medicationAdherence) {
-                if (yPos > 250) {
-                    pdf.addPage();
-                    yPos = 20;
-                }
-
-                pdf.setFontSize(14);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('Medications Given', 20, yPos);
-                yPos += 8;
-
-                pdf.setFontSize(10);
-                pdf.setFont('helvetica', 'normal');
-
-                if (filteredReminders.length > 0) {
-                    filteredReminders.forEach(reminder => {
-                        if (yPos > 270) {
-                            pdf.addPage();
-                            yPos = 20;
-                        }
-                        const status = reminder.completed ? 'Administered' : 'Missed';
-                        pdf.text(`• ${format(new Date(reminder.nextDue), 'MMM d')}: ${reminder.name} - ${status}`, 25, yPos);
-                        if (reminder.dosage) {
-                            yPos += 5;
-                            pdf.text(`  ${reminder.dosage}`, 25, yPos);
-                        }
-                        yPos += 6;
-                    });
-                } else {
-                    pdf.text('No medications recorded in this period.', 25, yPos);
-                    yPos += 6;
-                }
-                yPos += 10;
-            }
-
-            // Symptom Timeline
-            if (reportOptions.symptomFrequency && filteredLogs.length > 0) {
                 if (yPos > 220) {
                     pdf.addPage();
                     yPos = 20;
@@ -211,11 +151,115 @@ const VetReport: React.FC = () => {
 
                 pdf.setFontSize(14);
                 pdf.setFont('helvetica', 'bold');
-                pdf.text('Symptom Timeline', 20, yPos);
-                yPos += 8;
+                pdf.setTextColor(0, 0, 0);
+                pdf.text('Suspected Triggers', 20, yPos);
+                yPos += 10;
 
-                pdf.setFontSize(10);
-                pdf.setFont('helvetica', 'normal');
+                if (filteredTriggers.length > 0) {
+                    const uniqueTriggers = [...new Set(filteredTriggers.map(t => t.triggerType))];
+
+                    // Draw pill-shaped badges
+                    let pillX = 20;
+                    pdf.setFontSize(10);
+                    pdf.setFont('helvetica', 'normal');
+
+                    uniqueTriggers.forEach(trigger => {
+                        const textWidth = pdf.getTextWidth(trigger);
+                        const pillWidth = textWidth + 12;
+
+                        // Check if we need to wrap to next line
+                        if (pillX + pillWidth > pageWidth - 20) {
+                            pillX = 20;
+                            yPos += 12;
+                        }
+
+                        // Draw rounded rectangle (pill shape) in light gray
+                        pdf.setFillColor(240, 240, 240);
+                        pdf.roundedRect(pillX, yPos - 6, pillWidth, 8, 4, 4, 'F');
+
+                        // Draw text in dark gray
+                        pdf.setTextColor(80, 80, 80);
+                        pdf.text(trigger, pillX + 6, yPos);
+
+                        pillX += pillWidth + 6;
+                    });
+
+                    yPos += 15;
+                } else {
+                    pdf.setFontSize(10);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setTextColor(150, 150, 150);
+                    pdf.text('No triggers identified in this period.', 20, yPos);
+                    yPos += 10;
+                }
+            }
+
+            // Medications Given
+            if (reportOptions.medicationAdherence) {
+                if (yPos > 220) {
+                    pdf.addPage();
+                    yPos = 20;
+                }
+
+                pdf.setFontSize(14);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(0, 0, 0);
+                pdf.text('Medications Given', 20, yPos);
+                yPos += 10;
+
+                if (filteredReminders.length > 0) {
+                    const medications = filteredReminders.filter(r => r.completed);
+
+                    if (medications.length > 0) {
+                        medications.forEach(reminder => {
+                            if (yPos > 270) {
+                                pdf.addPage();
+                                yPos = 20;
+                            }
+
+                            // Medication name in black
+                            pdf.setFontSize(11);
+                            pdf.setFont('helvetica', 'bold');
+                            pdf.setTextColor(0, 0, 0);
+                            pdf.text(reminder.name, 20, yPos);
+                            yPos += 6;
+
+                            // Dosage in cyan
+                            if (reminder.dosage) {
+                                pdf.setFont('helvetica', 'normal');
+                                pdf.setTextColor(100, 200, 220);
+                                pdf.text(reminder.dosage, 20, yPos);
+                                yPos += 8;
+                            }
+                        });
+                    } else {
+                        pdf.setFontSize(10);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setTextColor(150, 150, 150);
+                        pdf.text('No medications administered in this period.', 20, yPos);
+                        yPos += 10;
+                    }
+                } else {
+                    pdf.setFontSize(10);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setTextColor(150, 150, 150);
+                    pdf.text('No medications recorded in this period.', 20, yPos);
+                    yPos += 10;
+                }
+            }
+
+            // Symptom Timeline
+            if (reportOptions.symptomFrequency && filteredLogs.length > 0) {
+                if (yPos > 200) {
+                    pdf.addPage();
+                    yPos = 20;
+                }
+
+                pdf.setFontSize(14);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(0, 0, 0);
+                pdf.text('Symptom Timeline', 20, yPos);
+                yPos += 10;
 
                 const sortedLogs = [...filteredLogs].sort((a, b) =>
                     new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -226,13 +270,22 @@ const VetReport: React.FC = () => {
                         pdf.addPage();
                         yPos = 20;
                     }
-                    pdf.text(`• ${format(new Date(log.createdAt), 'MMM d, yyyy')}: ${log.symptomType} (Severity: ${log.severity}/5)`, 25, yPos);
-                    if (log.notes) {
-                        yPos += 5;
-                        const notes = log.notes.length > 80 ? log.notes.substring(0, 80) + '...' : log.notes;
-                        pdf.text(`  ${notes}`, 25, yPos);
-                    }
+
+                    // Draw paw icon (simplified circle)
+                    pdf.setFillColor(200, 200, 200);
+                    pdf.circle(25, yPos - 2, 2, 'F');
+
+                    // Symptom name in black
+                    pdf.setFontSize(11);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.text(log.symptomType, 32, yPos);
                     yPos += 6;
+
+                    // Date in cyan
+                    pdf.setTextColor(100, 200, 220);
+                    pdf.text(format(new Date(log.createdAt), 'MMMM d, yyyy'), 32, yPos);
+                    yPos += 10;
                 });
             }
 
