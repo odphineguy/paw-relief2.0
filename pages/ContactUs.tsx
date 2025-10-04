@@ -38,75 +38,12 @@ const ContactUs: React.FC = () => {
     }, 2000);
   };
 
-  const ContactMethod = ({ 
-    icon, 
-    title, 
-    description, 
-    action 
-  }: { 
-    icon: React.ReactNode; 
-    title: string; 
-    description: string; 
-    action: string; 
-  }) => (
-    <div className="bg-card-light dark:bg-card-dark rounded-xl shadow-sm p-6">
-      <div className="flex items-start gap-4">
-        <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg shrink-0">
-          {icon}
-        </div>
-        <div className="flex-1">
-          <h3 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-2">{title}</h3>
-          <p className="text-subtle-light dark:text-subtle-dark mb-3">{description}</p>
-          <button className="text-primary hover:text-primary/80 font-semibold transition-colors">
-            {action}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="flex flex-col h-screen bg-background-light dark:bg-background-dark">
       <Header title="" />
-      
+
       <div className="flex-1 px-4 pb-28 overflow-y-auto">
         <div className="space-y-6">
-          {/* Contact Methods */}
-          <div className="space-y-4">
-            <ContactMethod
-              icon={
-                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              }
-              title="Email Support"
-              description="Get help via email. We typically respond within 24 hours."
-              action="support@pawrelief.com"
-            />
-            
-            <ContactMethod
-              icon={
-                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-              }
-              title="Live Chat"
-              description="Chat with our support team in real-time during business hours."
-              action="Start Chat"
-            />
-            
-            <ContactMethod
-              icon={
-                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-              }
-              title="Phone Support"
-              description="Call us for urgent issues. Available Monday-Friday, 9 AM - 6 PM EST."
-              action="+1 (555) 123-4567"
-            />
-          </div>
-
           {/* Contact Form */}
           <div className="bg-card-light dark:bg-card-dark rounded-xl shadow-sm p-6">
             <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-4">Send us a Message</h2>

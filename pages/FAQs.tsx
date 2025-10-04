@@ -197,28 +197,6 @@ const FAQs: React.FC = () => {
               </div>
             </div>
           ))}
-
-          {/* Contact Support */}
-          <div className="bg-card-light dark:bg-card-dark rounded-xl shadow-sm p-6">
-            <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-4">Still Need Help?</h2>
-            <p className="text-subtle-light dark:text-subtle-dark mb-4">
-              Can't find the answer you're looking for? Our support team is here to help.
-            </p>
-            <div className="flex gap-3">
-              <button 
-                onClick={() => navigate('/contact-us')}
-                className="flex-1 bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30"
-              >
-                Contact Support
-              </button>
-              <button 
-                onClick={() => navigate('/user-guides')}
-                className="flex-1 bg-card-light dark:bg-card-dark text-foreground-light dark:text-foreground-dark border border-border-light dark:border-border-dark font-bold py-3 px-4 rounded-lg hover:bg-background-light dark:hover:bg-background-dark transition-colors"
-              >
-                User Guides
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -54,7 +54,7 @@ const Meds: React.FC = () => {
                 <div className="flex-1 p-4 space-y-6 pb-24">
                     {/* Upcoming Section */}
                     <div>
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Upcoming</h2>
+                        <h2 className="text-xl text-gray-900 dark:text-white mb-4">Upcoming</h2>
                         {upcomingReminders.length > 0 ? (
                             <div className="space-y-3">
                                 {upcomingReminders.map(r => <ReminderCard key={r.id} reminder={r} onToggle={handleToggleComplete} />)}
@@ -68,7 +68,7 @@ const Meds: React.FC = () => {
 
                     {/* Completed Section */}
                     <div>
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Completed</h2>
+                        <h2 className="text-xl text-gray-900 dark:text-white mb-4">Completed</h2>
                         {completedReminders.length > 0 ? (
                             <div className="space-y-3">
                                 {completedReminders.map(r => <ReminderCard key={r.id} reminder={r} onToggle={handleToggleComplete} />)}

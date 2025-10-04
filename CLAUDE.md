@@ -50,16 +50,18 @@ created_at             →  createdAt
 ### Page Architecture
 
 **Main Navigation Pages** (BottomNav):
-1. **Dashboard** - Overview with symptom distribution chart, recent symptoms, reminders
+1. **Dashboard** - "Your Paws" pet switcher (3 per row, wraps to multiple rows), symptom distribution chart, recent symptoms, upcoming reminders
 2. **Logs** - Symptom history with filtering and charts
-3. **Meds** - Medication/treatment reminders with toggle completion
-4. **Profile** - Dog profile, settings, barcode scanner
+3. **Meds** - Medication/treatment reminders with toggle completion (uses pill bottle icon)
+4. **Profile** - Consolidated pet profile view, veterinarian tools, settings
 
 **Key Sub-Pages:**
+- **LogEntry** (`/log-entry`) - Unified page with tabs for Log Symptom and Log Trigger (opened via center + button)
 - **TriggerDetective** (`/trigger-detective`) - Log triggers and view patterns chart
-- **TriggerAnalysis** (`/trigger-analysis`) - Detailed trigger breakdown with percentages
+- **TriggerAnalysis** (`/trigger-analysis`) - Modern design with large percentage display, colorful trigger category pills, and breakdown cards
 - **AllergenAlerts** (`/allergen-alerts`) - Location-based allergen info with map
-- **CreateDogProfile** (`/create-dog-profile`) - Manage multiple dog profiles
+- **CreateDogProfile** (`/create-dog-profile`) - Single consolidated card form for adding/editing pet profiles (photo at top, all fields in one card)
+- **VetReport** (`/report`) - Veterinarian Report with date range selector, checkboxes for report sections, and sharing options
 
 **Routing:**
 - Uses HashRouter for GitHub Pages compatibility
@@ -88,11 +90,12 @@ created_at             →  createdAt
 
 **Shared Components** (`components/`):
 - `icons.tsx` - All SVG icons exported as React components
-- `BottomNav.tsx` - Persistent bottom navigation
-- `Header.tsx` - Page headers with back button
+- `BottomNav.tsx` - Persistent bottom navigation (center + button navigates to `/log-entry`)
+- `Header.tsx` - Page headers with back button and notification badges for overdue medications
 - `BarcodeScannerModal.tsx` - Camera-based barcode scanner
-- `SymptomLoggerModal.tsx` - Modal for logging symptoms (no triggers currently)
-- `TriggerLoggerModal.tsx` - Modal for logging standalone triggers
+- `SymptomLoggerModal.tsx` - Legacy modal (deprecated in favor of LogEntry page)
+- `TriggerLoggerModal.tsx` - Modal for logging standalone triggers (used in TriggerDetective)
+- `MedicationModal.tsx` - Modal for creating/editing medications and reminders
 - `ThemeSwitch.tsx` - Dark mode toggle
 
 **Icon System:**
@@ -109,6 +112,13 @@ export const NewIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6
 - Use solid blue background (`bg-blue-500 dark:bg-blue-600`) with white icons for active/upcoming items
 - Use gray background (`bg-gray-100 dark:bg-gray-700`) with gray icons for completed/inactive items
 - Standard icon box size: `w-12 h-12 rounded-lg`
+
+**UI Design Patterns:**
+- Section titles are typically unbolded (just `text-xl` without `font-bold`)
+- Use "Your Paws" instead of "Your Pets" for branding consistency
+- Pet avatars: 80px diameter (w-20 h-20), rounded-full, with conditional blue/gray borders based on selection
+- Modern card design: `rounded-2xl` with `shadow-sm`, softer borders, cleaner spacing
+- Interactive elements use blue hover states and smooth transitions
 
 ### Environment Variables
 
@@ -195,8 +205,34 @@ await addTriggerLog({
 
 **Accessing Selected Dog:**
 ```typescript
-const { selectedDog } = useDogs();
+const { selectedDog, dogs, setSelectedDog } = useDogs();
 if (!selectedDog) return <div>No dog selected</div>;
+
+// Switching dogs (e.g., in Dashboard "Your Paws" section)
+<button onClick={() => setSelectedDog(dog)}>
+```
+
+**Adding Reminders/Medications:**
+```typescript
+import { addReminder } from '../services/api';
+await addReminder({
+    dogId: selectedDog.id,
+    type: ReminderType.MEDICATION,
+    name: 'Apoquel',
+    dosage: '20mg, Once Daily',
+    nextDue: new Date().toISOString(),
+    repeatInterval: 'daily',
+    completed: false,
+});
+```
+
+**PDF Generation (Vet Reports):**
+```typescript
+import jsPDF from 'jspdf';
+const pdf = new jsPDF();
+pdf.setFont('helvetica', 'bold');
+pdf.text('Report Title', 20, 20);
+pdf.save('filename.pdf');
 ```
 
 **Theme Access:**
@@ -252,6 +288,50 @@ const { theme, toggleTheme } = useTheme();
 - Use camelCase in TypeScript, snake_case in database queries (mapping in api.ts)
 - Remember to reload or refetch data after mutations
 
+## Recent UI Improvements
+
+**LogEntry Page (Latest):**
+- Unified page with two tabs: "Log Symptom" (default) and "Log Trigger"
+- Accessed via center + button in BottomNav
+- Both forms in one location instead of separate modals
+- Navigates back to dashboard after successful save
+
+**Dashboard:**
+- Added "Your Paws" pet switcher section at top (3 avatars per row, wraps for 4+ pets)
+- Removed "Add Trigger Info" button from Trigger Detective card (only shows "View Analysis")
+- Fixed reminder display to use correct fields: `reminder.name` and `reminder.nextDue`
+- Unbolded section titles for cleaner visual hierarchy
+
+**Pet Management (CreateDogProfile):**
+- Consolidated 4 separate cards into single unified form
+- Photo upload at top, all fields in one card flow
+- Removed "Edit Dog Profile" title from card header
+
+**Trigger Analysis:**
+- Modern design with large percentage display for most common trigger
+- Colorful pill-style trigger category badges
+- Softer, cleaner card design with `rounded-2xl`
+
+**Veterinarian Report:**
+- Removed "Report Details" title for cleaner design
+- Unbolded section labels ("Include in Report:", "Sharing Options")
+- Standardized text sizing to `text-base` throughout
+- Date Range dropdown (7/30/90 days)
+- Interactive "Include in Report" checkboxes with icons
+- Single "Download Report PDF" button generates and downloads PDF using jsPDF
+- PDF includes: symptom frequency, triggers, medications, and timeline
+
+**Medications Page:**
+- Added MedicationModal for creating new medications/reminders
+- Floating "New Medication" button opens modal
+- Form includes: type selection (5 types), name, dosage, next due date, repeat interval
+- Supports daily/weekly/monthly recurring reminders
+
+**Header Notifications:**
+- Blue notification badge on pet avatar shows count of overdue medications
+- Badge only appears when count > 0
+- Updates automatically when switching pets
+
 ## Known Issues & TODOs
 
 - Authentication not yet implemented (using hardcoded user ID: `00000000-0000-0000-0000-000000000001`)
@@ -259,3 +339,4 @@ const { theme, toggleTheme } = useTheme();
 - Some pet food products may not be in OpenFoodFacts database
 - Photo upload functionality not implemented (placeholder removed to avoid random images)
 - Symptom logger currently saves triggers as empty array (trigger UI not connected)
+- Onboarding flow not yet built

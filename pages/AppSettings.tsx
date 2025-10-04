@@ -60,7 +60,7 @@ const AppSettings: React.FC = () => {
       <div className="flex-1 px-4 pb-28 overflow-y-auto">
         {/* Account Section */}
         <div className="mb-8">
-          <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-4">Account</h2>
+          <h2 className="text-xl text-foreground-light dark:text-foreground-dark mb-4">Account</h2>
           <div className="space-y-3">
             <SettingsSection
               icon={
@@ -87,7 +87,7 @@ const AppSettings: React.FC = () => {
 
         {/* Preferences Section */}
         <div className="mb-8">
-          <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-4">Preferences</h2>
+          <h2 className="text-xl text-foreground-light dark:text-foreground-dark mb-4">Preferences</h2>
           <div className="space-y-3">
             <SettingsSection
               icon={
@@ -115,7 +115,7 @@ const AppSettings: React.FC = () => {
 
         {/* Privacy & Data Section */}
         <div className="mb-8">
-          <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-4">Privacy & Data</h2>
+          <h2 className="text-xl text-foreground-light dark:text-foreground-dark mb-4">Privacy & Data</h2>
           <div className="space-y-3">
             <SettingsSection
               icon={
@@ -142,7 +142,7 @@ const AppSettings: React.FC = () => {
 
         {/* Help & Support Section */}
         <div className="mb-8">
-          <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-4">Help & Support</h2>
+          <h2 className="text-xl text-foreground-light dark:text-foreground-dark mb-4">Help & Support</h2>
           <div className="space-y-3">
             <SettingsSection
               icon={

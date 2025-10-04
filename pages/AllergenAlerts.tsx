@@ -304,7 +304,7 @@ const AllergenAlerts: React.FC = () => {
 
                 {/* Today's Allergens */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">Today's Allergens</h2>
+                    <h2 className="text-xl text-foreground-light dark:text-foreground-dark">Today's Allergens</h2>
 
                     {weather && (
                         <>
@@ -349,7 +349,7 @@ const AllergenAlerts: React.FC = () => {
 
                 {/* Recommendations */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">Recommendations</h2>
+                    <h2 className="text-xl text-foreground-light dark:text-foreground-dark">Recommendations</h2>
                     
                     <RecommendationCard
                         icon={PawPrintIcon}
