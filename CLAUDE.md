@@ -61,12 +61,22 @@ created_at             →  createdAt
 - **TriggerAnalysis** (`/trigger-analysis`) - Modern design with large percentage display, colorful trigger category pills, and breakdown cards
 - **AllergenAlerts** (`/allergen-alerts`) - Location-based allergen info with map
 - **CreateDogProfile** (`/create-dog-profile`) - Single consolidated card form for adding/editing pet profiles (photo at top, all fields in one card)
-- **VetReport** (`/report`) - Veterinarian Report with date range selector, checkboxes for report sections, and sharing options
+- **VetReport** (`/report`) - Veterinarian Report with date range selector, checkboxes for report sections, and PDF generation
+
+**Onboarding Flow Pages:**
+- **Splash** (`/splash`) - Auto-navigates to testimonials after 2 seconds
+- **Testimonials** (`/testimonials`) - Horizontal scrollable testimonial cards with "Get Started" button
+- **LoginSignup** (`/login`) - Email/password form with social auth UI placeholders (no actual authentication)
+- **Onboarding** (`/onboarding`) - 3-slide carousel (Welcome, Symptom Tracker, Trigger Detective)
+- **Welcome** (`/welcome`) - Post-onboarding welcome with premium subscription upsell
+- **Subscription** (`/subscription`) - Feature comparison and pricing page ($9.99/month)
 
 **Routing:**
 - Uses HashRouter for GitHub Pages compatibility
 - Mobile-first design (max-width: 448px container)
 - All routes defined in App.tsx
+- Onboarding flow: Splash → Testimonials → Login → Onboarding → Welcome → Subscription → Dashboard
+- Testers can access onboarding without signup (authentication is placeholder UI only)
 
 ### External APIs & Services
 
@@ -230,8 +240,21 @@ await addReminder({
 ```typescript
 import jsPDF from 'jspdf';
 const pdf = new jsPDF();
+
+// PDF design follows specific mockup:
+// - Symptom Occurrences: Large count display with bar chart visualization
+// - Suspected Triggers: Pill-shaped badges in light gray
+// - Medications Given: Black medication names with cyan dosage text
+// - Symptom Timeline: Paw icons with symptom names and cyan dates
+// - Color scheme: Black headers, cyan accents (#64C8DC), gray text
+
 pdf.setFont('helvetica', 'bold');
-pdf.text('Report Title', 20, 20);
+pdf.setTextColor(0, 0, 0);
+pdf.text('Section Title', 20, yPos);
+
+// For cyan text (dates, dosages):
+pdf.setTextColor(100, 200, 220);
+
 pdf.save('filename.pdf');
 ```
 
@@ -290,11 +313,19 @@ const { theme, toggleTheme } = useTheme();
 
 ## Recent UI Improvements
 
-**LogEntry Page (Latest):**
+**Onboarding Flow (Latest):**
+- Complete 6-page onboarding experience for new users
+- Uses emoji placeholders for dog illustrations (can be replaced with actual images)
+- No actual authentication required - placeholders allow testing without signup
+- Auto-navigation between steps with smooth transitions
+- Premium subscription offer before reaching main app
+
+**LogEntry Page:**
 - Unified page with two tabs: "Log Symptom" (default) and "Log Trigger"
 - Accessed via center + button in BottomNav
-- Both forms in one location instead of separate modals
-- Navigates back to dashboard after successful save
+- Vertical button layout (icon stacked above text) for better mobile UX
+- 2-column grid layout for all buttons
+- All icons use blue backgrounds (`bg-blue-500/600`) with white icons
 
 **Dashboard:**
 - Added "Your Paws" pet switcher section at top (3 avatars per row, wraps for 4+ pets)
@@ -302,41 +333,34 @@ const { theme, toggleTheme } = useTheme();
 - Fixed reminder display to use correct fields: `reminder.name` and `reminder.nextDue`
 - Unbolded section titles for cleaner visual hierarchy
 
-**Pet Management (CreateDogProfile):**
-- Consolidated 4 separate cards into single unified form
-- Photo upload at top, all fields in one card flow
-- Removed "Edit Dog Profile" title from card header
-
 **Trigger Analysis:**
 - Modern design with large percentage display for most common trigger
 - Colorful pill-style trigger category badges
 - Softer, cleaner card design with `rounded-2xl`
 
 **Veterinarian Report:**
-- Removed "Report Details" title for cleaner design
-- Unbolded section labels ("Include in Report:", "Sharing Options")
-- Standardized text sizing to `text-base` throughout
-- Date Range dropdown (7/30/90 days)
-- Interactive "Include in Report" checkboxes with icons
-- Single "Download Report PDF" button generates and downloads PDF using jsPDF
-- PDF includes: symptom frequency, triggers, medications, and timeline
+- Updated PDF design to match professional mockup
+- Symptom Occurrences: Large count with bar chart visualization
+- Suspected Triggers: Pill-shaped badges in light gray
+- Medications Given: Black medication names with cyan dosage text
+- Symptom Timeline: Paw icons with symptom names and cyan dates
+- Consistent color scheme: Black headers, cyan accents, gray text
 
 **Medications Page:**
 - Added MedicationModal for creating new medications/reminders
 - Floating "New Medication" button opens modal
-- Form includes: type selection (5 types), name, dosage, next due date, repeat interval
 - Supports daily/weekly/monthly recurring reminders
 
 **Header Notifications:**
 - Blue notification badge on pet avatar shows count of overdue medications
-- Badge only appears when count > 0
 - Updates automatically when switching pets
 
 ## Known Issues & TODOs
 
 - Authentication not yet implemented (using hardcoded user ID: `00000000-0000-0000-0000-000000000001`)
+- LoginSignup page has placeholder UI only - no actual authentication logic
 - Pollen data is estimated from AQI (no dedicated pollen API integrated)
 - Some pet food products may not be in OpenFoodFacts database
 - Photo upload functionality not implemented (placeholder removed to avoid random images)
 - Symptom logger currently saves triggers as empty array (trigger UI not connected)
-- Onboarding flow not yet built
+- Onboarding flow uses emoji placeholders - real dog images need to be cropped and added
