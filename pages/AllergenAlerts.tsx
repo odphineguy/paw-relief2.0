@@ -175,7 +175,7 @@ const AllergenAlerts: React.FC = () => {
     }) => (
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 flex items-center justify-between shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="flex items-center">
-                <div className="bg-blue-500 dark:bg-blue-600 p-2 rounded-full mr-3">
+                <div className="bg-blue-500 dark:bg-blue-600 p-3 rounded-lg mr-3">
                     <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -197,7 +197,7 @@ const AllergenAlerts: React.FC = () => {
         text: string;
     }) => (
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 flex items-center shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="bg-blue-500 dark:bg-blue-600 p-2 rounded-full mr-3">
+            <div className="bg-blue-500 dark:bg-blue-600 p-3 rounded-lg mr-3">
                 <Icon className="w-6 h-6 text-white" />
             </div>
             <p className="text-gray-900 dark:text-white text-base">{text}</p>
