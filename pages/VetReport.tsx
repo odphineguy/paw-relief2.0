@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDogs } from '../context/DogContext';
 import { SymptomLog, Reminder } from '../types';
-import { getSymptomLogs, getReminders } from '../services/api';
+import { getSymptomLogs, getReminders, getTriggerLogs } from '../services/api';
 import { format, isWithinInterval } from 'date-fns';
 import { ArrowLeftIcon, PawIcon, CalendarIcon } from '../components/icons';
 import Header from '../components/Header';
+import jsPDF from 'jspdf';
 
 type DateRangeOption = '7d' | '30d' | '90d';
 
@@ -37,7 +38,6 @@ const VetReport: React.FC = () => {
     const handleGenerateReport = async () => {
         if (!selectedDog) return;
         setLoading(true);
-        setReportData(null);
 
         try {
             const endDate = new Date();
@@ -58,9 +58,10 @@ const VetReport: React.FC = () => {
             startDate = new Date(endDate.valueOf());
             startDate.setDate(startDate.getDate() - daysToSubtract);
 
-            const [allLogs, allReminders] = await Promise.all([
+            const [allLogs, allReminders, allTriggers] = await Promise.all([
                 getSymptomLogs(selectedDog.id),
                 getReminders(selectedDog.id),
+                getTriggerLogs(selectedDog.id),
             ]);
 
             const filteredLogs = allLogs.filter(log =>
@@ -71,12 +72,173 @@ const VetReport: React.FC = () => {
                 isWithinInterval(new Date(reminder.nextDue), { start: startDate, end: endDate })
             );
 
-            setReportData({
-                logs: filteredLogs,
-                reminders: filteredReminders,
-                startDate,
-                endDate
-            });
+            const filteredTriggers = allTriggers.filter(trigger =>
+                isWithinInterval(new Date(trigger.loggedDate), { start: startDate, end: endDate })
+            );
+
+            // Generate PDF
+            const pdf = new jsPDF();
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            let yPos = 20;
+
+            // Header
+            pdf.setFontSize(20);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Paw Relief', pageWidth / 2, yPos, { align: 'center' });
+            yPos += 10;
+
+            pdf.setFontSize(16);
+            pdf.text('Veterinarian Report', pageWidth / 2, yPos, { align: 'center' });
+            yPos += 15;
+
+            // Pet Info
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(`Pet: ${selectedDog.name}`, 20, yPos);
+            yPos += 7;
+            pdf.text(`Date Range: ${format(startDate, 'MMM d, yyyy')} - ${format(endDate, 'MMM d, yyyy')}`, 20, yPos);
+            yPos += 15;
+
+            // Symptom Frequency
+            if (reportOptions.symptomFrequency) {
+                pdf.setFontSize(14);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Symptom Frequency', 20, yPos);
+                yPos += 8;
+
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+
+                if (filteredLogs.length > 0) {
+                    const symptomCounts: Record<string, number> = {};
+                    filteredLogs.forEach(log => {
+                        symptomCounts[log.symptomType] = (symptomCounts[log.symptomType] || 0) + 1;
+                    });
+
+                    Object.entries(symptomCounts).forEach(([symptom, count]) => {
+                        if (yPos > 270) {
+                            pdf.addPage();
+                            yPos = 20;
+                        }
+                        pdf.text(`• ${symptom}: ${count} occurrence${count > 1 ? 's' : ''}`, 25, yPos);
+                        yPos += 6;
+                    });
+                } else {
+                    pdf.text('No symptoms logged in this period.', 25, yPos);
+                    yPos += 6;
+                }
+                yPos += 10;
+            }
+
+            // Suspected Triggers
+            if (reportOptions.suspectedTriggers) {
+                if (yPos > 250) {
+                    pdf.addPage();
+                    yPos = 20;
+                }
+
+                pdf.setFontSize(14);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Suspected Triggers', 20, yPos);
+                yPos += 8;
+
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+
+                if (filteredTriggers.length > 0) {
+                    const triggerCounts: Record<string, number> = {};
+                    filteredTriggers.forEach(trigger => {
+                        triggerCounts[trigger.triggerType] = (triggerCounts[trigger.triggerType] || 0) + 1;
+                    });
+
+                    Object.entries(triggerCounts).forEach(([trigger, count]) => {
+                        if (yPos > 270) {
+                            pdf.addPage();
+                            yPos = 20;
+                        }
+                        pdf.text(`• ${trigger}: ${count} occurrence${count > 1 ? 's' : ''}`, 25, yPos);
+                        yPos += 6;
+                    });
+                } else {
+                    pdf.text('No triggers identified in this period.', 25, yPos);
+                    yPos += 6;
+                }
+                yPos += 10;
+            }
+
+            // Medications Given
+            if (reportOptions.medicationAdherence) {
+                if (yPos > 250) {
+                    pdf.addPage();
+                    yPos = 20;
+                }
+
+                pdf.setFontSize(14);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Medications Given', 20, yPos);
+                yPos += 8;
+
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+
+                if (filteredReminders.length > 0) {
+                    filteredReminders.forEach(reminder => {
+                        if (yPos > 270) {
+                            pdf.addPage();
+                            yPos = 20;
+                        }
+                        const status = reminder.completed ? 'Administered' : 'Missed';
+                        pdf.text(`• ${format(new Date(reminder.nextDue), 'MMM d')}: ${reminder.name} - ${status}`, 25, yPos);
+                        if (reminder.dosage) {
+                            yPos += 5;
+                            pdf.text(`  ${reminder.dosage}`, 25, yPos);
+                        }
+                        yPos += 6;
+                    });
+                } else {
+                    pdf.text('No medications recorded in this period.', 25, yPos);
+                    yPos += 6;
+                }
+                yPos += 10;
+            }
+
+            // Symptom Timeline
+            if (reportOptions.symptomFrequency && filteredLogs.length > 0) {
+                if (yPos > 220) {
+                    pdf.addPage();
+                    yPos = 20;
+                }
+
+                pdf.setFontSize(14);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Symptom Timeline', 20, yPos);
+                yPos += 8;
+
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+
+                const sortedLogs = [...filteredLogs].sort((a, b) =>
+                    new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                );
+
+                sortedLogs.forEach(log => {
+                    if (yPos > 270) {
+                        pdf.addPage();
+                        yPos = 20;
+                    }
+                    pdf.text(`• ${format(new Date(log.createdAt), 'MMM d, yyyy')}: ${log.symptomType} (Severity: ${log.severity}/5)`, 25, yPos);
+                    if (log.notes) {
+                        yPos += 5;
+                        const notes = log.notes.length > 80 ? log.notes.substring(0, 80) + '...' : log.notes;
+                        pdf.text(`  ${notes}`, 25, yPos);
+                    }
+                    yPos += 6;
+                });
+            }
+
+            // Download PDF
+            const fileName = `paw-relief-report-${selectedDog.name.toLowerCase()}-${format(new Date(), 'yyyy-MM-dd')}.pdf`;
+            pdf.save(fileName);
 
         } catch (error) {
             console.error("Failed to generate report", error);
@@ -86,71 +248,6 @@ const VetReport: React.FC = () => {
         }
     };
 
-    const handleSharePDF = () => {
-        if (!reportData || !selectedDog) return;
-        
-        // Generate PDF content
-        let reportText = `Vet Report for ${selectedDog.name}\n`;
-        reportText += `Period: ${format(reportData.startDate, 'MMM d, yyyy')} - ${format(reportData.endDate, 'MMM d, yyyy')}\n\n`;
-        
-        if (reportOptions.symptomFrequency) {
-            reportText += '--- SYMPTOM FREQUENCY ---\n';
-            if (reportData.logs.length > 0) {
-                reportData.logs.forEach(log => {
-                    reportText += `${format(new Date(log.createdAt), 'MMM d')}: ${log.symptomType} (Severity: ${log.severity}/5)\n`;
-                });
-            } else {
-                reportText += 'No symptoms logged in this period.\n';
-            }
-            reportText += '\n';
-        }
-
-        if (reportOptions.suspectedTriggers) {
-            reportText += '--- SUSPECTED TRIGGERS ---\n';
-            const allTriggers = new Set();
-            reportData.logs.forEach(log => {
-                log.triggers.forEach(trigger => allTriggers.add(trigger));
-            });
-            if (allTriggers.size > 0) {
-                reportText += Array.from(allTriggers).join(', ') + '\n';
-            } else {
-                reportText += 'No triggers identified in this period.\n';
-            }
-            reportText += '\n';
-        }
-
-        if (reportOptions.medicationAdherence) {
-            reportText += '--- MEDICATION ADHERENCE ---\n';
-            if (reportData.reminders.length > 0) {
-                reportData.reminders.forEach(reminder => {
-                    reportText += `${format(new Date(reminder.nextDue), 'MMM d')}: ${reminder.name} (${reminder.completed ? 'Administered' : 'Missed'})\n`;
-                });
-            } else {
-                reportText += 'No medications recorded in this period.\n';
-            }
-        }
-
-        // For now, use the Web Share API or clipboard
-        if (navigator.share) {
-            navigator.share({
-                title: `Vet Report for ${selectedDog.name}`,
-                text: reportText,
-            }).catch(console.error);
-        } else {
-            navigator.clipboard.writeText(reportText);
-            alert('Report copied to clipboard!');
-        }
-    };
-
-    const handleEmailReport = () => {
-        if (!reportData || !selectedDog) return;
-        
-        const subject = encodeURIComponent(`Vet Report for ${selectedDog.name}`);
-        const body = encodeURIComponent(`Please find the attached vet report for ${selectedDog.name} covering the period ${format(reportData.startDate, 'MMM d, yyyy')} - ${format(reportData.endDate, 'MMM d, yyyy')}.`);
-        
-        const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
-        window.open(mailtoLink, '_blank');
-    };
 
     const toggleReportOption = (option: keyof ReportOptions) => {
         setReportOptions(prev => ({
@@ -173,12 +270,9 @@ const VetReport: React.FC = () => {
             <Header title="" showBackButton={true} />
 
             <div className="p-4 space-y-6">
-                {/* Page Title */}
-                <h1 className="text-2xl text-foreground-light dark:text-foreground-dark">Report Details</h1>
-
                 {/* Date Range Section */}
                 <div className="space-y-3">
-                    <label className="block text-base font-semibold text-foreground-light dark:text-foreground-dark">
+                    <label className="block text-base text-foreground-light dark:text-foreground-dark">
                         Date Range
                     </label>
                     <select
@@ -194,7 +288,7 @@ const VetReport: React.FC = () => {
 
                 {/* Include in Report Section */}
                 <div className="space-y-4">
-                    <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark">Include in Report:</h2>
+                    <h2 className="text-base text-foreground-light dark:text-foreground-dark">Include in Report:</h2>
 
                     <div className="space-y-3">
                         {/* Symptom Frequency Option */}
@@ -270,29 +364,28 @@ const VetReport: React.FC = () => {
 
                 {/* Sharing Options Section */}
                 <div className="space-y-4">
-                    <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark">Sharing Options</h2>
+                    <h2 className="text-base text-foreground-light dark:text-foreground-dark">Sharing Options</h2>
 
                     <div className="space-y-3">
-                        {/* Share PDF Button */}
+                        {/* Download Report PDF Button */}
                         <button
-                            onClick={handleSharePDF}
-                            className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 shadow-lg hover:bg-primary/90 transition-colors"
+                            onClick={handleGenerateReport}
+                            disabled={loading}
+                            className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 shadow-lg hover:bg-primary/90 transition-colors disabled:bg-primary/60 disabled:cursor-not-allowed"
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                            </svg>
-                            <span>Share PDF</span>
-                        </button>
-
-                        {/* Email Report Button */}
-                        <button
-                            onClick={handleEmailReport}
-                            className="w-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 hover:bg-blue-200 dark:hover:bg-blue-900/30 transition-colors"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                            <span>Email Report</span>
+                            {loading ? (
+                                <>
+                                    <PawIcon className="w-6 h-6 animate-spin" />
+                                    <span>Generating PDF...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>Download Report PDF</span>
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>

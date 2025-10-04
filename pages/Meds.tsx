@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDogs } from '../context/DogContext';
 import Header from '../components/Header';
+import MedicationModal from '../components/MedicationModal';
 import { Reminder, ReminderType } from '../types';
 import { getReminders, updateReminder } from '../services/api';
 import { format, isToday } from 'date-fns';
@@ -10,6 +11,7 @@ const Meds: React.FC = () => {
     const { selectedDog } = useDogs();
     const [reminders, setReminders] = useState<Reminder[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showMedicationModal, setShowMedicationModal] = useState(false);
 
     useEffect(() => {
         if (selectedDog) {
@@ -85,10 +87,20 @@ const Meds: React.FC = () => {
             )}
 
             {/* Floating Action Button */}
-            <button className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 transition-colors z-10">
+            <button
+                onClick={() => setShowMedicationModal(true)}
+                className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 transition-colors z-10"
+            >
                 <PlusCircleIcon className="w-5 h-5" />
                 <span className="font-medium">New Medication</span>
             </button>
+
+            {/* Medication Modal */}
+            <MedicationModal
+                isOpen={showMedicationModal}
+                onClose={() => setShowMedicationModal(false)}
+                onSuccess={fetchReminders}
+            />
         </div>
     );
 };

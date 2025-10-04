@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDogs } from '../context/DogContext';
 import { useTheme } from '../context/ThemeContext';
-import { Dog } from '../types';
+import { Dog, Reminder } from '../types';
+import { getReminders } from '../services/api';
 import { ArrowLeftIcon } from './icons';
 
 interface HeaderProps {
@@ -15,6 +16,27 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = true }) => {
     const { dogs, selectedDog, setSelectedDog, loading } = useDogs();
     const { theme } = useTheme();
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [overdueCount, setOverdueCount] = useState(0);
+
+    useEffect(() => {
+        if (selectedDog) {
+            fetchOverdueReminders();
+        }
+    }, [selectedDog]);
+
+    const fetchOverdueReminders = async () => {
+        if (!selectedDog) return;
+        try {
+            const reminders = await getReminders(selectedDog.id);
+            const now = new Date();
+            const overdue = reminders.filter(r =>
+                !r.completed && new Date(r.nextDue) < now
+            );
+            setOverdueCount(overdue.length);
+        } catch (error) {
+            console.error('Error fetching reminders for notification:', error);
+        }
+    };
 
     const handleDogSelect = (dog: Dog) => {
         setSelectedDog(dog);
@@ -47,7 +69,14 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = true }) => {
                 {selectedDog && (
                     <div className="relative">
                         <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center space-x-2">
-                            <img src={selectedDog.photoUrl} alt={selectedDog.name} className="w-10 h-10 rounded-full object-cover border-2 border-primary" />
+                            <div className="relative">
+                                <img src={selectedDog.photoUrl} alt={selectedDog.name} className="w-10 h-10 rounded-full object-cover border-2 border-primary" />
+                                {overdueCount > 0 && (
+                                    <div className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-background-light dark:border-background-dark">
+                                        {overdueCount}
+                                    </div>
+                                )}
+                            </div>
                             <span className="font-semibold text-foreground-light dark:text-foreground-dark">{selectedDog.name}</span>
                             <svg className={`w-4 h-4 transition-transform text-subtle-light dark:text-subtle-dark ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                         </button>
