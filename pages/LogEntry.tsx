@@ -246,7 +246,7 @@ const LogEntry: React.FC = () => {
                                             key={symptom}
                                             type="button"
                                             onClick={() => handleSymptomToggle(symptom)}
-                                            className={`flex items-center gap-2 p-3 rounded-xl transition-colors ${
+                                            className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-colors ${
                                                 selectedSymptoms.has(symptom)
                                                     ? 'bg-blue-600 text-white'
                                                     : 'bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700'
@@ -255,7 +255,7 @@ const LogEntry: React.FC = () => {
                                             <div className="flex-shrink-0 text-white">
                                                 {getSymptomIcon(symptom)}
                                             </div>
-                                            <span className="font-medium text-sm truncate">{symptom}</span>
+                                            <span className="font-medium text-sm text-center">{symptom}</span>
                                         </button>
                                     ))}
                                 </div>
