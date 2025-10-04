@@ -340,28 +340,23 @@ const LogEntry: React.FC = () => {
                         <form onSubmit={handleTriggerSubmit} className="p-6 space-y-6">
                             {/* Trigger Type Selection */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Select Trigger Type</h3>
-                                <div className="space-y-3">
+                                <div className="grid grid-cols-2 gap-3">
                                     {triggerTypes.map((trigger) => (
-                                        <div
+                                        <button
                                             key={trigger.id}
+                                            type="button"
                                             onClick={() => setSelectedTriggerType(trigger.type)}
-                                            className={`p-4 rounded-xl border cursor-pointer transition-colors ${
+                                            className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-colors ${
                                                 selectedTriggerType === trigger.type
-                                                    ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-400'
-                                                    : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                                    ? 'bg-blue-600 text-white'
+                                                    : 'bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700'
                                             }`}
                                         >
-                                            <div className="flex items-center space-x-4">
-                                                <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center bg-blue-500 dark:bg-blue-600 text-white">
-                                                    {trigger.icon}
-                                                </div>
-                                                <div className="flex-1">
-                                                    <h4 className="font-semibold text-gray-900 dark:text-white">{trigger.title}</h4>
-                                                    <p className="text-sm text-gray-500 dark:text-gray-400">{trigger.description}</p>
-                                                </div>
+                                            <div className="flex-shrink-0 text-white">
+                                                {trigger.icon}
                                             </div>
-                                        </div>
+                                            <span className="font-medium text-sm text-center">{trigger.title}</span>
+                                        </button>
                                     ))}
                                 </div>
                             </div>
