@@ -353,11 +353,7 @@ const LogEntry: React.FC = () => {
                                             }`}
                                         >
                                             <div className="flex items-center space-x-4">
-                                                <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${
-                                                    selectedTriggerType === trigger.type
-                                                        ? 'bg-blue-500 dark:bg-blue-600 text-white'
-                                                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-                                                }`}>
+                                                <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center bg-blue-500 dark:bg-blue-600 text-white">
                                                     {trigger.icon}
                                                 </div>
                                                 <div className="flex-1">
