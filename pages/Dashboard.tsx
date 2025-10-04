@@ -177,16 +177,10 @@ const Dashboard: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <div className="mt-4 flex gap-3">
-                <button 
-                  onClick={() => navigate('/trigger-detective')}
-                  className="flex-1 bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors"
-                >
-                  Add Trigger Info
-                </button>
-                <button 
+              <div className="mt-4">
+                <button
                   onClick={() => navigate('/allergen-alerts')}
-                  className="flex-1 bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors"
+                  className="w-full bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   View Analysis
                 </button>
@@ -259,11 +253,11 @@ const Dashboard: React.FC = () => {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">{reminder.title}</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">{reminder.name}</h3>
                     <p className="text-sm text-blue-600 dark:text-blue-400">
-                      {reminder.date ? (() => {
+                      {reminder.nextDue ? (() => {
                         try {
-                          return format(new Date(reminder.date), 'MMM d, h:mm a');
+                          return format(new Date(reminder.nextDue), 'MMM d, h:mm a');
                         } catch {
                           return 'Date unavailable';
                         }

@@ -21,6 +21,7 @@ import CreateDogProfile from './pages/CreateDogProfile';
 import TriggerDetective from './pages/TriggerDetective';
 import TriggerAnalysis from './pages/TriggerAnalysis';
 import AllergenAlerts from './pages/AllergenAlerts';
+import LogEntry from './pages/LogEntry';
 import BottomNav from './components/BottomNav';
 import { DogProvider } from './context/DogContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -39,6 +40,7 @@ const App: React.FC = () => {
                                     <Route path="/logs" element={<Logs />} />
                                     <Route path="/meds" element={<Meds />} />
                                     <Route path="/profile" element={<Profile />} />
+                                    <Route path="/log-entry" element={<LogEntry />} />
                                     <Route path="/report" element={<VetReport />} />
                                     <Route path="/app-settings" element={<AppSettings />} />
                                     <Route path="/personal-information" element={<PersonalInformation />} />
