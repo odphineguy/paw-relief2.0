@@ -51,7 +51,7 @@ const getSymptomIcon = (symptom: SymptomType) => {
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { selectedDog } = useDogs();
+  const { selectedDog, dogs, setSelectedDog } = useDogs();
   const { theme } = useTheme();
   const [logs, setLogs] = useState<SymptomLog[]>([]);
   const [reminders, setReminders] = useState<Reminder[]>([]);
@@ -113,9 +113,56 @@ const Dashboard: React.FC = () => {
         </div>
       ) : selectedDog ? (
         <div className="px-4 pb-8 overflow-y-auto">
+          {/* Your Paws Section */}
+          <section className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight">
+                Your Paws
+              </h2>
+              <button
+                onClick={() => navigate('/create-dog-profile')}
+                className="w-10 h-10 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              {dogs.map((dog) => (
+                <button
+                  key={dog.id}
+                  onClick={() => setSelectedDog(dog)}
+                  className={`flex flex-col items-center gap-2 transition-all ${
+                    selectedDog?.id === dog.id ? 'scale-105' : 'opacity-70 hover:opacity-100'
+                  }`}
+                >
+                  <div className={`w-20 h-20 rounded-full overflow-hidden border-4 ${
+                    selectedDog?.id === dog.id
+                      ? 'border-blue-500 dark:border-blue-400'
+                      : 'border-gray-300 dark:border-gray-600'
+                  }`}>
+                    <img
+                      src={dog.photoUrl}
+                      alt={dog.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span className={`text-sm font-medium ${
+                    selectedDog?.id === dog.id
+                      ? 'text-blue-500 dark:text-blue-400'
+                      : 'text-gray-700 dark:text-gray-300'
+                  }`}>
+                    {dog.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+
           {/* Trigger Detective Section */}
           <section className="mb-8">
-            <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
+            <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
               Trigger Detective
             </h2>
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -150,7 +197,7 @@ const Dashboard: React.FC = () => {
           {/* Symptom Distribution Chart */}
           {pieChartData.length > 0 && (
             <section className="mb-8">
-              <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
+              <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
                 Symptom Distribution
               </h2>
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -180,7 +227,7 @@ const Dashboard: React.FC = () => {
 
           {/* Recent Symptoms */}
           <section className="mb-8">
-            <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
+            <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
               Recent Symptoms
             </h2>
             <div className="space-y-3">
@@ -200,7 +247,7 @@ const Dashboard: React.FC = () => {
 
           {/* Upcoming Reminders */}
           <section className="mb-8">
-            <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
+            <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
               Upcoming Reminders
             </h2>
             <div className="space-y-3">
@@ -225,18 +272,6 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
-          </section>
-
-          {/* Action Buttons */}
-          <section className="mb-8">
-            <div className="flex gap-4">
-              <button className="flex-1 bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors">
-                Log Symptom
-              </button>
-              <button className="flex-1 bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors">
-                Manage Reminders
-              </button>
             </div>
           </section>
         </div>

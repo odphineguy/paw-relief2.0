@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { DashboardIcon, ClipboardListIcon, BellIcon, PawIcon, PlusCircleIcon } from './icons';
+import { DashboardIcon, ClipboardListIcon, PillBottleIcon, PawIcon, PlusCircleIcon } from './icons';
 import SymptomLoggerModal from './SymptomLoggerModal';
 
 const BottomNav: React.FC = () => {
@@ -32,7 +32,7 @@ const BottomNav: React.FC = () => {
                 </button>
 
                 <NavLink to="/meds" className={navLinkClasses}>
-                    <BellIcon />
+                    <PillBottleIcon />
                     <span className="text-xs font-semibold">Meds</span>
                 </NavLink>
                 <NavLink to="/profile" className={navLinkClasses}>

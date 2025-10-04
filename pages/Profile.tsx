@@ -78,7 +78,7 @@ const Profile: React.FC = () => {
                         <InfoCard title="Veterinarian Tools">
                             <div className="space-y-2">
                                 <Link to="/report" className="flex justify-between items-center p-2 text-left bg-background-light dark:bg-background-dark rounded-lg hover:bg-primary/10 dark:hover:bg-primary/10">
-                                    <span className="text-sm font-medium text-primary">Generate Vet Report</span>
+                                    <span className="text-sm font-medium text-primary">Veterinarian Report</span>
                                     <ChevronRightIcon className="w-4 h-4 text-gray-400"/>
                                 </Link>
                                 <button onClick={() => setIsScannerOpen(true)} className="w-full flex justify-between items-center p-2 text-left bg-background-light dark:bg-background-dark rounded-lg hover:bg-primary/10 dark:hover:bg-primary/10">

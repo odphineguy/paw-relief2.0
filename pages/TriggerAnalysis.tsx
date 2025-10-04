@@ -69,66 +69,79 @@ const TriggerAnalysis: React.FC = () => {
                     </div>
                 ) : (
                     <>
-                        {/* Summary Card */}
-                        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Summary</h2>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Triggers</p>
-                                    <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{totalTriggers}</p>
-                                </div>
-                                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">Unique Types</p>
-                                    <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                                        {Object.keys(triggerCounts).length}
-                                    </p>
-                                </div>
+                        {/* Summary Card - Cleaner Modern Design */}
+                        <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-2xl shadow-sm">
+                            <div className="flex items-baseline gap-2 mb-2">
+                                <h2 className="text-4xl font-bold text-gray-900 dark:text-white">
+                                    {sortedTriggers.length > 0
+                                        ? (((sortedTriggers[0].count / totalTriggers) * 100).toFixed(0) + '%')
+                                        : 'N/A'}
+                                </h2>
+                                <span className="text-green-600 dark:text-green-400 text-sm font-medium">
+                                    {sortedTriggers.length > 0 ? `${sortedTriggers[0].trigger}` : ''}
+                                </span>
+                            </div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                                Most Common Trigger • Last 30 Days
+                            </p>
+
+                            {/* Trigger Category Pills */}
+                            <div className="flex flex-wrap gap-2 mt-4">
+                                {sortedTriggers.map(({ trigger }, index) => {
+                                    const colors = ['#3b82f6', '#10b981', '#a855f7', '#f97316', '#ec4899', '#06b6d4'];
+                                    return (
+                                        <span
+                                            key={trigger}
+                                            className="px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide"
+                                            style={{
+                                                backgroundColor: colors[index % colors.length] + '20',
+                                                color: colors[index % colors.length]
+                                            }}
+                                        >
+                                            {trigger}
+                                        </span>
+                                    );
+                                })}
                             </div>
                         </div>
 
-                        {/* Trigger Breakdown */}
-                        <div className="space-y-4">
-                            <h2 className="text-xl text-foreground-light dark:text-foreground-dark">Trigger Breakdown</h2>
+                        {/* Trigger Breakdown - Cleaner Cards */}
+                        <div className="space-y-3">
+                            <h2 className="text-xl text-foreground-light dark:text-foreground-dark">Breakdown</h2>
 
                             {sortedTriggers.map(({ trigger, count }, index) => {
                                 const percentage = ((count / totalTriggers) * 100).toFixed(1);
 
-                                // Color scheme for different triggers
-                                const colors = [
-                                    { bg: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400', light: 'bg-blue-50 dark:bg-blue-900/20' },
-                                    { bg: 'bg-green-500', text: 'text-green-600 dark:text-green-400', light: 'bg-green-50 dark:bg-green-900/20' },
-                                    { bg: 'bg-purple-500', text: 'text-purple-600 dark:text-purple-400', light: 'bg-purple-50 dark:bg-purple-900/20' },
-                                    { bg: 'bg-orange-500', text: 'text-orange-600 dark:text-orange-400', light: 'bg-orange-50 dark:bg-orange-900/20' },
-                                    { bg: 'bg-pink-500', text: 'text-pink-600 dark:text-pink-400', light: 'bg-pink-50 dark:bg-pink-900/20' },
-                                ];
+                                // Hex colors for consistency
+                                const colors = ['#3b82f6', '#10b981', '#a855f7', '#f97316', '#ec4899', '#06b6d4'];
                                 const color = colors[index % colors.length];
 
                                 return (
                                     <div
                                         key={trigger}
-                                        className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700"
+                                        className="bg-white dark:bg-gray-800/80 p-5 rounded-2xl shadow-sm"
                                     >
                                         <div className="flex items-center justify-between mb-3">
                                             <div className="flex-1">
-                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                                <h3 className="text-base font-semibold text-gray-900 dark:text-white">
                                                     {trigger}
                                                 </h3>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">
                                                     {count} occurrence{count !== 1 ? 's' : ''}
                                                 </p>
                                             </div>
-                                            <div className={`px-4 py-2 ${color.light} rounded-lg text-right`}>
-                                                <div className={`text-2xl font-bold ${color.text}`}>
+                                            <div className="text-right">
+                                                <div className="text-2xl font-bold" style={{ color }}>
                                                     {percentage}%
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/* Colorful progress bar */}
-                                        <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 overflow-hidden">
+                                        {/* Softer progress bar */}
+                                        <div className="w-full h-2 bg-gray-100 dark:bg-gray-700/50 rounded-full overflow-hidden">
                                             <div
-                                                className={`h-full ${color.bg} rounded-full transition-all`}
-                                                style={{ width: `${percentage}%` }}
+                                                className="h-full rounded-full transition-all"
+                                                style={{ width: `${percentage}%`, backgroundColor: color }}
                                             ></div>
                                         </div>
                                     </div>
@@ -136,8 +149,8 @@ const TriggerAnalysis: React.FC = () => {
                             })}
                         </div>
 
-                        {/* Insights */}
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800">
+                        {/* Insights - Cleaner Design */}
+                        <div className="bg-blue-50/50 dark:bg-blue-900/10 p-6 rounded-2xl shadow-sm">
                             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">💡 Key Insights</h2>
                             <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                                 {sortedTriggers.length > 0 && (

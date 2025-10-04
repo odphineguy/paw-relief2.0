@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDogs } from '../context/DogContext';
 import { Dog } from '../types';
 import Header from '../components/Header';
-import { ArrowLeftIcon, PawIcon } from '../components/icons';
+import { ArrowLeftIcon, DogIcon } from '../components/icons';
 import { format } from 'date-fns';
 
 const CreateDogProfile: React.FC = () => {
@@ -241,7 +241,7 @@ const CreateDogProfile: React.FC = () => {
                 {/* Your Dogs Section */}
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">Your Pets</h2>
+                        <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">Your Paws</h2>
                         <button 
                             onClick={handleAddNewDog}
                             className="bg-primary text-white px-4 py-2 rounded-lg font-semibold flex items-center space-x-2 hover:bg-primary/90 transition-colors"
@@ -255,79 +255,26 @@ const CreateDogProfile: React.FC = () => {
                     
                     {dogs.length === 0 && (
                         <div className="bg-card-light dark:bg-card-dark p-8 rounded-xl border border-border-light dark:border-border-dark text-center">
-                            <PawIcon className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                            <DogIcon className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
                             <p className="text-gray-600 dark:text-gray-400">No pets added yet</p>
                             <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">Add your first pet to get started</p>
                         </div>
                     )}
                 </div>
 
-                {/* Add/Edit Dog Form */}
+                {/* Add/Edit Dog Form - Consolidated Single Card */}
                 {isAddingNew && (
                     <div className="space-y-6">
                         <div className="bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden">
-                            <div className="p-4 border-b border-border-light dark:border-border-dark">
-                                <h3 className="text-lg font-bold text-foreground-light dark:text-foreground-dark">
-                                    {editingDog ? 'Edit Dog Profile' : 'Basic Information'}
-                                </h3>
-                            </div>
-                            <div className="p-4 space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Name</label>
-                                    <input
-                                        type="text"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                                        placeholder="Enter dog's name"
-                                        className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Breed</label>
-                                    <input
-                                        type="text"
-                                        value={formData.breed}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, breed: e.target.value }))}
-                                        placeholder="Enter breed"
-                                        className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Age</label>
-                                    <input
-                                        type="number"
-                                        value={formData.age}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, age: e.target.value }))}
-                                        placeholder="Enter age in years"
-                                        className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Weight</label>
-                                    <input
-                                        type="number"
-                                        value={formData.weight}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
-                                        placeholder="Enter weight in lb"
-                                        className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Photo Upload Section */}
-                        <div className="bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden">
-                            <div className="p-4 border-b border-border-light dark:border-border-dark">
-                                <h3 className="text-lg font-bold text-foreground-light dark:text-foreground-dark">Pet Photo</h3>
-                            </div>
-                            <div className="p-4">
-                                <div className="flex flex-col items-center space-y-4">
+                            <div className="p-6 space-y-6">
+                                {/* Photo Upload Section */}
+                                <div className="flex flex-col items-center space-y-4 pb-6 border-b border-border-light dark:border-border-dark">
                                     {/* Image Preview */}
                                     {(imagePreview || selectedImage) && (
                                         <div className="relative">
-                                            <img 
-                                                src={imagePreview} 
-                                                alt="Pet preview" 
+                                            <img
+                                                src={imagePreview}
+                                                alt="Pet preview"
                                                 className="w-32 h-32 rounded-full object-cover border-2 border-primary"
                                             />
                                             <button
@@ -338,7 +285,7 @@ const CreateDogProfile: React.FC = () => {
                                             </button>
                                         </div>
                                     )}
-                                    
+
                                     {/* Upload Button */}
                                     <div className="text-center">
                                         <input
@@ -363,25 +310,81 @@ const CreateDogProfile: React.FC = () => {
                                         </p>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div className="bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden">
-                            <div className="p-4 border-b border-border-light dark:border-border-dark">
-                                <h3 className="text-lg font-bold text-foreground-light dark:text-foreground-dark">Health Details</h3>
-                            </div>
-                            <div className="p-4 space-y-0">
-                                <InputRow label="Known Allergies" field="knownAllergies" placeholder="Enter allergies separated by commas" />
-                                <InputRow label="Current Medications" field="currentMedications" placeholder="Enter current medications" />
-                            </div>
-                        </div>
-
-                        <div className="bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden">
-                            <div className="p-4 border-b border-border-light dark:border-border-dark">
-                                <h3 className="text-lg font-bold text-foreground-light dark:text-foreground-dark">Reminders</h3>
-                            </div>
-                            <div className="p-4 space-y-0">
-                                <InputRow label="Birthday" field="birthday" type="date" />
+                                {/* Basic Information */}
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Name</label>
+                                        <input
+                                            type="text"
+                                            value={formData.name}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                            placeholder="Enter dog's name"
+                                            className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Breed</label>
+                                        <input
+                                            type="text"
+                                            value={formData.breed}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, breed: e.target.value }))}
+                                            placeholder="Enter breed"
+                                            className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Age</label>
+                                            <input
+                                                type="number"
+                                                value={formData.age}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, age: e.target.value }))}
+                                                placeholder="Age in years"
+                                                className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Weight</label>
+                                            <input
+                                                type="number"
+                                                value={formData.weight}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+                                                placeholder="Weight in lb"
+                                                className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Birthday</label>
+                                        <input
+                                            type="date"
+                                            value={formData.birthday}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, birthday: e.target.value }))}
+                                            className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Known Allergies</label>
+                                        <input
+                                            type="text"
+                                            value={formData.knownAllergies}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, knownAllergies: e.target.value }))}
+                                            placeholder="Enter allergies separated by commas"
+                                            className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1">Current Medications</label>
+                                        <input
+                                            type="text"
+                                            value={formData.currentMedications}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, currentMedications: e.target.value }))}
+                                            placeholder="Enter current medications"
+                                            className="w-full p-2 text-base font-semibold text-foreground-light dark:text-foreground-dark bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded outline-none"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

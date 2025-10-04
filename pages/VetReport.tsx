@@ -174,13 +174,104 @@ const VetReport: React.FC = () => {
 
             <div className="p-4 space-y-6">
                 {/* Page Title */}
-                <h1 className="text-2xl font-bold text-foreground-light dark:text-foreground-dark">Vet Report</h1>
-                
+                <h1 className="text-2xl text-foreground-light dark:text-foreground-dark">Report Details</h1>
+
+                {/* Date Range Section */}
+                <div className="space-y-3">
+                    <label className="block text-base font-semibold text-foreground-light dark:text-foreground-dark">
+                        Date Range
+                    </label>
+                    <select
+                        value={dateRange}
+                        onChange={(e) => setDateRange(e.target.value as DateRangeOption)}
+                        className="w-full p-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-foreground-light dark:text-foreground-dark font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d">Last 30 Days</option>
+                        <option value="90d">Last 90 Days</option>
+                    </select>
+                </div>
+
+                {/* Include in Report Section */}
+                <div className="space-y-4">
+                    <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark">Include in Report:</h2>
+
+                    <div className="space-y-3">
+                        {/* Symptom Frequency Option */}
+                        <div
+                            onClick={() => toggleReportOption('symptomFrequency')}
+                            className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center gap-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-colors"
+                        >
+                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="font-semibold text-gray-900 dark:text-white">Symptom Frequency</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Frequency of symptoms over the selected period</p>
+                            </div>
+                            <div className={`w-6 h-6 rounded flex items-center justify-center ${reportOptions.symptomFrequency ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'}`}>
+                                {reportOptions.symptomFrequency && (
+                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Suspected Triggers Option */}
+                        <div
+                            onClick={() => toggleReportOption('suspectedTriggers')}
+                            className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center gap-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-colors"
+                        >
+                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="font-semibold text-gray-900 dark:text-white">Suspected Triggers</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Potential allergens or environmental factors</p>
+                            </div>
+                            <div className={`w-6 h-6 rounded flex items-center justify-center ${reportOptions.suspectedTriggers ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'}`}>
+                                {reportOptions.suspectedTriggers && (
+                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Medication Adherence Option */}
+                        <div
+                            onClick={() => toggleReportOption('medicationAdherence')}
+                            className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center gap-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-colors"
+                        >
+                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="font-semibold text-gray-900 dark:text-white">Medication Adherence</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Adherence to prescribed medications</p>
+                            </div>
+                            <div className={`w-6 h-6 rounded flex items-center justify-center ${reportOptions.medicationAdherence ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'}`}>
+                                {reportOptions.medicationAdherence && (
+                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Sharing Options Section */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">Sharing Options</h2>
-                    
+                    <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark">Sharing Options</h2>
+
                     <div className="space-y-3">
                         {/* Share PDF Button */}
                         <button
@@ -189,7 +280,6 @@ const VetReport: React.FC = () => {
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 8v8M14 8v8" />
                             </svg>
                             <span>Share PDF</span>
                         </button>
@@ -197,7 +287,7 @@ const VetReport: React.FC = () => {
                         {/* Email Report Button */}
                         <button
                             onClick={handleEmailReport}
-                            className="w-full bg-card-light dark:bg-card-dark text-primary font-semibold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 border border-primary hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors"
+                            className="w-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 hover:bg-blue-200 dark:hover:bg-blue-900/30 transition-colors"
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -206,62 +296,6 @@ const VetReport: React.FC = () => {
                         </button>
                     </div>
                 </div>
-
-                {/* Generate Report Button */}
-                <button
-                    onClick={handleGenerateReport}
-                    disabled={loading}
-                    className="w-full bg-primary text-white font-bold py-4 px-6 rounded-xl hover:bg-primary/90 transition-colors disabled:bg-gray-400 flex items-center justify-center space-x-3 shadow-lg shadow-primary/30"
-                >
-                    {loading && <PawIcon className="w-6 h-6 animate-spin" />}
-                    <span>{loading ? 'Generating Report...' : 'Generate Report'}</span>
-                </button>
-
-                {/* Generated Report Display */}
-                {reportData && (
-                    <div className="space-y-4">
-                        <div className="bg-card-light dark:bg-card-dark p-4 rounded-xl border border-border-light dark:border-border-dark">
-                            <h3 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-2">Report Generated</h3>
-                            <p className="text-sm text-subtle-light dark:text-subtle-dark">
-                                Period: {format(reportData.startDate, 'MMM d, yyyy')} - {format(reportData.endDate, 'MMM d, yyyy')}
-                            </p>
-                        </div>
-
-                        {reportOptions.symptomFrequency && reportData.logs.length > 0 && (
-                            <div className="bg-card-light dark:bg-card-dark p-4 rounded-xl border border-border-light dark:border-border-dark">
-                                <h4 className="font-semibold text-foreground-light dark:text-foreground-dark mb-2">Symptom Frequency</h4>
-                                <p className="text-sm text-subtle-light dark:text-subtle-dark">
-                                    {reportData.logs.length} symptoms logged in this period
-                                </p>
-                            </div>
-                        )}
-
-                        {reportOptions.suspectedTriggers && reportData.logs.length > 0 && (
-                            <div className="bg-card-light dark:bg-card-dark p-4 rounded-xl border border-border-light dark:border-border-dark">
-                                <h4 className="font-semibold text-foreground-light dark:text-foreground-dark mb-2">Suspected Triggers</h4>
-                                <p className="text-sm text-subtle-light dark:text-subtle-dark">
-                                    {new Set(reportData.logs.flatMap(log => log.triggers)).size} unique triggers identified
-                                </p>
-                            </div>
-                        )}
-
-                        {reportOptions.medicationAdherence && reportData.reminders.length > 0 && (
-                            <div className="bg-card-light dark:bg-card-dark p-4 rounded-xl border border-border-light dark:border-border-dark">
-                                <h4 className="font-semibold text-foreground-light dark:text-foreground-dark mb-2">Medication Adherence</h4>
-                                <p className="text-sm text-subtle-light dark:text-subtle-dark">
-                                    {reportData.reminders.filter(r => r.completed).length} of {reportData.reminders.length} medications administered
-                                </p>
-                            </div>
-                        )}
-
-                        <button 
-                            onClick={() => setReportData(null)} 
-                            className="w-full text-center text-primary font-semibold py-2 hover:text-primary/80 transition-colors"
-                        >
-                            Generate New Report
-                        </button>
-                    </div>
-                )}
             </div>
         </div>
     );
