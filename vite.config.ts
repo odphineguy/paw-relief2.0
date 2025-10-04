@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
-        https: true,
+        https: false, // Temporarily disable HTTPS for testing
       },
       plugins: [react(), basicSsl()],
       define: {

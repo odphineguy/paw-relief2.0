@@ -22,6 +22,12 @@ import TriggerDetective from './pages/TriggerDetective';
 import TriggerAnalysis from './pages/TriggerAnalysis';
 import AllergenAlerts from './pages/AllergenAlerts';
 import LogEntry from './pages/LogEntry';
+import Splash from './pages/Splash';
+import Testimonials from './pages/Testimonials';
+import LoginSignup from './pages/LoginSignup';
+import Onboarding from './pages/Onboarding';
+import Welcome from './pages/Welcome';
+import Subscription from './pages/Subscription';
 import BottomNav from './components/BottomNav';
 import { DogProvider } from './context/DogContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -36,6 +42,12 @@ const App: React.FC = () => {
                             <div className="max-w-md mx-auto bg-background-light dark:bg-background-dark h-full min-h-screen">
                                 <Routes>
                                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                                    <Route path="/splash" element={<Splash />} />
+                                    <Route path="/testimonials" element={<Testimonials />} />
+                                    <Route path="/login" element={<LoginSignup />} />
+                                    <Route path="/onboarding" element={<Onboarding />} />
+                                    <Route path="/welcome" element={<Welcome />} />
+                                    <Route path="/subscription" element={<Subscription />} />
                                     <Route path="/dashboard" element={<Dashboard />} />
                                     <Route path="/logs" element={<Logs />} />
                                     <Route path="/meds" element={<Meds />} />
@@ -53,7 +65,6 @@ const App: React.FC = () => {
                                     <Route path="/contact-us" element={<ContactUs />} />
                                     <Route path="/user-guides" element={<UserGuides />} />
                                     <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
-                                    <Route path="/login" element={<Login />} />
                                     <Route path="/create-dog-profile" element={<CreateDogProfile />} />
                                     <Route path="/trigger-detective" element={<TriggerDetective />} />
                                     <Route path="/trigger-analysis" element={<TriggerAnalysis />} />
