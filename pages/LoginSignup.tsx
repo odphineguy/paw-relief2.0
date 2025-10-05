@@ -16,7 +16,11 @@ const LoginSignup: React.FC = () => {
         <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark">
             {/* Dog Illustration Header */}
             <div className="w-full h-64 bg-orange-200 dark:bg-orange-300 flex items-center justify-center">
-                {/* Boxer image will be added here */}
+                <img 
+                    src="/assets/pet-images/boxerLogin.png" 
+                    alt="Boxer dog illustration" 
+                    className="w-full h-full object-cover"
+                />
             </div>
 
             {/* Login Form */}
