@@ -17,9 +17,14 @@ const LoginSignup: React.FC = () => {
             {/* Dog Illustration Header */}
             <div className="w-full h-64 bg-orange-200 dark:bg-orange-300 flex items-center justify-center overflow-hidden">
                 <img
-                    src="/assets/pet-images/boxerLogin.jpeg"
-                    alt="Boxer dog"
+                    src="/assets/pet-images/login.png"
+                    alt="Happy dog"
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                        console.log('Image failed to load:', e);
+                        // Fallback to a simple background if image fails
+                        e.currentTarget.style.display = 'none';
+                    }}
                 />
             </div>
 
