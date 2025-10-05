@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { Dog } from '../types';
 import { getDogs, addDog as apiAddDog, updateDog as apiUpdateDog } from '../services/api';
+import { useAuth } from './AuthContext';
 
 interface DogContextType {
     dogs: Dog[];
@@ -14,12 +15,24 @@ interface DogContextType {
 const DogContext = createContext<DogContextType | undefined>(undefined);
 
 export const DogProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const { user, loading: authLoading } = useAuth();
     const [dogs, setDogs] = useState<Dog[]>([]);
     const [selectedDog, setSelectedDogState] = useState<Dog | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchDogs = async () => {
+            // Wait for auth to finish loading
+            if (authLoading) {
+                return;
+            }
+
+            // Only fetch if user is authenticated
+            if (!user) {
+                setLoading(false);
+                return;
+            }
+
             try {
                 const dogsData = await getDogs();
                 setDogs(dogsData);
@@ -33,7 +46,7 @@ export const DogProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             }
         };
         fetchDogs();
-    }, []);
+    }, [user, authLoading]);
 
     const setSelectedDog = useCallback((dog: Dog) => {
         setSelectedDogState(dog);
