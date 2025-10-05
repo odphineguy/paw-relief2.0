@@ -17,12 +17,12 @@ const LoginSignup: React.FC = () => {
             {/* Dog Illustration Header */}
             <div className="w-full h-64 bg-orange-200 dark:bg-orange-300 overflow-hidden">
                 <img
-                    src="/assets/pet-images/boxerLogin.jpeg"
-                    alt="Boxer dog"
+                    src="/assets/pet-images/login.png"
+                    alt="Happy dog"
                     className="w-full h-full object-cover"
-                    onLoad={() => console.log('Boxer image loaded successfully')}
+                    onLoad={() => console.log('Login image loaded successfully')}
                     onError={(e) => {
-                        console.error('Boxer image failed to load:', e);
+                        console.error('Login image failed to load:', e);
                         console.error('Image src:', e.currentTarget.src);
                         // Hide the broken image
                         e.currentTarget.style.display = 'none';
