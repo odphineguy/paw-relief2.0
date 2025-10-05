@@ -50,8 +50,8 @@ created_at             →  createdAt
 ### Page Architecture
 
 **Main Navigation Pages** (BottomNav):
-1. **Dashboard** - "Your Paws" pet switcher (3 per row, wraps to multiple rows), symptom distribution chart, recent symptoms, upcoming reminders
-2. **Logs** - Symptom history with filtering and charts
+1. **Dashboard** - "Your Paws" pet switcher (3 per row, wraps to multiple rows), Identified Patterns card with static trigger graph, symptom distribution chart, upcoming reminders
+2. **Logs** - Symptom history with blue icon boxes matching Dashboard styling
 3. **Meds** - Medication/treatment reminders with toggle completion (uses pill bottle icon)
 4. **Profile** - Consolidated pet profile view, veterinarian tools, settings
 
@@ -64,12 +64,12 @@ created_at             →  createdAt
 - **VetReport** (`/report`) - Veterinarian Report with date range selector, checkboxes for report sections, and PDF generation
 
 **Onboarding Flow Pages:**
-- **Splash** (`/splash`) - Auto-navigates to testimonials after 2 seconds
-- **Testimonials** (`/testimonials`) - Horizontal scrollable testimonial cards with "Get Started" button
+- **Splash** (`/splash`) - Lottie animation, auto-navigates to testimonials after 3.5 seconds
+- **Testimonials** (`/testimonials`) - Horizontal scrollable testimonial cards (6 breed-specific images) with "Get Started" button
 - **LoginSignup** (`/login`) - Email/password form with social auth UI placeholders (no actual authentication)
-- **Onboarding** (`/onboarding`) - 3-slide carousel (Welcome, Symptom Tracker, Trigger Detective)
+- **Onboarding** (`/onboarding`) - 3-slide carousel with images (Welcome, Symptom Tracker, Trigger Detective)
 - **Welcome** (`/welcome`) - Post-onboarding welcome with premium subscription upsell
-- **Subscription** (`/subscription`) - Feature comparison and pricing page ($9.99/month)
+- **Subscription** (`/subscription`) - 2-column feature comparison grid and pricing page ($9.99/month)
 
 **Routing:**
 - Uses HashRouter for GitHub Pages compatibility
@@ -111,7 +111,8 @@ created_at             →  createdAt
 **Animations:**
 - Lottie animations stored in `public/assets/animations/`
 - Use `lottie-react` library for integration
-- Example: Splash page uses `Paw Loader.json` animation
+- Example: Splash page uses `Paw Loader.json` animation with CSS filter for light mode visibility
+- Light mode fix: `style={theme === 'light' ? { filter: 'invert(1) hue-rotate(180deg)' } : {}}`
 
 **Icon System:**
 Add new icons to `components/icons.tsx`:
@@ -330,8 +331,9 @@ const { theme, toggleTheme } = useTheme();
 
 **Onboarding Flow:**
 - Complete 6-page onboarding experience for new users
-- Splash page uses Lottie animation (`Paw Loader.json`)
-- Testimonials page uses emoji placeholders (images should be added to `public/assets/testimonials/`)
+- Splash page uses Lottie animation (`Paw Loader.json`) with 3.5s delay and light mode CSS filter
+- Testimonials page displays 6 breed-specific dog images from `public/assets/testimonials/`
+- Onboarding carousel uses actual pet images from `public/assets/pet-images/`
 - No actual authentication required - placeholders allow testing without signup
 - Auto-navigation between steps with smooth transitions
 - Premium subscription offer before reaching main app
@@ -345,8 +347,9 @@ const { theme, toggleTheme } = useTheme();
 
 **Dashboard:**
 - Added "Your Paws" pet switcher section at top (3 avatars per row, wraps for 4+ pets)
-- Removed "Add Trigger Info" button from Trigger Detective card (only shows "View Analysis")
-- Fixed reminder display to use correct fields: `reminder.name` and `reminder.nextDue`
+- "Identified Patterns" card displays static trigger correlation graph (`/assets/trigger-graph.png`)
+- Blue "View Detailed Analysis" button navigates to `/trigger-analysis`
+- Removed redundant "Recent Symptoms" section (available on Logs page)
 - Unbolded section titles for cleaner visual hierarchy
 
 **Trigger Analysis:**
@@ -380,4 +383,4 @@ const { theme, toggleTheme } = useTheme();
 - Some pet food products may not be in OpenFoodFacts database
 - Photo upload functionality not implemented (placeholder removed to avoid random images)
 - Symptom logger currently saves triggers as empty array (trigger UI not connected)
-- Testimonials page uses emoji placeholders - real pet images should be named by breed and placed in `public/assets/testimonials/`
+- Trigger graph on Dashboard is static image - needs to be made dynamic with real data
