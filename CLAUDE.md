@@ -412,9 +412,11 @@ Run `supabase-scripts/create-demo-user.sql` and `supabase-scripts/add-demo-dog.s
 **LogEntry Page:**
 - Unified page with two tabs: "Log Symptom" (default) and "Log Trigger"
 - Accessed via center + button in BottomNav
-- Vertical button layout (icon stacked above text) for better mobile UX
-- 2-column grid layout for all buttons
-- All icons use blue backgrounds (`bg-blue-500/600`) with white icons
+- Tab design: Active tab has blue background with white text, inactive tabs are gray
+- 2-column grid layout for all selection buttons
+- Button states: Unselected buttons are blue (`bg-blue-500 dark:bg-blue-600`), selected buttons turn gray with ring effect
+- Both symptom and trigger buttons support toggle behavior (click again to deselect)
+- Save buttons use `bg-blue-500` with `hover:bg-blue-600`
 
 **Dashboard:**
 - Added "Your Paws" pet switcher section at top (3 avatars per row, wraps for 4+ pets)
@@ -424,6 +426,10 @@ Run `supabase-scripts/create-demo-user.sql` and `supabase-scripts/add-demo-dog.s
 - Unbolded section titles for cleaner visual hierarchy
 - Shows "Add Your First Pet" empty state when user has no dogs (prevents infinite loading)
 - Loading state properly resets when no dog is selected
+- **Dynamic Recommendations**: Allergen recommendations now adapt based on real-time pollen and air quality data
+  - Good conditions (low pollen + good air): Encourages outdoor activities
+  - Poor conditions (high pollen OR poor air): Recommends limiting outdoor time, using air purifiers
+  - Moderate conditions: Suggests optimal walking times and basic precautions
 
 **Trigger Analysis:**
 - Modern design with large percentage display for most common trigger
@@ -454,6 +460,24 @@ Run `supabase-scripts/create-demo-user.sql` and `supabase-scripts/add-demo-dog.s
 - Returns permanent public URLs (replaces temporary blob URLs)
 - Default placeholder: Unsplash dog image (stable, non-random)
 - Login page input focus ring changed to dark blue (`focus:ring-blue-500`)
+
+**Profile Page:**
+- Pet card updated to match CreateDogProfile design with large hero-style image at top
+- Image covers full width (h-64) with gradient background fallback
+- Pet name and breed displayed below image with clear separation
+
+**CreateDogProfile Page:**
+- Edit and Delete buttons changed to side-by-side layout (instead of stacked)
+- Buttons use `flex-1` for equal width distribution
+- Text shortened to "Edit" and "Delete" to fit narrower width
+- Reduced padding and font size for more proportional appearance
+
+**BarcodeScannerModal:**
+- Fixed background transparency issues for better text readability
+- Results section now has solid white/gray backgrounds
+- Ingredient list container uses contrasting background with visible borders
+- All text colors updated for high contrast (`text-gray-900 dark:text-white`)
+- Allergen highlights use clear red coloring (`text-red-600 dark:text-red-400`)
 
 ## Known Issues & TODOs
 
