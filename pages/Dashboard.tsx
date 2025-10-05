@@ -177,29 +177,19 @@ const Dashboard: React.FC = () => {
                 <span className="text-xs text-cyan-600 dark:text-cyan-400 font-medium">Last 30 Days</span>
               </div>
 
-              {/* Simplified Visualization Area */}
-              <div className="bg-white/60 dark:bg-gray-900/30 rounded-lg p-4 mb-4 h-32 flex items-end justify-around gap-2">
-                {/* Simple bar visualization representing trigger frequency */}
-                {['FOOD', 'LOCATION', 'WEATHER', 'POLLEN', 'PRODUCTS'].map((label, index) => {
-                  const heights = [60, 45, 55, 75, 50];
-                  return (
-                    <div key={label} className="flex flex-col items-center flex-1">
-                      <div
-                        className="w-full bg-gradient-to-t from-cyan-500 to-blue-400 dark:from-cyan-600 dark:to-blue-500 rounded-t transition-all"
-                        style={{ height: `${heights[index]}%` }}
-                      />
-                      <span className="text-[9px] text-cyan-600 dark:text-cyan-400 font-medium mt-2 uppercase tracking-wider">
-                        {label}
-                      </span>
-                    </div>
-                  );
-                })}
+              {/* Static Graph Visualization */}
+              <div className="mb-4">
+                <img
+                  src="/assets/trigger-graph.png"
+                  alt="Trigger correlation graph"
+                  className="w-full h-auto"
+                />
               </div>
 
               {/* Action Button */}
               <button
                 onClick={() => navigate('/trigger-analysis')}
-                className="w-full bg-cyan-500 hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm"
+                className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm"
               >
                 View Detailed Analysis
               </button>
