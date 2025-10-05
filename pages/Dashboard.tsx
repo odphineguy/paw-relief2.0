@@ -93,6 +93,9 @@ const Dashboard: React.FC = () => {
         }
       };
       fetchData();
+    } else {
+      // No dog selected, stop loading
+      setLoading(false);
     }
   }, [selectedDog]);
 
