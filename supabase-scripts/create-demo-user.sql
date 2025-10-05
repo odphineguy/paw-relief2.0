@@ -1,13 +1,13 @@
--- Create demo user directly in Supabase auth
--- Email: demo@pawrelief.app
--- Password: password
--- This bypasses email confirmation
+/* Create demo user directly in Supabase auth
+   Email: demo@pawrelief.app
+   Password: password
+   This bypasses email confirmation */
 
--- First, delete the user if it already exists (to avoid conflicts)
+/* First, delete the user if it already exists (to avoid conflicts) */
 DELETE FROM auth.users WHERE email = 'demo@pawrelief.app';
 
--- Insert the demo user with confirmed email
--- The password is already hashed using Supabase's hash function
+/* Insert the demo user with confirmed email
+   The password is hashed using Supabase's crypt function */
 INSERT INTO auth.users (
   instance_id,
   id,
@@ -32,7 +32,7 @@ INSERT INTO auth.users (
   'authenticated',
   'authenticated',
   'demo@pawrelief.app',
-  crypt('password', gen_salt('bf')), -- This hashes the password 'password'
+  crypt('password', gen_salt('bf')),
   NOW(),
   NOW(),
   NOW(),
@@ -46,7 +46,7 @@ INSERT INTO auth.users (
   ''
 );
 
--- Confirm the user was created
+/* Confirm the user was created */
 SELECT id, email, email_confirmed_at, created_at
 FROM auth.users
 WHERE email = 'demo@pawrelief.app';
