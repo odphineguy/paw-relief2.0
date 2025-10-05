@@ -10,15 +10,25 @@ const LoginSignup: React.FC = () => {
     const [isSignUp, setIsSignUp] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [needsEmailConfirmation, setNeedsEmailConfirmation] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setNeedsEmailConfirmation(false);
         setLoading(true);
 
         try {
             if (isSignUp) {
-                await signUp(email, password);
+                const result = await signUp(email, password);
+
+                // Check if email confirmation is required
+                if (result && !result.session && result.user && !result.user.confirmed_at) {
+                    setNeedsEmailConfirmation(true);
+                    setLoading(false);
+                    return;
+                }
+
                 // Navigate to onboarding for new users
                 navigate('/onboarding');
             } else {
@@ -53,6 +63,14 @@ const LoginSignup: React.FC = () => {
                 {error && (
                     <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 rounded-lg text-red-700 dark:text-red-400 text-sm">
                         {error}
+                    </div>
+                )}
+
+                {needsEmailConfirmation && (
+                    <div className="mb-4 p-4 bg-blue-100 dark:bg-blue-900/30 border border-blue-400 dark:border-blue-700 rounded-lg text-blue-700 dark:text-blue-400 text-sm">
+                        <p className="font-semibold mb-2">📧 Check your email!</p>
+                        <p>We've sent a confirmation link to <strong>{email}</strong>. Please check your email and click the confirmation link to activate your account.</p>
+                        <p className="mt-2 text-xs">Can't find it? Check your spam folder.</p>
                     </div>
                 )}
 
@@ -135,6 +153,7 @@ const LoginSignup: React.FC = () => {
                             onClick={() => {
                                 setIsSignUp(!isSignUp);
                                 setError('');
+                                setNeedsEmailConfirmation(false);
                             }}
                             className="text-cyan-600 dark:text-cyan-400 hover:underline font-medium"
                         >
