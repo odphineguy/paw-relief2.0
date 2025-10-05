@@ -1,15 +1,16 @@
 # Scripts
 
-## Create Demo Account
+## Demo Accounts
 
-Creates a demo testing account for Paw Relief.
+### Simple Demo Account (Recommended for Testing)
+- Email: `demo@pawrelief.app`
+- Password: `password`
+- User ID: `9c10e955-c8f3-4b0c-b4ec-c738dacc4fdb`
 
-**Credentials:**
+### Original Demo Account
 - Email: `demo.pawrelief@gmail.com`
 - Password: `PawRelief2024!`
 - User ID: `be93c22b-115b-4b60-b37c-5a45e4a48394`
-
-**Note:** Currently using Gmail. Once pawrelief.app DNS is configured, you can create accounts with @pawrelief.app emails.
 
 **To run:**
 

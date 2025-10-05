@@ -76,12 +76,12 @@ const Testimonials: React.FC = () => {
                             </div>
 
                             {/* Testimonial Text */}
-                            <p className="text-gray-800 text-sm leading-relaxed mb-4">
+                            <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed mb-4">
                                 "{testimonial.text}"
                             </p>
 
                             {/* Author */}
-                            <p className="text-gray-600 text-sm italic">
+                            <p className="text-gray-600 dark:text-gray-400 text-sm italic">
                                 - {testimonial.author}
                             </p>
                         </div>
