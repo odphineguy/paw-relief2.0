@@ -619,8 +619,26 @@ const Dashboard: React.FC = () => {
           </section>
         </div>
       ) : (
-        <div className="flex justify-center items-center h-64">
-          <p className="text-foreground-light dark:text-foreground-dark">Please select a dog to view dashboard</p>
+        <div className="flex flex-col items-center justify-center h-64 px-6">
+          <div className="text-center mb-6">
+            <div className="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-12 h-12 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-foreground-light dark:text-foreground-dark mb-2">
+              Add Your First Pet
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Start tracking your dog's allergies and symptoms
+            </p>
+            <button
+              onClick={() => navigate('/create-dog-profile')}
+              className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+            >
+              Add Your Dog
+            </button>
+          </div>
         </div>
       )}
     </div>
