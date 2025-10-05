@@ -15,19 +15,8 @@ const LoginSignup: React.FC = () => {
     return (
         <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark">
             {/* Dog Illustration Header */}
-            <div className="w-full h-64 bg-orange-200 dark:bg-orange-300 overflow-hidden">
-                <img
-                    src="/assets/pet-images/login.png"
-                    alt="Happy dog"
-                    className="w-full h-full object-cover"
-                    onLoad={() => console.log('Login image loaded successfully')}
-                    onError={(e) => {
-                        console.error('Login image failed to load:', e);
-                        console.error('Image src:', e.currentTarget.src);
-                        // Hide the broken image
-                        e.currentTarget.style.display = 'none';
-                    }}
-                />
+            <div className="w-full h-64 bg-orange-200 dark:bg-orange-300 flex items-center justify-center">
+                {/* Boxer image will be added here */}
             </div>
 
             {/* Login Form */}
