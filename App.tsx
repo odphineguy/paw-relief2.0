@@ -20,7 +20,6 @@ import Login from './pages/Login';
 import CreateDogProfile from './pages/CreateDogProfile';
 import TriggerDetective from './pages/TriggerDetective';
 import TriggerAnalysis from './pages/TriggerAnalysis';
-import AllergenAlerts from './pages/AllergenAlerts';
 import LogEntry from './pages/LogEntry';
 import Splash from './pages/Splash';
 import Testimonials from './pages/Testimonials';
@@ -66,9 +65,8 @@ const App: React.FC = () => {
                                     <Route path="/user-guides" element={<UserGuides />} />
                                     <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
                                     <Route path="/create-dog-profile" element={<CreateDogProfile />} />
-                                    <Route path="/trigger-detective" element={<TriggerDetective />} />
-                                    <Route path="/trigger-analysis" element={<TriggerAnalysis />} />
-                                    <Route path="/allergen-alerts" element={<AllergenAlerts />} />
+                    <Route path="/trigger-detective" element={<TriggerDetective />} />
+                    <Route path="/trigger-analysis" element={<TriggerAnalysis />} />
                                 </Routes>
                             </div>
                         </main>

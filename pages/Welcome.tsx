@@ -17,33 +17,80 @@ const Welcome: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Dog Illustration */}
-                <div className="w-full bg-orange-100 dark:bg-orange-200 py-8 flex items-center justify-center">
-                    <img
-                        src="/assets/Lucy.png"
-                        alt="Happy dog"
-                        className="w-48 h-48 object-contain"
-                    />
-                </div>
-
-                {/* Premium Card */}
+                {/* Subscription Comparison */}
                 <div className="px-6">
                     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                            Go Premium
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+                            Choose Your Plan
                         </h3>
-                        <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            $9.99/month
-                        </p>
-                        <p className="text-cyan-600 dark:text-cyan-400 mb-4">
-                            Unlock advanced features and personalized support
-                        </p>
-                        <button
-                            onClick={() => navigate('/subscription')}
-                            className="bg-cyan-400 hover:bg-cyan-500 text-white font-bold py-3 px-6 rounded-xl transition-colors"
-                        >
-                            Subscribe
-                        </button>
+
+                        {/* Feature Comparison Table */}
+                        <div className="space-y-4 mb-6">
+                            <div className="grid grid-cols-3 gap-2 text-sm font-medium text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
+                                <div>Feature</div>
+                                <div className="text-center">Basic</div>
+                                <div className="text-center">Premium</div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                <div>Symptom Tracking</div>
+                                <div className="text-center">✓</div>
+                                <div className="text-center">✓</div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                <div>Trigger Analysis</div>
+                                <div className="text-center">Basic</div>
+                                <div className="text-center font-semibold text-cyan-600 dark:text-cyan-400">Advanced</div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                <div>Medication Reminders</div>
+                                <div className="text-center">Basic</div>
+                                <div className="text-center font-semibold text-cyan-600 dark:text-cyan-400">Advanced</div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                <div>Vet Report Generation</div>
+                                <div className="text-center">Basic</div>
+                                <div className="text-center font-semibold text-cyan-600 dark:text-cyan-400">Premium</div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                <div>Priority Support</div>
+                                <div className="text-center">Basic</div>
+                                <div className="text-center font-semibold text-cyan-600 dark:text-cyan-400">Priority</div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                <div>Unlimited Symptom Tracking</div>
+                                <div className="text-center">-</div>
+                                <div className="text-center font-semibold text-cyan-600 dark:text-cyan-400">✓</div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                <div>Advanced Analytics</div>
+                                <div className="text-center">-</div>
+                                <div className="text-center font-semibold text-cyan-600 dark:text-cyan-400">✓</div>
+                            </div>
+                        </div>
+
+                        {/* Pricing Section */}
+                        <div className="text-center">
+                            <div className="mb-4">
+                                <span className="text-3xl font-bold text-gray-900 dark:text-white">$9.99</span>
+                                <span className="text-base text-gray-600 dark:text-gray-400">/month</span>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    alert('Premium subscription feature coming soon!');
+                                    navigate('/dashboard');
+                                }}
+                                className="bg-cyan-400 hover:bg-cyan-500 text-white font-bold py-3 px-8 rounded-xl transition-colors shadow-sm"
+                            >
+                                Subscribe Now
+                            </button>
+                        </div>
                     </div>
                 </div>
 
