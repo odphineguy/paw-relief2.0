@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Lottie from 'lottie-react';
+import pawLoaderAnimation from '../public/assets/animations/Paw Loader.json';
 
 const Splash: React.FC = () => {
     const navigate = useNavigate();
@@ -15,10 +17,12 @@ const Splash: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-green-100 to-green-50 dark:from-green-900 dark:to-green-800 p-6">
-            {/* Dog Illustration Placeholder */}
-            <div className="w-64 h-64 rounded-full bg-green-200 dark:bg-green-700 flex items-center justify-center mb-8 overflow-hidden">
-                {/* Placeholder for dog illustration */}
-                <div className="text-6xl">🐕</div>
+            {/* Paw Loader Animation */}
+            <div className="w-64 h-64 mb-8">
+                <Lottie
+                    animationData={pawLoaderAnimation}
+                    loop={true}
+                />
             </div>
 
             {/* App Name */}

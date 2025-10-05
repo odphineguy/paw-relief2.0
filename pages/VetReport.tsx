@@ -103,7 +103,7 @@ const VetReport: React.FC = () => {
                 pdf.setFont('helvetica', 'normal');
                 pdf.setTextColor(100, 200, 220);
                 pdf.text(`Last ${dateRange === '7d' ? '7' : dateRange === '90d' ? '90' : '30'} Days`, 20, yPos);
-                yPos += 15;
+                yPos += 20;
 
                 // Bar chart
                 if (filteredLogs.length > 0) {
@@ -127,24 +127,25 @@ const VetReport: React.FC = () => {
                         barX += barWidth + barSpacing;
                     });
 
-                    yPos += maxBarHeight + 8;
+                    yPos += maxBarHeight + 5;
 
                     // Labels below bars
                     barX = 20;
                     pdf.setFontSize(8);
                     pdf.setTextColor(100, 200, 220);
                     Object.entries(symptomCounts).forEach(([symptom]) => {
-                        pdf.text(symptom, barX + barWidth/2, yPos, { align: 'center', maxWidth: barWidth });
+                        const lines = pdf.splitTextToSize(symptom, barWidth);
+                        pdf.text(lines, barX + barWidth/2, yPos, { align: 'center' });
                         barX += barWidth + barSpacing;
                     });
 
-                    yPos += 15;
+                    yPos += 20;
                 }
             }
 
             // Suspected Triggers
             if (reportOptions.suspectedTriggers) {
-                if (yPos > 220) {
+                if (yPos > 200) {
                     pdf.addPage();
                     yPos = 20;
                 }
@@ -196,7 +197,7 @@ const VetReport: React.FC = () => {
 
             // Medications Given
             if (reportOptions.medicationAdherence) {
-                if (yPos > 220) {
+                if (yPos > 200) {
                     pdf.addPage();
                     yPos = 20;
                 }
@@ -250,7 +251,7 @@ const VetReport: React.FC = () => {
 
             // Symptom Timeline
             if (reportOptions.symptomFrequency && filteredLogs.length > 0) {
-                if (yPos > 200) {
+                if (yPos > 180) {
                     pdf.addPage();
                     yPos = 20;
                 }
