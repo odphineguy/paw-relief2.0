@@ -43,11 +43,19 @@ const Profile: React.FC = () => {
                     <div className="p-4 space-y-6">
                         {/* Consolidated Pet Profile Card */}
                         <div className="bg-card-light dark:bg-card-dark rounded-2xl overflow-hidden shadow-lg">
-                            {/* Pet Image and Name Section */}
-                            <div className="p-6 flex flex-col items-center border-b border-border-light dark:border-border-dark">
-                                <img src={selectedDog.photoUrl} alt={selectedDog.name} className="w-32 h-32 rounded-full object-cover border-4 border-primary shadow-lg" />
-                                <h2 className="text-3xl font-bold mt-4 text-foreground-light dark:text-foreground-dark">{selectedDog.name}</h2>
-                                <p className="text-gray-500 dark:text-gray-400 text-lg">{selectedDog.breed}</p>
+                            {/* Pet Image - Large Hero Style */}
+                            <div className="relative h-64 bg-gradient-to-br from-primary/20 to-primary/5">
+                                <img
+                                    src={selectedDog.photoUrl}
+                                    alt={selectedDog.name}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+
+                            {/* Pet Name and Breed */}
+                            <div className="px-6 pt-6 pb-4 border-b border-border-light dark:border-border-dark">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{selectedDog.name}</h2>
+                                <p className="text-gray-600 dark:text-gray-400 text-lg">{selectedDog.breed}</p>
                             </div>
 
                             {/* Pet Details Section */}

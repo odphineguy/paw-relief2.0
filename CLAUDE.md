@@ -45,6 +45,10 @@ npm run preview         # Preview production build
 - All CRUD operations in `services/api.ts`
 - Database uses snake_case, app uses camelCase (mapping in api.ts)
 - User ID obtained from authenticated session via `supabase.auth.getUser()`
+- **Image Storage**: Supabase Storage bucket `pet-photos` for persistent pet profile photos
+  - Upload function: `uploadPetImage(file, petName)` in `services/api.ts`
+  - Returns permanent public URLs (not temporary blob URLs)
+  - Bucket policies: Public read, authenticated insert/delete
 
 ### Key Database Schema Mappings
 
@@ -272,6 +276,21 @@ await addReminder({
 });
 ```
 
+**Uploading Pet Images:**
+```typescript
+import { uploadPetImage } from '../services/api';
+
+// Upload image file and get permanent URL
+const photoUrl = await uploadPetImage(imageFile, petName);
+
+// Use the returned URL when creating/updating dog profile
+await addDog({
+    name: 'Buddy',
+    photoUrl: photoUrl,
+    // ... other fields
+});
+```
+
 **PDF Generation (Vet Reports):**
 ```typescript
 import jsPDF from 'jspdf';
@@ -340,6 +359,13 @@ const { theme, toggleTheme } = useTheme();
 - `trigger_logs` - Standalone trigger entries (type, location, notes)
 - `reminders` - Medications and treatments
 - `products` - Barcode scanned product cache
+
+**Supabase Storage:**
+- Bucket: `pet-photos` (public)
+- Policies:
+  - SELECT: Public access (anyone can view)
+  - INSERT: Authenticated users only
+  - DELETE: Users can delete their own images (organized by user_id folders)
 
 **Demo Account Setup:**
 Run `supabase-scripts/create-demo-user.sql` and `supabase-scripts/add-demo-dog.sql` in Supabase SQL Editor to create a test account without triggering email confirmation.
@@ -422,11 +448,17 @@ Run `supabase-scripts/create-demo-user.sql` and `supabase-scripts/add-demo-dog.s
 - Blue notification badge on pet avatar shows count of overdue medications
 - Updates automatically when switching pets
 
+**Pet Photo Management:**
+- Implemented Supabase Storage for persistent photo uploads
+- Photos uploaded via `uploadPetImage()` in `services/api.ts`
+- Returns permanent public URLs (replaces temporary blob URLs)
+- Default placeholder: Unsplash dog image (stable, non-random)
+- Login page input focus ring changed to dark blue (`focus:ring-blue-500`)
+
 ## Known Issues & TODOs
 
 - Pollen data is estimated from AQI (no dedicated pollen API integrated)
 - Some pet food products may not be in OpenFoodFacts database
-- Photo upload functionality not implemented (placeholder removed to avoid random images)
 - Symptom logger currently saves triggers as empty array (trigger UI not connected)
 - Trigger graph on Dashboard is static image - needs to be made dynamic with real data
 - Boxer image on login page is 17MB and loads slowly (needs optimization to ~200KB)

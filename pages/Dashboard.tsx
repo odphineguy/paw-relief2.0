@@ -501,20 +501,74 @@ const Dashboard: React.FC = () => {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground-light dark:text-foreground-dark">Recommendations</h3>
 
-              <RecommendationCard
-                icon={PawPrintIcon}
-                text="Wipe paws after walks to remove pollen."
-              />
+              {weather && (() => {
+                const pollenLevel = Math.min(10, Math.round((weather.aqi / 15) * 1.2));
+                const aqi = weather.aqi;
+                const recommendations = [];
 
-              <RecommendationCard
-                icon={HourglassIcon}
-                text="Limit outdoor time during peak pollen hours."
-              />
+                // Determine pollen severity
+                const isHighPollen = pollenLevel >= 7;
+                const isModeratePollen = pollenLevel >= 4 && pollenLevel < 7;
+                const isLowPollen = pollenLevel < 4;
 
-              <RecommendationCard
-                icon={AirPurifierIcon}
-                text="Use an air purifier indoors to filter allergens."
-              />
+                // Determine air quality severity
+                const isPoorAir = aqi >= 100;
+                const isModerateAir = aqi >= 50 && aqi < 100;
+                const isGoodAir = aqi < 50;
+
+                // Generate recommendations based on conditions
+                if (isLowPollen && isGoodAir) {
+                  // Great conditions
+                  recommendations.push({
+                    icon: SunIcon,
+                    text: "Perfect day for outdoor activities with your pup!"
+                  });
+                  recommendations.push({
+                    icon: PawPrintIcon,
+                    text: "Enjoy longer walks - allergen levels are low today."
+                  });
+                  recommendations.push({
+                    icon: HourglassIcon,
+                    text: "Consider visiting the dog park or trying a new trail."
+                  });
+                } else if (isHighPollen || isPoorAir) {
+                  // Poor conditions
+                  recommendations.push({
+                    icon: HourglassIcon,
+                    text: isHighPollen ? "High pollen alert - limit outdoor time to short potty breaks." : "Poor air quality - keep outdoor activities brief."
+                  });
+                  recommendations.push({
+                    icon: PawPrintIcon,
+                    text: "Wipe paws and coat after walks to remove allergens."
+                  });
+                  recommendations.push({
+                    icon: AirPurifierIcon,
+                    text: "Run air purifiers indoors and keep windows closed."
+                  });
+                } else {
+                  // Moderate conditions
+                  recommendations.push({
+                    icon: HourglassIcon,
+                    text: isModeratePollen ? "Moderate pollen - walk during early morning or evening." : "Moderate air quality - monitor your dog for symptoms."
+                  });
+                  recommendations.push({
+                    icon: PawPrintIcon,
+                    text: "Wipe paws after walks to remove pollen and allergens."
+                  });
+                  recommendations.push({
+                    icon: AirPurifierIcon,
+                    text: "Use air purifiers in main living areas."
+                  });
+                }
+
+                return recommendations.map((rec, index) => (
+                  <RecommendationCard
+                    key={index}
+                    icon={rec.icon}
+                    text={rec.text}
+                  />
+                ));
+              })()}
             </div>
           </section>
 

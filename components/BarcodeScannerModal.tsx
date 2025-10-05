@@ -181,37 +181,37 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
         switch (status) {
             case 'scanning':
                 return (
-                    <div className="text-center p-4">
+                    <div className="text-center p-4 bg-white dark:bg-gray-800">
                         <div id="barcode-scanner" className="w-full rounded-lg overflow-hidden"></div>
-                        <p className="mt-4 font-semibold text-text-200 dark:text-text-100">Scanning for barcode...</p>
+                        <p className="mt-4 font-semibold text-gray-900 dark:text-white">Scanning for barcode...</p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">Please center the barcode in the frame.</p>
                     </div>
                 );
             case 'result':
                 if (!product) return null;
                 return (
-                    <div className="p-6">
+                    <div className="p-6 bg-white dark:bg-gray-800">
                         <div className="flex items-center space-x-4 mb-4">
                              <img src={product.imageUrl} alt={product.name} className="w-20 h-20 rounded-lg object-cover" />
                              <div>
-                                <h3 className="text-lg font-bold text-text-200 dark:text-text-100">{product.name}</h3>
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{product.name}</h3>
                                 {allergens.length > 0 ? (
-                                    <div className="mt-1 flex items-center text-red-500">
+                                    <div className="mt-1 flex items-center text-red-600 dark:text-red-400">
                                         <AlertTriangleIcon className="w-5 h-5 mr-1" />
                                         <span className="font-semibold">{allergens.length} potential allergen(s) found.</span>
                                     </div>
                                 ) : (
-                                    <p className="text-green-600 font-semibold mt-1">No known allergens found for {selectedDog?.name}.</p>
+                                    <p className="text-green-600 dark:text-green-400 font-semibold mt-1">No known allergens found for {selectedDog?.name}.</p>
                                 )}
                              </div>
                         </div>
-                        <div className="h-48 overflow-y-auto bg-bg-200 dark:bg-bg-200 p-3 rounded-lg">
-                            <h4 className="font-bold mb-2 text-text-200 dark:text-text-100">Ingredients:</h4>
+                        <div className="h-48 overflow-y-auto bg-gray-50 dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600">
+                            <h4 className="font-bold mb-2 text-gray-900 dark:text-white">Ingredients:</h4>
                             <ul className="space-y-1 text-sm">
                                 {product.ingredients.map((item, index) => {
                                     const isAllergen = allergens.some(a => item.toLowerCase().includes(a.toLowerCase()));
                                     return (
-                                        <li key={index} className={`flex items-center ${isAllergen ? 'text-red-500 font-bold' : 'text-text-200 dark:text-text-200'}`}>
+                                        <li key={index} className={`flex items-center ${isAllergen ? 'text-red-600 dark:text-red-400 font-bold' : 'text-gray-700 dark:text-gray-300'}`}>
                                             {isAllergen && <AlertTriangleIcon className="w-4 h-4 mr-2 flex-shrink-0" />}
                                             {item}
                                         </li>
@@ -236,21 +236,21 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-bg-100 dark:bg-bg-100 rounded-2xl shadow-xl w-full max-w-md flex flex-col">
-                <div className="p-4 border-b border-bg-200 dark:border-bg-300 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-text-200 dark:text-text-100">Ingredient Checker</h2>
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md flex flex-col">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Ingredient Checker</h2>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"><XIcon /></button>
                 </div>
-                
+
                 <div className="flex-grow">
                     {renderContent()}
                 </div>
 
                 {status === 'result' || status === 'error' ? (
-                    <div className="p-4 border-t border-bg-200 dark:border-bg-300">
+                    <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                         <button
                             onClick={handleScanAgain}
-                            className="w-full bg-accent-200 text-white font-bold py-3 px-4 rounded-lg hover:bg-accent-100 transition-colors"
+                            className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
                         >
                             Scan Again
                         </button>

@@ -216,20 +216,20 @@ const LogEntry: React.FC = () => {
                 <div className="flex border-b border-gray-200 dark:border-gray-700">
                     <button
                         onClick={() => setActiveTab('symptom')}
-                        className={`flex-1 py-3 text-center font-semibold transition-colors ${
+                        className={`flex-1 py-3 text-center font-semibold transition-all ${
                             activeTab === 'symptom'
-                                ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                                ? 'text-white bg-blue-600 dark:bg-blue-500 border-b-2 border-blue-600 dark:border-blue-500'
+                                : 'text-gray-500 dark:text-gray-400 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800'
                         }`}
                     >
                         Log Symptom
                     </button>
                     <button
                         onClick={() => setActiveTab('trigger')}
-                        className={`flex-1 py-3 text-center font-semibold transition-colors ${
+                        className={`flex-1 py-3 text-center font-semibold transition-all ${
                             activeTab === 'trigger'
-                                ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                                ? 'text-white bg-blue-600 dark:bg-blue-500 border-b-2 border-blue-600 dark:border-blue-500'
+                                : 'text-gray-500 dark:text-gray-400 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800'
                         }`}
                     >
                         Log Trigger
@@ -248,13 +248,15 @@ const LogEntry: React.FC = () => {
                                             key={symptom}
                                             type="button"
                                             onClick={() => handleSymptomToggle(symptom)}
-                                            className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-colors ${
+                                            className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-all ${
                                                 selectedSymptoms.has(symptom)
-                                                    ? 'bg-blue-600 text-white'
-                                                    : 'bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700'
+                                                    ? 'bg-blue-600 dark:bg-blue-500 text-white ring-2 ring-blue-400 dark:ring-blue-300 scale-105'
+                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                                             }`}
                                         >
-                                            <div className="flex-shrink-0 text-white">
+                                            <div className={`flex-shrink-0 ${
+                                                selectedSymptoms.has(symptom) ? 'text-white' : 'text-gray-600 dark:text-gray-400'
+                                            }`}>
                                                 {getSymptomIcon(symptom)}
                                             </div>
                                             <span className="font-medium text-sm text-center">{symptom}</span>
@@ -369,13 +371,15 @@ const LogEntry: React.FC = () => {
                                             key={trigger.id}
                                             type="button"
                                             onClick={() => setSelectedTriggerType(trigger.type)}
-                                            className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-colors ${
+                                            className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-all ${
                                                 selectedTriggerType === trigger.type
-                                                    ? 'bg-blue-600 text-white'
-                                                    : 'bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700'
+                                                    ? 'bg-blue-600 dark:bg-blue-500 text-white ring-2 ring-blue-400 dark:ring-blue-300 scale-105'
+                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                                             }`}
                                         >
-                                            <div className="flex-shrink-0 text-white">
+                                            <div className={`flex-shrink-0 ${
+                                                selectedTriggerType === trigger.type ? 'text-white' : 'text-gray-600 dark:text-gray-400'
+                                            }`}>
                                                 {trigger.icon}
                                             </div>
                                             <span className="font-medium text-sm text-center">{trigger.title}</span>
