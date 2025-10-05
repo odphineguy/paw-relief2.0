@@ -34,10 +34,12 @@ const Welcome: React.FC = () => {
                 </div>
 
                 {/* Dog Illustration */}
-                <div className="w-full bg-orange-100 dark:bg-orange-200 p-8 flex items-center justify-center">
-                    <div className="w-40 h-40 rounded-full bg-orange-200 dark:bg-orange-300 flex items-center justify-center">
-                        <div className="text-7xl">🐕</div>
-                    </div>
+                <div className="w-full bg-orange-100 dark:bg-orange-200 py-8 flex items-center justify-center">
+                    <img
+                        src="/assets/Lucy.png"
+                        alt="Happy dog"
+                        className="w-48 h-48 object-contain"
+                    />
                 </div>
 
                 {/* Premium Card */}

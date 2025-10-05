@@ -50,7 +50,7 @@ const Onboarding: React.FC = () => {
                     <img
                         src={slides[currentSlide].image}
                         alt={slides[currentSlide].title}
-                        className="max-h-full max-w-full object-contain p-4"
+                        className="w-full h-full object-cover"
                     />
                 </div>
 
