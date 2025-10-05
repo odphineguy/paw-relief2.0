@@ -125,6 +125,14 @@ const LogEntry: React.FC = () => {
         setSelectedSymptoms(newSelection);
     };
 
+    const handleTriggerToggle = (triggerType: TriggerType) => {
+        if (selectedTriggerType === triggerType) {
+            setSelectedTriggerType(null);
+        } else {
+            setSelectedTriggerType(triggerType);
+        }
+    };
+
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const newPhotos = Array.from(e.target.files);
@@ -250,12 +258,12 @@ const LogEntry: React.FC = () => {
                                             onClick={() => handleSymptomToggle(symptom)}
                                             className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-all ${
                                                 selectedSymptoms.has(symptom)
-                                                    ? 'bg-blue-600 dark:bg-blue-500 text-white ring-2 ring-blue-400 dark:ring-blue-300 scale-105'
-                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 ring-2 ring-gray-300 dark:ring-gray-600 scale-105'
+                                                    : 'bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700'
                                             }`}
                                         >
                                             <div className={`flex-shrink-0 ${
-                                                selectedSymptoms.has(symptom) ? 'text-white' : 'text-gray-600 dark:text-gray-400'
+                                                selectedSymptoms.has(symptom) ? 'text-gray-600 dark:text-gray-400' : 'text-white'
                                             }`}>
                                                 {getSymptomIcon(symptom)}
                                             </div>
@@ -370,15 +378,15 @@ const LogEntry: React.FC = () => {
                                         <button
                                             key={trigger.id}
                                             type="button"
-                                            onClick={() => setSelectedTriggerType(trigger.type)}
+                                            onClick={() => handleTriggerToggle(trigger.type)}
                                             className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-all ${
                                                 selectedTriggerType === trigger.type
-                                                    ? 'bg-blue-600 dark:bg-blue-500 text-white ring-2 ring-blue-400 dark:ring-blue-300 scale-105'
-                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 ring-2 ring-gray-300 dark:ring-gray-600 scale-105'
+                                                    : 'bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700'
                                             }`}
                                         >
                                             <div className={`flex-shrink-0 ${
-                                                selectedTriggerType === trigger.type ? 'text-white' : 'text-gray-600 dark:text-gray-400'
+                                                selectedTriggerType === trigger.type ? 'text-gray-600 dark:text-gray-400' : 'text-white'
                                             }`}>
                                                 {trigger.icon}
                                             </div>
