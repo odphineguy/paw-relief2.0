@@ -15,14 +15,16 @@ const LoginSignup: React.FC = () => {
     return (
         <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark">
             {/* Dog Illustration Header */}
-            <div className="w-full h-64 bg-orange-200 dark:bg-orange-300 flex items-center justify-center overflow-hidden">
+            <div className="w-full h-64 bg-orange-200 dark:bg-orange-300 overflow-hidden">
                 <img
-                    src="/assets/pet-images/login.png"
-                    alt="Happy dog"
+                    src="/assets/pet-images/boxerLogin.jpeg"
+                    alt="Boxer dog"
                     className="w-full h-full object-cover"
+                    onLoad={() => console.log('Boxer image loaded successfully')}
                     onError={(e) => {
-                        console.log('Image failed to load:', e);
-                        // Fallback to a simple background if image fails
+                        console.error('Boxer image failed to load:', e);
+                        console.error('Image src:', e.currentTarget.src);
+                        // Hide the broken image
                         e.currentTarget.style.display = 'none';
                     }}
                 />
