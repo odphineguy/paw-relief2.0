@@ -5,6 +5,7 @@ import { Dog } from '../types';
 import Header from '../components/Header';
 import { ArrowLeftIcon, DogIcon } from '../components/icons';
 import { format } from 'date-fns';
+import { uploadPetImage } from '../services/api';
 
 const CreateDogProfile: React.FC = () => {
     const navigate = useNavigate();
@@ -121,26 +122,20 @@ const CreateDogProfile: React.FC = () => {
 
         try {
             let finalPhotoUrl = formData.photoUrl;
-            
+
             // Handle image upload if a new image was selected
             if (selectedImage) {
-                // Create a unique filename
-                const timestamp = Date.now();
-                const fileExtension = selectedImage.name.split('.').pop();
-                const fileName = `${formData.name.replace(/\s+/g, '_')}_${timestamp}.${fileExtension}`;
-                
-                // For now, we'll use a placeholder URL. In a real app, you'd upload to a server
-                // or use a service like AWS S3, Cloudinary, etc.
-                finalPhotoUrl = `/assets/pet-images/${fileName}`;
-                
-                // In a real application, you would upload the file here
-                // For now, we'll just use the preview URL or a placeholder
-                if (imagePreview) {
-                    finalPhotoUrl = imagePreview;
+                try {
+                    // Upload to Supabase Storage and get permanent URL
+                    finalPhotoUrl = await uploadPetImage(selectedImage, formData.name);
+                } catch (uploadError) {
+                    console.error('Failed to upload image:', uploadError);
+                    alert('Failed to upload image. Using default placeholder.');
+                    finalPhotoUrl = 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&h=400&fit=crop';
                 }
-            } else if (!formData.photoUrl) {
-                // Use placeholder if no image provided
-                finalPhotoUrl = 'https://picsum.photos/seed/' + formData.name + '/200/200';
+            } else if (!formData.photoUrl && editingDog) {
+                // Keep existing photo when editing
+                finalPhotoUrl = editingDog.photoUrl;
             }
 
             const dogData = {

@@ -12,6 +12,36 @@ const getCurrentUserId = async (): Promise<string> => {
   return user.id;
 };
 
+// Helper function to upload image to Supabase Storage
+export const uploadPetImage = async (file: File, petName: string): Promise<string> => {
+  const userId = await getCurrentUserId();
+
+  // Create unique filename with timestamp
+  const timestamp = Date.now();
+  const fileExtension = file.name.split('.').pop();
+  const fileName = `${userId}/${petName.replace(/\s+/g, '_')}_${timestamp}.${fileExtension}`;
+
+  // Upload to Supabase Storage
+  const { data, error } = await supabase.storage
+    .from('pet-photos')
+    .upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
+
+  if (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
+
+  // Get public URL
+  const { data: { publicUrl } } = supabase.storage
+    .from('pet-photos')
+    .getPublicUrl(data.path);
+
+  return publicUrl;
+};
+
 // ===== DOG FUNCTIONS =====
 
 export const getDogs = async (): Promise<Dog[]> => {
@@ -51,7 +81,7 @@ export const addDog = async (dog: Omit<Dog, 'id'> & { id?: string }): Promise<Do
     breed: dog.breed,
     age: dog.age,
     weight: dog.weight,
-    photo_url: dog.photoUrl || `https://picsum.photos/seed/${dog.name}/200/200`,
+    photo_url: dog.photoUrl || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&h=400&fit=crop',
     known_allergies: dog.knownAllergies || [],
     birthday: dog.birthday,
   };
