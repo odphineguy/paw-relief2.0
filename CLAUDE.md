@@ -21,12 +21,21 @@ npm run preview         # Preview production build
 
 ### Data Flow & State Management
 
-**Context Providers** (App.tsx wraps everything):
-- `ThemeProvider` - Manages light/dark mode (persisted to localStorage)
-- `DogProvider` - Central state for dogs, selected dog, and CRUD operations
+**Context Providers** (App.tsx wraps everything in this order):
+1. `ThemeProvider` - Manages light/dark mode (persisted to localStorage)
+2. `AuthProvider` - Manages user authentication and session state
+3. `DogProvider` - Central state for dogs, selected dog, and CRUD operations
+
+**AuthContext Pattern:**
+- Manages Supabase authentication state (user, session, loading)
+- Provides `signIn`, `signUp`, and `signOut` methods
+- Sessions persisted to localStorage for automatic login
+- All pages that require auth are wrapped in `ProtectedRoute` component
+- Access via `const { user, session, signIn, signUp, signOut } = useAuth()`
 
 **DogContext Pattern:**
 - Single source of truth for all dog data
+- Waits for auth to load before fetching dogs (prevents errors)
 - Automatically selects first dog on initial load
 - All pages access via `const { selectedDog, dogs, addDog } = useDogs()`
 - `selectedDog` determines what data is shown across all pages
@@ -35,7 +44,7 @@ npm run preview         # Preview production build
 - Backend: Supabase PostgreSQL database
 - All CRUD operations in `services/api.ts`
 - Database uses snake_case, app uses camelCase (mapping in api.ts)
-- Current user: Hardcoded temporary user ID (`00000000-0000-0000-0000-000000000001`) until auth is implemented
+- User ID obtained from authenticated session via `supabase.auth.getUser()`
 
 ### Key Database Schema Mappings
 
@@ -66,7 +75,7 @@ created_at             →  createdAt
 **Onboarding Flow Pages:**
 - **Splash** (`/splash`) - Lottie animation, auto-navigates to testimonials after 3.5 seconds
 - **Testimonials** (`/testimonials`) - Horizontal scrollable testimonial cards (6 breed-specific images) with "Get Started" button
-- **LoginSignup** (`/login`) - Email/password form with social auth UI placeholders (no actual authentication)
+- **LoginSignup** (`/login`) - Email/password form with Supabase authentication, toggles between sign-in and sign-up modes
 - **Onboarding** (`/onboarding`) - 3-slide carousel with images (Welcome, Symptom Tracker, Trigger Detective)
 - **Welcome** (`/welcome`) - Post-onboarding welcome with premium subscription upsell
 - **Subscription** (`/subscription`) - 2-column feature comparison grid and pricing page ($9.99/month)
@@ -75,8 +84,10 @@ created_at             →  createdAt
 - Uses HashRouter for GitHub Pages compatibility
 - Mobile-first design (max-width: 448px container)
 - All routes defined in App.tsx
-- Onboarding flow: Splash → Testimonials → Login → Onboarding → Welcome → Subscription → Dashboard
-- Testers can access onboarding without signup (authentication is placeholder UI only)
+- **Protected routes**: Dashboard, Logs, Meds, Profile, and all settings pages require authentication
+- **Public routes**: Splash, Testimonials, Login, Onboarding, Welcome, Subscription
+- Onboarding flow: Splash → Testimonials → Login/Signup → Onboarding → Welcome → Subscription → Dashboard
+- Unauthenticated users are redirected to `/splash`
 
 ### External APIs & Services
 
@@ -102,6 +113,7 @@ created_at             →  createdAt
 - `icons.tsx` - All SVG icons exported as React components
 - `BottomNav.tsx` - Persistent bottom navigation (center + button navigates to `/log-entry`)
 - `Header.tsx` - Page headers with back button and notification badges for overdue medications
+- `ProtectedRoute.tsx` - Guards routes that require authentication, shows loading spinner, redirects to `/splash` if not authenticated
 - `BarcodeScannerModal.tsx` - Camera-based barcode scanner
 - `SymptomLoggerModal.tsx` - Legacy modal (deprecated in favor of LogEntry page)
 - `TriggerLoggerModal.tsx` - Modal for logging standalone triggers (used in TriggerDetective)
@@ -135,6 +147,9 @@ export const NewIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6
 - Pet avatars: 80px diameter (w-20 h-20), rounded-full, with conditional blue/gray borders based on selection
 - Modern card design: `rounded-2xl` with `shadow-sm`, softer borders, cleaner spacing
 - Interactive elements use blue hover states and smooth transitions
+- All primary buttons use deep blue (`bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700`)
+- Error messages: red background with border, success/info messages: blue background with border
+- Empty states: Show friendly call-to-action with icon, title, description, and prominent button
 
 ### Environment Variables
 
@@ -200,10 +215,25 @@ import { format } from 'date-fns';
 format(new Date(dog.birthday), 'MMMM d, yyyy')
 ```
 
+**Authentication:**
+```typescript
+import { useAuth } from '../context/AuthContext';
+const { user, session, signIn, signUp, signOut } = useAuth();
+
+// Sign in
+await signIn('email@example.com', 'password');
+
+// Sign up
+await signUp('email@example.com', 'password');
+
+// Sign out
+await signOut();
+```
+
 **API Calls:**
 ```typescript
 import { getDogs, addDog, getSymptomLogs, getTriggerLogs, addTriggerLog } from '../services/api';
-const dogs = await getDogs();
+const dogs = await getDogs(); // Automatically uses authenticated user ID
 const triggers = await getTriggerLogs(dogId);
 ```
 
@@ -294,7 +324,9 @@ const { theme, toggleTheme } = useTheme();
 
 ## Database Management
 
-**SQL Scripts:**
+**SQL Scripts** (`supabase-scripts/`):
+- `create-demo-user.sql` - Creates demo account (demo@pawrelief.app / password) directly in auth.users table
+- `add-demo-dog.sql` - Adds sample dog "Buddy" for demo user
 - `supabase-migration.sql` - Initial database schema setup
 - `fix-rls-policies.sql` - Row Level Security policy fixes
 - `seed-database.sql` - Sample data for testing
@@ -302,11 +334,15 @@ const { theme, toggleTheme } = useTheme();
 - `clear-symptom-logs.sql` - Delete all symptom logs
 
 **Database Tables:**
-- `dogs` - Pet profiles
+- `auth.users` - Supabase authentication users
+- `dogs` - Pet profiles (linked to user_id)
 - `symptom_logs` - Symptom entries (severity, notes, photo)
 - `trigger_logs` - Standalone trigger entries (type, location, notes)
 - `reminders` - Medications and treatments
 - `products` - Barcode scanned product cache
+
+**Demo Account Setup:**
+Run `supabase-scripts/create-demo-user.sql` and `supabase-scripts/add-demo-dog.sql` in Supabase SQL Editor to create a test account without triggering email confirmation.
 
 ## Development Guidelines
 
@@ -329,12 +365,21 @@ const { theme, toggleTheme } = useTheme();
 
 ## Recent UI Improvements
 
+**Authentication System:**
+- Supabase Auth integration with email/password authentication
+- Sessions persisted to localStorage (users stay logged in on refresh)
+- Auto token refresh enabled
+- Email confirmation notice shown when Supabase requires email verification
+- Sign-out functionality available in Profile page → Settings
+- Protected routes automatically redirect unauthenticated users to `/splash`
+- New users without dogs see friendly "Add Your First Pet" empty state with call-to-action button
+
 **Onboarding Flow:**
 - Complete 6-page onboarding experience for new users
 - Splash page uses Lottie animation (`Paw Loader.json`) with 3.5s delay and light mode CSS filter
 - Testimonials page displays 6 breed-specific dog images from `public/assets/testimonials/`
+- LoginSignup page with toggle between sign-in and sign-up modes
 - Onboarding carousel uses actual pet images from `public/assets/pet-images/`
-- No actual authentication required - placeholders allow testing without signup
 - Auto-navigation between steps with smooth transitions
 - Premium subscription offer before reaching main app
 
@@ -351,6 +396,8 @@ const { theme, toggleTheme } = useTheme();
 - Blue "View Detailed Analysis" button navigates to `/trigger-analysis`
 - Removed redundant "Recent Symptoms" section (available on Logs page)
 - Unbolded section titles for cleaner visual hierarchy
+- Shows "Add Your First Pet" empty state when user has no dogs (prevents infinite loading)
+- Loading state properly resets when no dog is selected
 
 **Trigger Analysis:**
 - Modern design with large percentage display for most common trigger
@@ -377,10 +424,10 @@ const { theme, toggleTheme } = useTheme();
 
 ## Known Issues & TODOs
 
-- Authentication not yet implemented (using hardcoded user ID: `00000000-0000-0000-0000-000000000001`)
-- LoginSignup page has placeholder UI only - no actual authentication logic
 - Pollen data is estimated from AQI (no dedicated pollen API integrated)
 - Some pet food products may not be in OpenFoodFacts database
 - Photo upload functionality not implemented (placeholder removed to avoid random images)
 - Symptom logger currently saves triggers as empty array (trigger UI not connected)
 - Trigger graph on Dashboard is static image - needs to be made dynamic with real data
+- Boxer image on login page is 17MB and loads slowly (needs optimization to ~200KB)
+- Domain email (pawrelief.app) configured but may require email confirmation to be disabled in Supabase for testing
