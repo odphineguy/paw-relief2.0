@@ -108,6 +108,11 @@ created_at             →  createdAt
 - `MedicationModal.tsx` - Modal for creating/editing medications and reminders
 - `ThemeSwitch.tsx` - Dark mode toggle
 
+**Animations:**
+- Lottie animations stored in `public/assets/animations/`
+- Use `lottie-react` library for integration
+- Example: Splash page uses `Paw Loader.json` animation
+
 **Icon System:**
 Add new icons to `components/icons.tsx`:
 ```typescript
@@ -241,19 +246,29 @@ await addReminder({
 import jsPDF from 'jspdf';
 const pdf = new jsPDF();
 
-// PDF design follows specific mockup:
-// - Symptom Occurrences: Large count display with bar chart visualization
-// - Suspected Triggers: Pill-shaped badges in light gray
-// - Medications Given: Black medication names with cyan dosage text
-// - Symptom Timeline: Paw icons with symptom names and cyan dates
-// - Color scheme: Black headers, cyan accents (#64C8DC), gray text
+// PDF design follows professional mockup with:
+// - Blue header banner (rgb 59, 130, 246) with white text
+// - Bar chart with grid lines and Y-axis labels
+// - Table format for symptom timeline with alternating row backgrounds
+// - Checkbox list for suspected triggers (checked/strikethrough for active)
+// - Blue color scheme (#3B82F6) for headers and accents
 
-pdf.setFont('helvetica', 'bold');
+// Header banner
+pdf.setFillColor(59, 130, 246);
+pdf.rect(0, 0, pageWidth, 50, 'F');
+pdf.setTextColor(255, 255, 255);
+pdf.setFontSize(28);
+pdf.text('Paw Relief', 15, 22);
+
+// Regular content
 pdf.setTextColor(0, 0, 0);
+pdf.setFont('helvetica', 'bold');
 pdf.text('Section Title', 20, yPos);
 
-// For cyan text (dates, dosages):
-pdf.setTextColor(100, 200, 220);
+// Drawing grid lines for charts
+pdf.setDrawColor(220, 220, 220);
+pdf.setLineWidth(0.5);
+pdf.line(x1, y1, x2, y2);
 
 pdf.save('filename.pdf');
 ```
@@ -313,9 +328,10 @@ const { theme, toggleTheme } = useTheme();
 
 ## Recent UI Improvements
 
-**Onboarding Flow (Latest):**
+**Onboarding Flow:**
 - Complete 6-page onboarding experience for new users
-- Uses emoji placeholders for dog illustrations (can be replaced with actual images)
+- Splash page uses Lottie animation (`Paw Loader.json`)
+- Testimonials page uses emoji placeholders (images should be added to `public/assets/testimonials/`)
 - No actual authentication required - placeholders allow testing without signup
 - Auto-navigation between steps with smooth transitions
 - Premium subscription offer before reaching main app
@@ -339,12 +355,13 @@ const { theme, toggleTheme } = useTheme();
 - Softer, cleaner card design with `rounded-2xl`
 
 **Veterinarian Report:**
-- Updated PDF design to match professional mockup
-- Symptom Occurrences: Large count with bar chart visualization
-- Suspected Triggers: Pill-shaped badges in light gray
-- Medications Given: Black medication names with cyan dosage text
-- Symptom Timeline: Paw icons with symptom names and cyan dates
-- Consistent color scheme: Black headers, cyan accents, gray text
+- Professional PDF design with blue header banner
+- Bar chart with grid lines, Y-axis labels, and rotated symptom names
+- Table format for symptom timeline with alternating row backgrounds
+- Checkbox list for suspected triggers (active triggers shown with checkmark and strikethrough)
+- Medications section lists completed medications in date range
+- Dynamic date range in subtitle (7/30/90 days)
+- Tight spacing to maximize content on first page
 
 **Medications Page:**
 - Added MedicationModal for creating new medications/reminders
@@ -363,4 +380,4 @@ const { theme, toggleTheme } = useTheme();
 - Some pet food products may not be in OpenFoodFacts database
 - Photo upload functionality not implemented (placeholder removed to avoid random images)
 - Symptom logger currently saves triggers as empty array (trigger UI not connected)
-- Onboarding flow uses emoji placeholders - real dog images need to be cropped and added
+- Testimonials page uses emoji placeholders - real pet images should be named by breed and placed in `public/assets/testimonials/`

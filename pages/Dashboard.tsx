@@ -98,9 +98,6 @@ const Dashboard: React.FC = () => {
     color: theme === 'dark' ? '#f0f4f8' : '#1d1c1c'
   };
 
-  // Get recent symptoms (last 3)
-  const recentSymptoms = logs.slice(0, 2);
-
   // Get upcoming reminders (next 2 not completed)
   const upcomingReminders = reminders.slice(0, 2);
 
@@ -160,31 +157,52 @@ const Dashboard: React.FC = () => {
             </div>
           </section>
 
-          {/* Trigger Detective Section */}
+          {/* Identified Patterns - Trigger Analysis */}
           <section className="mb-8">
             <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
-              Trigger Detective
+              Identified Patterns
             </h2>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                  <ChartCombinedIcon className="w-6 h-6" />
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-700 p-6 rounded-xl border border-gray-200 dark:border-gray-600">
+              {/* Header */}
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                    Trigger vs. Symptoms
+                  </h3>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-gray-900 dark:text-white">High</span>
+                    <span className="text-sm font-semibold text-green-600 dark:text-green-400">+15%</span>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Recent Insight</h3>
-                  <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
-                    High pollen count seems to correlate with increased sneezing after park visits.
-                  </p>
-                </div>
+                <span className="text-xs text-cyan-600 dark:text-cyan-400 font-medium">Last 30 Days</span>
               </div>
-              <div className="mt-4">
-                <button
-                  onClick={() => navigate('/allergen-alerts')}
-                  className="w-full bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors"
-                >
-                  View Analysis
-                </button>
+
+              {/* Simplified Visualization Area */}
+              <div className="bg-white/60 dark:bg-gray-900/30 rounded-lg p-4 mb-4 h-32 flex items-end justify-around gap-2">
+                {/* Simple bar visualization representing trigger frequency */}
+                {['FOOD', 'LOCATION', 'WEATHER', 'POLLEN', 'PRODUCTS'].map((label, index) => {
+                  const heights = [60, 45, 55, 75, 50];
+                  return (
+                    <div key={label} className="flex flex-col items-center flex-1">
+                      <div
+                        className="w-full bg-gradient-to-t from-cyan-500 to-blue-400 dark:from-cyan-600 dark:to-blue-500 rounded-t transition-all"
+                        style={{ height: `${heights[index]}%` }}
+                      />
+                      <span className="text-[9px] text-cyan-600 dark:text-cyan-400 font-medium mt-2 uppercase tracking-wider">
+                        {label}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
+
+              {/* Action Button */}
+              <button
+                onClick={() => navigate('/trigger-analysis')}
+                className="w-full bg-cyan-500 hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm"
+              >
+                View Detailed Analysis
+              </button>
             </div>
           </section>
 
@@ -218,26 +236,6 @@ const Dashboard: React.FC = () => {
               </div>
             </section>
           )}
-
-          {/* Recent Symptoms */}
-          <section className="mb-8">
-            <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
-              Recent Symptoms
-            </h2>
-            <div className="space-y-3">
-              {recentSymptoms.map((log) => (
-                <div key={log.id} className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                    {getSymptomIcon(log.symptomType)}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">{log.symptomType}</h3>
-                    <p className="text-sm text-blue-600 dark:text-blue-400">{log.notes || 'No notes'}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
 
           {/* Upcoming Reminders */}
           <section className="mb-8">

@@ -5,16 +5,16 @@ const Subscription: React.FC = () => {
     const navigate = useNavigate();
 
     const features = [
-        { name: 'Symptom Tracking', basic: true, premium: true },
-        { name: 'Trigger Analysis', basic: true, premium: true },
-        { name: 'Medication Reminders', basic: true, premium: true },
-        { name: 'Vet Report Generation', basic: true, premium: true },
-        { name: 'Priority Support', basic: false, premium: true },
-        { name: 'Unlimited Symptom Tracking', basic: false, premium: true },
-        { name: 'Advanced Trigger Analysis', basic: false, premium: true },
-        { name: 'Medication Reminders', basic: false, premium: true },
-        { name: 'Vet Report Generation', basic: false, premium: true },
-        { name: 'Priority Support', basic: false, premium: true }
+        { name: 'Symptom Tracking', tier: 'Basic' },
+        { name: 'Trigger Analysis', tier: 'Basic' },
+        { name: 'Medication Reminders', tier: 'Basic' },
+        { name: 'Vet Report Generation', tier: 'Basic' },
+        { name: 'Priority Support', tier: 'Basic' },
+        { name: 'Unlimited Symptom Tracking', tier: 'Premium' },
+        { name: 'Advanced Trigger Analysis', tier: 'Premium' },
+        { name: 'Medication Reminders', tier: 'Premium' },
+        { name: 'Vet Report Generation', tier: 'Premium' },
+        { name: 'Priority Support', tier: 'Premium' }
     ];
 
     return (
@@ -48,25 +48,17 @@ const Subscription: React.FC = () => {
                         Feature Comparison
                     </h3>
 
-                    <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-3">
                         {features.map((feature, index) => (
                             <div
                                 key={index}
-                                className="grid grid-cols-2 gap-4 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+                                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
                             >
-                                <div className="text-sm text-gray-900 dark:text-white">
+                                <div className="text-sm text-cyan-600 dark:text-cyan-400 font-medium mb-1">
                                     {feature.name}
                                 </div>
-                                <div className="text-sm text-right">
-                                    {feature.premium ? (
-                                        <span className="text-cyan-600 dark:text-cyan-400 font-medium">
-                                            Premium
-                                        </span>
-                                    ) : (
-                                        <span className="text-gray-500 dark:text-gray-400">
-                                            Basic
-                                        </span>
-                                    )}
+                                <div className="text-xs text-gray-600 dark:text-gray-400">
+                                    {feature.tier}
                                 </div>
                             </div>
                         ))}

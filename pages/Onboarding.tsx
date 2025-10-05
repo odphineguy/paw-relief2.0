@@ -10,21 +10,21 @@ const Onboarding: React.FC = () => {
             id: 0,
             title: 'Welcome to Paw Relief',
             description: 'Track your dog\'s allergies with ease. Identify triggers, manage symptoms, and generate vet reports.',
-            image: '🐕',
+            image: '/assets/pet-images/login.png',
             bgColor: 'bg-teal-700'
         },
         {
             id: 1,
             title: 'Symptom Tracker',
             description: 'Log your dog\'s allergy symptoms, including severity and frequency, to monitor their health over time.',
-            image: '🔍',
+            image: '/assets/pet-images/app1.png',
             bgColor: 'bg-white dark:bg-gray-800'
         },
         {
             id: 2,
             title: 'Trigger Detective',
             description: 'Identify potential allergy triggers by tracking your dog\'s exposure to different environments, foods, and products.',
-            image: '🕵️',
+            image: '/assets/pet-images/detective.png',
             bgColor: 'bg-orange-200'
         }
     ];
@@ -47,7 +47,11 @@ const Onboarding: React.FC = () => {
             <div className="flex-1 flex flex-col">
                 {/* Image Section */}
                 <div className={`w-full h-80 flex items-center justify-center ${slides[currentSlide].bgColor}`}>
-                    <div className="text-9xl">{slides[currentSlide].image}</div>
+                    <img
+                        src={slides[currentSlide].image}
+                        alt={slides[currentSlide].title}
+                        className="max-h-full max-w-full object-contain p-4"
+                    />
                 </div>
 
                 {/* Text Content */}

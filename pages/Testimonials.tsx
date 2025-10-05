@@ -9,19 +9,43 @@ const Testimonials: React.FC = () => {
             id: 1,
             text: "This app has been a lifesaver for managing my dog's allergies! I can now track symptoms and identify triggers, leading to no more incessant scratching for Buddy.",
             author: "Sarah, Buddy's Owner",
-            image: "🦮"
+            image: "/assets/testimonials/golden.png",
+            breed: "Golden Retriever"
         },
         {
             id: 2,
             text: "I can finally pinpoint what triggers my dog's allergies thanks to this app! After months of discovery, I've finally identified the trigger for Max!",
             author: "Mark, Max's Owner",
-            image: "🦴"
+            image: "/assets/testimonials/lab.png",
+            breed: "Labrador"
         },
         {
             id: 3,
             text: "The trigger detective feature helped me understand that pollen was causing most of Lucy's symptoms. Now we avoid peak hours!",
             author: "Jennifer, Lucy's Owner",
-            image: "🐕‍🦺"
+            image: "/assets/testimonials/frenchie.png",
+            breed: "French Bulldog"
+        },
+        {
+            id: 4,
+            text: "Tracking Charlie's medication schedule has never been easier. The reminders ensure I never miss a dose!",
+            author: "David, Charlie's Owner",
+            image: "/assets/testimonials/dachshund.png",
+            breed: "Dachshund"
+        },
+        {
+            id: 5,
+            text: "The vet report feature is amazing! I can share detailed allergy data with my vet and get better treatment recommendations.",
+            author: "Lisa, Bella's Owner",
+            image: "/assets/testimonials/Chihuahua.png",
+            breed: "Chihuahua"
+        },
+        {
+            id: 6,
+            text: "Paw Relief helped me identify that my dog was allergic to a specific ingredient in his food. Life-changing!",
+            author: "Tom, Rocky's Owner",
+            image: "/assets/testimonials/pitbull.png",
+            breed: "Pit Bull"
         }
     ];
 
@@ -45,9 +69,13 @@ const Testimonials: React.FC = () => {
                             key={testimonial.id}
                             className="flex-shrink-0 w-80 bg-orange-100 dark:bg-orange-200 rounded-2xl p-6 shadow-lg"
                         >
-                            {/* Dog Image Placeholder */}
-                            <div className="w-full h-48 bg-orange-200 dark:bg-orange-300 rounded-xl flex items-center justify-center mb-4">
-                                <div className="text-6xl">{testimonial.image}</div>
+                            {/* Dog Image */}
+                            <div className="w-full h-48 bg-orange-200 dark:bg-orange-300 rounded-xl overflow-hidden mb-4">
+                                <img
+                                    src={testimonial.image}
+                                    alt={testimonial.breed}
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
 
                             {/* Testimonial Text */}

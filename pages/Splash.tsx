@@ -2,15 +2,17 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react';
 import pawLoaderAnimation from '../public/assets/animations/Paw Loader.json';
+import { useTheme } from '../context/ThemeContext';
 
 const Splash: React.FC = () => {
     const navigate = useNavigate();
+    const { theme } = useTheme();
 
     useEffect(() => {
-        // Auto-navigate to testimonials after 2 seconds
+        // Auto-navigate to testimonials after 3.5 seconds
         const timer = setTimeout(() => {
             navigate('/testimonials');
-        }, 2000);
+        }, 3500);
 
         return () => clearTimeout(timer);
     }, [navigate]);
@@ -18,7 +20,10 @@ const Splash: React.FC = () => {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-green-100 to-green-50 dark:from-green-900 dark:to-green-800 p-6">
             {/* Paw Loader Animation */}
-            <div className="w-64 h-64 mb-8">
+            <div
+                className="w-64 h-64 mb-8"
+                style={theme === 'light' ? { filter: 'invert(1) hue-rotate(180deg)' } : {}}
+            >
                 <Lottie
                     animationData={pawLoaderAnimation}
                     loop={true}

@@ -73,7 +73,7 @@ const Logs: React.FC = () => {
                                 <div className="flex justify-between items-start mb-3">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-3 mb-1">
-                                            <div className="text-gray-600 dark:text-gray-400">
+                                            <div className="flex-shrink-0 w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-lg flex items-center justify-center text-white">
                                                 {getSymptomIcon(log.symptomType)}
                                             </div>
                                             <h3 className="font-bold text-lg text-gray-900 dark:text-white">{log.symptomType}</h3>
