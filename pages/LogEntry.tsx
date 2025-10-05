@@ -363,7 +363,7 @@ const LogEntry: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={isSymptomSubmitting || selectedSymptoms.size === 0}
-                                    className="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
+                                    className="w-full bg-blue-500 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-600 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
                                 >
                                     {isSymptomSubmitting ? 'Saving...' : 'Save Symptom Log'}
                                 </button>
@@ -446,7 +446,7 @@ const LogEntry: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={isTriggerSubmitting || !selectedTriggerType}
-                                    className="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
+                                    className="w-full bg-blue-500 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-600 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
                                 >
                                     {isTriggerSubmitting ? 'Saving...' : 'Save Trigger Log'}
                                 </button>
