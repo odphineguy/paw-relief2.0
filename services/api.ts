@@ -171,6 +171,39 @@ export const addSymptomLog = async (log: Omit<SymptomLog, 'id' | 'createdAt'>): 
   };
 };
 
+export const updateSymptomLog = async (logId: string, updates: Partial<SymptomLog>): Promise<SymptomLog> => {
+  const updateData: any = {};
+
+  if (updates.symptomType !== undefined) updateData.symptom_type = updates.symptomType;
+  if (updates.severity !== undefined) updateData.severity = updates.severity;
+  if (updates.triggers !== undefined) updateData.triggers = updates.triggers;
+  if (updates.notes !== undefined) updateData.notes = updates.notes;
+  if (updates.photoUrl !== undefined) updateData.photo_url = updates.photoUrl;
+
+  const { data, error } = await supabase
+    .from('symptom_logs')
+    .update(updateData)
+    .eq('id', logId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating symptom log:', error);
+    throw error;
+  }
+
+  return {
+    id: data.id,
+    dogId: data.dog_id,
+    symptomType: data.symptom_type,
+    severity: data.severity,
+    triggers: data.triggers || [],
+    notes: data.notes || '',
+    photoUrl: data.photo_url,
+    createdAt: data.created_at,
+  };
+};
+
 // ===== REMINDER FUNCTIONS =====
 
 export const getReminders = async (dogId: string): Promise<Reminder[]> => {

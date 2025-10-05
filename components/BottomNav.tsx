@@ -1,9 +1,16 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { DashboardIcon, ClipboardListIcon, PillBottleIcon, PawIcon, PlusCircleIcon } from './icons';
 
 const BottomNav: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Hide bottom nav on onboarding pages
+    const onboardingRoutes = ['/splash', '/testimonials', '/login', '/onboarding', '/welcome', '/subscription'];
+    if (onboardingRoutes.includes(location.pathname)) {
+        return null;
+    }
 
     const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
         `flex flex-col items-center justify-center space-y-1 transition-colors duration-200 ${

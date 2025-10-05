@@ -34,6 +34,7 @@ const LogEntry: React.FC = () => {
 
     // Symptom state
     const [selectedSymptoms, setSelectedSymptoms] = useState<Set<SymptomType>>(new Set());
+    const [severity, setSeverity] = useState(3);
     const [symptomNotes, setSymptomNotes] = useState('');
     const [photos, setPhotos] = useState<File[]>([]);
     const [isSymptomSubmitting, setIsSymptomSubmitting] = useState(false);
@@ -147,7 +148,7 @@ const LogEntry: React.FC = () => {
                 await addSymptomLog({
                     dogId: selectedDog.id,
                     symptomType: symptom,
-                    severity: 3,
+                    severity: severity,
                     triggers: [],
                     notes: symptomNotes,
                     photoUrl: undefined,
@@ -156,6 +157,7 @@ const LogEntry: React.FC = () => {
 
             // Reset form
             setSelectedSymptoms(new Set());
+            setSeverity(3);
             setSymptomNotes('');
             setPhotos([]);
             navigate('/dashboard');
@@ -258,6 +260,27 @@ const LogEntry: React.FC = () => {
                                             <span className="font-medium text-sm text-center">{symptom}</span>
                                         </button>
                                     ))}
+                                </div>
+                            </div>
+
+                            {/* Severity Section */}
+                            <div>
+                                <div className="flex justify-between items-center mb-3">
+                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Severity</h3>
+                                    <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{severity}/5</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="1"
+                                    max="5"
+                                    value={severity}
+                                    onChange={(e) => setSeverity(Number(e.target.value))}
+                                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                />
+                                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                    <span>Mild</span>
+                                    <span>Moderate</span>
+                                    <span>Severe</span>
                                 </div>
                             </div>
 
