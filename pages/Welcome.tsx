@@ -86,7 +86,7 @@ const Welcome: React.FC = () => {
                                     alert('Premium subscription feature coming soon!');
                                     navigate('/dashboard');
                                 }}
-                                className="bg-cyan-400 hover:bg-cyan-500 text-white font-bold py-3 px-8 rounded-xl transition-colors shadow-sm"
+                                className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-colors shadow-sm"
                             >
                                 Subscribe Now
                             </button>
@@ -98,7 +98,7 @@ const Welcome: React.FC = () => {
                 <div className="px-6 pb-6">
                     <button
                         onClick={() => navigate('/dashboard')}
-                        className="w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-bold py-4 rounded-xl transition-colors"
+                        className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors"
                     >
                         Continue to Dashboard
                     </button>

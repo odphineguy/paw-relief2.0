@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDogs } from '../context/DogContext';
+import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import { DogIcon, ChevronRightIcon } from '../components/icons';
 import { format, differenceInYears, addYears } from 'date-fns';
@@ -9,8 +10,19 @@ import ThemeSwitch from '../components/ThemeSwitch';
 
 const Profile: React.FC = () => {
     const { selectedDog, loading } = useDogs();
+    const { signOut } = useAuth();
+    const navigate = useNavigate();
     const [isScannerOpen, setIsScannerOpen] = useState(false);
-    
+
+    const handleSignOut = async () => {
+        try {
+            await signOut();
+            navigate('/splash');
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
+    };
+
     const getBirthdayInfo = (isoDate: string) => {
         const birthDate = new Date(isoDate);
         const age = differenceInYears(new Date(), birthDate);
@@ -107,6 +119,13 @@ const Profile: React.FC = () => {
                                     <span className="text-sm font-medium text-foreground-light dark:text-foreground-dark">Appearance</span>
                                     <ThemeSwitch />
                                 </div>
+                                <button
+                                    onClick={handleSignOut}
+                                    className="w-full flex justify-between items-center p-2 text-left bg-background-light dark:bg-background-dark rounded-lg hover:bg-red-500/10 dark:hover:bg-red-500/10"
+                                >
+                                    <span className="text-sm font-medium text-red-600 dark:text-red-400">Sign Out</span>
+                                    <ChevronRightIcon className="w-4 h-4 text-gray-400"/>
+                                </button>
                             </div>
                         </InfoCard>
                     </div>

@@ -53,10 +53,7 @@ const Testimonials: React.FC = () => {
         <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark">
             {/* Header */}
             <div className="p-6 pb-4">
-                <h2 className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                    User Testimonials
-                </h2>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white text-center mt-2">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white text-center">
                     Paw Relief
                 </h1>
             </div>
@@ -67,10 +64,10 @@ const Testimonials: React.FC = () => {
                     {testimonials.map((testimonial) => (
                         <div
                             key={testimonial.id}
-                            className="flex-shrink-0 w-80 bg-orange-100 dark:bg-orange-200 rounded-2xl p-6 shadow-lg"
+                            className="flex-shrink-0 w-80 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
                         >
                             {/* Dog Image */}
-                            <div className="w-full h-48 bg-orange-200 dark:bg-orange-300 rounded-xl overflow-hidden mb-4">
+                            <div className="w-full h-48 bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden mb-4">
                                 <img
                                     src={testimonial.image}
                                     alt={testimonial.breed}
@@ -96,7 +93,7 @@ const Testimonials: React.FC = () => {
             <div className="p-6">
                 <button
                     onClick={() => navigate('/login')}
-                    className="w-full bg-cyan-400 hover:bg-cyan-500 text-white font-bold py-4 rounded-xl transition-colors shadow-lg"
+                    className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg"
                 >
                     Get Started
                 </button>

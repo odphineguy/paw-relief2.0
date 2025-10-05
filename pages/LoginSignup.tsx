@@ -1,15 +1,36 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const LoginSignup: React.FC = () => {
     const navigate = useNavigate();
+    const { signIn, signUp } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isSignUp, setIsSignUp] = useState(false);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Placeholder login - just navigate to onboarding
-        navigate('/onboarding');
+        setError('');
+        setLoading(true);
+
+        try {
+            if (isSignUp) {
+                await signUp(email, password);
+                // Navigate to onboarding for new users
+                navigate('/onboarding');
+            } else {
+                await signIn(email, password);
+                // Navigate to dashboard for existing users
+                navigate('/dashboard');
+            }
+        } catch (err: any) {
+            setError(err.message || 'Authentication failed. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -26,8 +47,14 @@ const LoginSignup: React.FC = () => {
             {/* Login Form */}
             <div className="flex-1 bg-white dark:bg-gray-900 rounded-t-3xl -mt-6 p-6 shadow-lg">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-                    Welcome to Paw Relief
+                    {isSignUp ? 'Create Account' : 'Welcome to Paw Relief'}
                 </h1>
+
+                {error && (
+                    <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 rounded-lg text-red-700 dark:text-red-400 text-sm">
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleLogin} className="space-y-4">
                     {/* Email Input */}
@@ -67,9 +94,10 @@ const LoginSignup: React.FC = () => {
                     {/* Log In Button */}
                     <button
                         type="submit"
-                        className="w-full bg-cyan-400 hover:bg-cyan-500 text-white font-bold py-4 rounded-xl transition-colors shadow-lg"
+                        disabled={loading}
+                        className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-colors shadow-lg"
                     >
-                        Log In
+                        {loading ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Log In')}
                     </button>
                 </form>
 
@@ -101,13 +129,16 @@ const LoginSignup: React.FC = () => {
                 {/* Sign Up Link */}
                 <div className="mt-8 text-center">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Don't have an account?{' '}
+                        {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
                         <button
                             type="button"
-                            onClick={() => navigate('/signup')}
+                            onClick={() => {
+                                setIsSignUp(!isSignUp);
+                                setError('');
+                            }}
                             className="text-cyan-600 dark:text-cyan-400 hover:underline font-medium"
                         >
-                            Sign Up
+                            {isSignUp ? 'Log In' : 'Sign Up'}
                         </button>
                     </p>
                 </div>

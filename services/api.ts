@@ -2,16 +2,20 @@ import { Dog, SymptomLog, Reminder, AllergenAlerts, ProductInfo, TriggerLog, Tri
 import { supabase } from '../lib/supabase';
 
 // Helper function to get current user ID
-// For now, we'll use a temporary user ID until we add authentication
-const getCurrentUserId = (): string => {
-  // TODO: Replace with actual auth when implemented
-  return '00000000-0000-0000-0000-000000000001';
+const getCurrentUserId = async (): Promise<string> => {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
+  return user.id;
 };
 
 // ===== DOG FUNCTIONS =====
 
 export const getDogs = async (): Promise<Dog[]> => {
-  const userId = getCurrentUserId();
+  const userId = await getCurrentUserId();
 
   const { data, error } = await supabase
     .from('dogs')
@@ -39,7 +43,7 @@ export const getDogs = async (): Promise<Dog[]> => {
 };
 
 export const addDog = async (dog: Omit<Dog, 'id'> & { id?: string }): Promise<Dog> => {
-  const userId = getCurrentUserId();
+  const userId = await getCurrentUserId();
 
   const dogData = {
     user_id: userId,

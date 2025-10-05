@@ -66,7 +66,7 @@ const Onboarding: React.FC = () => {
                     {/* Next Button */}
                     <button
                         onClick={handleNext}
-                        className="w-full bg-cyan-400 hover:bg-cyan-500 text-white font-bold py-4 rounded-xl transition-colors shadow-lg mb-4"
+                        className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg mb-4"
                     >
                         {currentSlide < slides.length - 1 ? 'Next' : 'Get Started'}
                     </button>
@@ -79,7 +79,7 @@ const Onboarding: React.FC = () => {
                                 onClick={() => setCurrentSlide(index)}
                                 className={`w-2 h-2 rounded-full transition-all ${
                                     index === currentSlide
-                                        ? 'bg-cyan-400 w-8'
+                                        ? 'bg-blue-500 dark:bg-blue-600 w-8'
                                         : 'bg-gray-300 dark:bg-gray-600'
                                 }`}
                             />
