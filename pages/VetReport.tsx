@@ -80,119 +80,166 @@ const VetReport: React.FC = () => {
             const pdf = new jsPDF();
             const pageWidth = pdf.internal.pageSize.getWidth();
             const pageHeight = pdf.internal.pageSize.getHeight();
-            let yPos = 20;
+            let yPos = 0;
 
-            // Symptom Occurrences Section
-            if (reportOptions.symptomFrequency) {
-                // Title in gray
-                pdf.setFontSize(11);
-                pdf.setFont('helvetica', 'normal');
-                pdf.setTextColor(150, 150, 150);
-                pdf.text('Symptom Occurrences', 20, yPos);
-                yPos += 10;
+            // Blue header banner
+            pdf.setFillColor(59, 130, 246); // Blue color
+            pdf.rect(0, 0, pageWidth, 50, 'F');
 
-                // Count in large bold black
-                pdf.setFontSize(36);
-                pdf.setFont('helvetica', 'bold');
-                pdf.setTextColor(0, 0, 0);
-                pdf.text(filteredLogs.length.toString(), 20, yPos);
-                yPos += 8;
+            // White title text
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(28);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Paw Relief', 15, 22);
 
-                // Date range subtitle in cyan
-                pdf.setFontSize(11);
-                pdf.setFont('helvetica', 'normal');
-                pdf.setTextColor(100, 200, 220);
-                pdf.text(`Last ${dateRange === '7d' ? '7' : dateRange === '90d' ? '90' : '30'} Days`, 20, yPos);
-                yPos += 20;
+            pdf.setFontSize(20);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text('Veterinarian Report', 15, 38);
 
-                // Bar chart
-                if (filteredLogs.length > 0) {
-                    const symptomCounts: Record<string, number> = {};
-                    filteredLogs.forEach(log => {
-                        symptomCounts[log.symptomType] = (symptomCounts[log.symptomType] || 0) + 1;
-                    });
+            yPos = 60;
 
-                    const maxCount = Math.max(...Object.values(symptomCounts));
-                    const barWidth = 30;
-                    const maxBarHeight = 50;
-                    const barSpacing = 10;
-                    let barX = 20;
+            // Subtitle with date and period
+            pdf.setTextColor(150, 150, 150);
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'normal');
+            const dateStr = format(new Date(), 'MM/dd/yyyy');
+            const daysLabel = dateRange === '7d' ? '7' : dateRange === '90d' ? '90' : '30';
+            pdf.text(`A report generated on ${dateStr}, for pet symptoms for the past ${daysLabel} days`, 15, yPos);
+            yPos += 15;
 
-                    Object.entries(symptomCounts).forEach(([symptom, count]) => {
-                        // Draw bar in light cyan
-                        const barHeight = (count / maxCount) * maxBarHeight;
-                        pdf.setFillColor(200, 230, 240);
-                        pdf.rect(barX, yPos + maxBarHeight - barHeight, barWidth, barHeight, 'F');
+            // Pet name centered
+            pdf.setTextColor(59, 130, 246);
+            pdf.setFontSize(18);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(selectedDog.name, pageWidth / 2, yPos, { align: 'center' });
+            yPos += 20;
 
-                        barX += barWidth + barSpacing;
-                    });
+            // Symptom Occurrences Bar Chart
+            if (reportOptions.symptomFrequency && filteredLogs.length > 0) {
+                const symptomCounts: Record<string, number> = {};
+                filteredLogs.forEach(log => {
+                    symptomCounts[log.symptomType] = (symptomCounts[log.symptomType] || 0) + 1;
+                });
 
-                    yPos += maxBarHeight + 5;
+                const maxCount = Math.max(...Object.values(symptomCounts), 1);
+                const chartHeight = 80;
+                const chartWidth = pageWidth - 40;
+                const chartLeft = 20;
+                const chartBottom = yPos + chartHeight;
 
-                    // Labels below bars
-                    barX = 20;
-                    pdf.setFontSize(8);
-                    pdf.setTextColor(100, 200, 220);
-                    Object.entries(symptomCounts).forEach(([symptom]) => {
-                        const lines = pdf.splitTextToSize(symptom, barWidth);
-                        pdf.text(lines, barX + barWidth/2, yPos, { align: 'center' });
-                        barX += barWidth + barSpacing;
-                    });
+                const numBars = Object.keys(symptomCounts).length;
+                const barWidth = Math.min(20, (chartWidth - 20) / numBars - 5);
+                const barSpacing = (chartWidth - (barWidth * numBars)) / (numBars + 1);
 
-                    yPos += 20;
+                // Draw grid lines and Y-axis labels
+                pdf.setDrawColor(220, 220, 220);
+                pdf.setLineWidth(0.5);
+                const yAxisSteps = Math.ceil(maxCount / 2) * 2; // Round up to even number
+                for (let i = 0; i <= yAxisSteps; i += 2) {
+                    const yLine = chartBottom - (i / yAxisSteps) * chartHeight;
+                    pdf.line(chartLeft, yLine, chartLeft + chartWidth, yLine);
+
+                    // Y-axis labels
+                    pdf.setFontSize(9);
+                    pdf.setTextColor(100, 100, 100);
+                    pdf.text(i.toString(), chartLeft - 5, yLine + 2, { align: 'right' });
                 }
+
+                // Draw bars
+                let barX = chartLeft + barSpacing;
+                Object.entries(symptomCounts).forEach(([symptom, count]) => {
+                    const barHeight = (count / yAxisSteps) * chartHeight;
+                    pdf.setFillColor(59, 130, 246); // Blue bars
+                    pdf.rect(barX, chartBottom - barHeight, barWidth, barHeight, 'F');
+
+                    barX += barWidth + barSpacing;
+                });
+
+                yPos = chartBottom + 10;
+
+                // Labels below bars (rotated)
+                barX = chartLeft + barSpacing;
+                pdf.setFontSize(8);
+                pdf.setTextColor(60, 60, 60);
+                Object.entries(symptomCounts).forEach(([symptom]) => {
+                    // Shorten label if needed
+                    const shortLabel = symptom.replace('Red/Irritated Skin', 'Red/Irr Skin')
+                                             .replace('Excessive Scratching', 'Excessive Scratching')
+                                             .replace('Ear Infections', 'Ear Infection')
+                                             .replace('Watery Eyes', 'Watery Eyes');
+
+                    // Position the text at the bottom center of each bar, then rotate
+                    const textX = barX + barWidth/2;
+                    const textY = yPos;
+
+                    pdf.text(shortLabel, textX, textY, {
+                        align: 'left',
+                        angle: 45,
+                        maxWidth: 30
+                    });
+                    barX += barWidth + barSpacing;
+                });
+
+                yPos += 8;
             }
 
             // Suspected Triggers
             if (reportOptions.suspectedTriggers) {
-                if (yPos > 200) {
+                // Keep on same page if possible
+                if (yPos > 220) {
                     pdf.addPage();
                     yPos = 20;
                 }
 
-                pdf.setFontSize(14);
+                pdf.setFontSize(16);
                 pdf.setFont('helvetica', 'bold');
-                pdf.setTextColor(0, 0, 0);
-                pdf.text('Suspected Triggers', 20, yPos);
+                pdf.setTextColor(59, 130, 246);
+                pdf.text('Suspected Triggers', pageWidth / 2, yPos, { align: 'center' });
+                yPos += 15;
+
+                const allTriggerTypes = ['Food', 'Pollen', 'Household Product', 'Walk Location', 'Environmental Changes'];
+                const activeTriggers = filteredTriggers.length > 0
+                    ? [...new Set(filteredTriggers.map(t => t.triggerType))]
+                    : [];
+
+                allTriggerTypes.forEach(triggerType => {
+                    const isActive = activeTriggers.includes(triggerType);
+
+                    // Draw checkbox
+                    pdf.setDrawColor(0, 0, 0);
+                    pdf.setLineWidth(0.5);
+                    pdf.rect(25, yPos - 4, 4, 4, 'S');
+
+                    // Fill checkbox if active
+                    if (isActive) {
+                        pdf.setFillColor(0, 0, 0);
+                        pdf.rect(25, yPos - 4, 4, 4, 'F');
+                        // Checkmark
+                        pdf.setDrawColor(255, 255, 255);
+                        pdf.setLineWidth(0.8);
+                        pdf.line(25.5, yPos - 1, 26.5, yPos);
+                        pdf.line(26.5, yPos, 28.5, yPos - 3.5);
+                    }
+
+                    // Trigger name
+                    pdf.setFontSize(11);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setTextColor(0, 0, 0);
+
+                    // Strikethrough if active (like in mockup)
+                    if (isActive) {
+                        const textWidth = pdf.getTextWidth(triggerType);
+                        pdf.setDrawColor(0, 0, 0);
+                        pdf.setLineWidth(0.3);
+                        pdf.line(32, yPos - 1.5, 32 + textWidth, yPos - 1.5);
+                    }
+
+                    pdf.text(triggerType, 32, yPos);
+
+                    yPos += 8;
+                });
+
                 yPos += 10;
-
-                if (filteredTriggers.length > 0) {
-                    const uniqueTriggers = [...new Set(filteredTriggers.map(t => t.triggerType))];
-
-                    // Draw pill-shaped badges
-                    let pillX = 20;
-                    pdf.setFontSize(10);
-                    pdf.setFont('helvetica', 'normal');
-
-                    uniqueTriggers.forEach(trigger => {
-                        const textWidth = pdf.getTextWidth(trigger);
-                        const pillWidth = textWidth + 12;
-
-                        // Check if we need to wrap to next line
-                        if (pillX + pillWidth > pageWidth - 20) {
-                            pillX = 20;
-                            yPos += 12;
-                        }
-
-                        // Draw rounded rectangle (pill shape) in light gray
-                        pdf.setFillColor(240, 240, 240);
-                        pdf.roundedRect(pillX, yPos - 6, pillWidth, 8, 4, 4, 'F');
-
-                        // Draw text in dark gray
-                        pdf.setTextColor(80, 80, 80);
-                        pdf.text(trigger, pillX + 6, yPos);
-
-                        pillX += pillWidth + 6;
-                    });
-
-                    yPos += 15;
-                } else {
-                    pdf.setFontSize(10);
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.setTextColor(150, 150, 150);
-                    pdf.text('No triggers identified in this period.', 20, yPos);
-                    yPos += 10;
-                }
             }
 
             // Medications Given
@@ -249,45 +296,69 @@ const VetReport: React.FC = () => {
                 }
             }
 
-            // Symptom Timeline
+            // Symptom Timeline (Table format)
             if (reportOptions.symptomFrequency && filteredLogs.length > 0) {
+                // Check if we need a new page
                 if (yPos > 180) {
                     pdf.addPage();
                     yPos = 20;
                 }
 
-                pdf.setFontSize(14);
+                pdf.setFontSize(16);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(59, 130, 246);
+                pdf.text('Symptom Timeline', pageWidth / 2, yPos, { align: 'center' });
+                yPos += 15;
+
+                // Table headers
+                const tableLeft = 20;
+                const tableWidth = pageWidth - 40;
+                const col1Width = tableWidth * 0.6;
+                const col2Width = tableWidth * 0.4;
+
+                pdf.setFillColor(240, 240, 240);
+                pdf.rect(tableLeft, yPos - 8, tableWidth, 12, 'F');
+
+                pdf.setFontSize(11);
                 pdf.setFont('helvetica', 'bold');
                 pdf.setTextColor(0, 0, 0);
-                pdf.text('Symptom Timeline', 20, yPos);
+                pdf.text('Symptom', tableLeft + 5, yPos);
+                pdf.text('Date', tableLeft + col1Width + 5, yPos);
+
                 yPos += 10;
 
                 const sortedLogs = [...filteredLogs].sort((a, b) =>
                     new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
                 );
 
+                // Table rows with alternating background
+                let rowIndex = 0;
                 sortedLogs.forEach(log => {
                     if (yPos > 270) {
                         pdf.addPage();
                         yPos = 20;
+                        rowIndex = 0;
                     }
 
-                    // Draw paw icon (simplified circle)
-                    pdf.setFillColor(200, 200, 200);
-                    pdf.circle(25, yPos - 2, 2, 'F');
+                    // Alternating row background
+                    if (rowIndex % 2 === 0) {
+                        pdf.setFillColor(245, 250, 255);
+                        pdf.rect(tableLeft, yPos - 8, tableWidth, 12, 'F');
+                    }
 
-                    // Symptom name in black
-                    pdf.setFontSize(11);
+                    pdf.setFontSize(10);
                     pdf.setFont('helvetica', 'normal');
-                    pdf.setTextColor(0, 0, 0);
-                    pdf.text(log.symptomType, 32, yPos);
-                    yPos += 6;
+                    pdf.setTextColor(59, 130, 246);
+                    pdf.text(log.symptomType, tableLeft + 5, yPos);
 
-                    // Date in cyan
-                    pdf.setTextColor(100, 200, 220);
-                    pdf.text(format(new Date(log.createdAt), 'MMMM d, yyyy'), 32, yPos);
-                    yPos += 10;
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.text(format(new Date(log.createdAt), 'MMMM d, yyyy'), tableLeft + col1Width + 5, yPos);
+
+                    yPos += 12;
+                    rowIndex++;
                 });
+
+                yPos += 5;
             }
 
             // Download PDF
