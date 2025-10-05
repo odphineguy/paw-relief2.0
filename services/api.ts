@@ -116,6 +116,53 @@ export const updateDog = async (dogId: string, updates: Partial<Dog>): Promise<D
   };
 };
 
+export const deleteDog = async (dogId: string): Promise<void> => {
+  // First, delete all related data (cascade delete)
+  // Delete symptom logs
+  const { error: symptomError } = await supabase
+    .from('symptom_logs')
+    .delete()
+    .eq('dog_id', dogId);
+
+  if (symptomError) {
+    console.error('Error deleting symptom logs:', symptomError);
+    throw symptomError;
+  }
+
+  // Delete trigger logs
+  const { error: triggerError } = await supabase
+    .from('trigger_logs')
+    .delete()
+    .eq('dog_id', dogId);
+
+  if (triggerError) {
+    console.error('Error deleting trigger logs:', triggerError);
+    throw triggerError;
+  }
+
+  // Delete reminders
+  const { error: reminderError } = await supabase
+    .from('reminders')
+    .delete()
+    .eq('dog_id', dogId);
+
+  if (reminderError) {
+    console.error('Error deleting reminders:', reminderError);
+    throw reminderError;
+  }
+
+  // Finally, delete the dog
+  const { error: dogError } = await supabase
+    .from('dogs')
+    .delete()
+    .eq('id', dogId);
+
+  if (dogError) {
+    console.error('Error deleting dog:', dogError);
+    throw dogError;
+  }
+};
+
 // ===== SYMPTOM LOG FUNCTIONS =====
 
 export const getSymptomLogs = async (dogId: string): Promise<SymptomLog[]> => {

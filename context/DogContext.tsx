@@ -1,7 +1,7 @@
 
 import React, { createContext, useState, useContext, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { Dog } from '../types';
-import { getDogs, addDog as apiAddDog, updateDog as apiUpdateDog } from '../services/api';
+import { getDogs, addDog as apiAddDog, updateDog as apiUpdateDog, deleteDog as apiDeleteDog } from '../services/api';
 import { useAuth } from './AuthContext';
 
 interface DogContextType {
@@ -9,6 +9,7 @@ interface DogContextType {
     selectedDog: Dog | null;
     setSelectedDog: (dog: Dog) => void;
     addDog: (dogData: Omit<Dog, 'id'> & { id?: string }) => Promise<void>;
+    deleteDog: (dogId: string) => Promise<void>;
     loading: boolean;
 }
 
@@ -97,9 +98,27 @@ export const DogProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
     }, [dogs, selectedDog]);
 
+    const deleteDog = useCallback(async (dogId: string) => {
+        try {
+            await apiDeleteDog(dogId);
+            
+            // Update local state
+            setDogs(prevDogs => prevDogs.filter(dog => dog.id !== dogId));
+            
+            // If the deleted dog was selected, select the first remaining dog or null
+            if (selectedDog?.id === dogId) {
+                const remainingDogs = dogs.filter(dog => dog.id !== dogId);
+                setSelectedDogState(remainingDogs.length > 0 ? remainingDogs[0] : null);
+            }
+        } catch (error) {
+            console.error('Failed to delete dog', error);
+            throw error;
+        }
+    }, [dogs, selectedDog]);
+
     const value = useMemo(
-        () => ({ dogs, selectedDog, setSelectedDog, addDog, loading }),
-        [dogs, selectedDog, setSelectedDog, addDog, loading]
+        () => ({ dogs, selectedDog, setSelectedDog, addDog, deleteDog, loading }),
+        [dogs, selectedDog, setSelectedDog, addDog, deleteDog, loading]
     );
 
     return (
