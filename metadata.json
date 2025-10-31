@@ -1,0 +1,7 @@
+{
+  "name": "Paw Relief",
+  "description": "An app to help dog owners manage and track their dog's allergies, including symptoms, triggers, medications, and generating reports for veterinarians.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://aistudiocdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.supabase.co https://*.supabase.io https://world.openfoodfacts.org https://api.bigdatacloud.net https://api.open-meteo.com https://air-quality-api.open-meteo.com https://api.mapbox.com https://tile.openstreetmap.org https://www.google.com https://images.unsplash.com https://via.placeholder.com https://picsum.photos; frame-src 'self' https://*.supabase.co https://*.supabase.io; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(self)"
+        }
+      ]
+    }
+  ]
+}
+
