@@ -112,52 +112,85 @@ const AppPreferences: React.FC = () => {
             <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-4">Notifications</h2>
             
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
                   <h3 className="text-base font-semibold text-foreground-light dark:text-foreground-dark">Push Notifications</h3>
                   <p className="text-sm text-subtle-light dark:text-subtle-dark">Receive notifications about reminders and updates</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={preferences.notifications}
-                    onChange={(e) => handlePreferenceChange('notifications', e.target.checked)}
-                    className="sr-only peer"
+                <button
+                  type="button"
+                  onClick={() => handlePreferenceChange('notifications', !preferences.notifications)}
+                  className="shrink-0 relative"
+                  style={{ width: '51px', height: '31px' }}
+                >
+                  <div 
+                    className="absolute inset-0 rounded-full transition-colors duration-200"
+                    style={{ backgroundColor: preferences.notifications ? '#3b82f6' : '#d1d5db' }}
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                </label>
+                  <div 
+                    className="absolute top-[2px] rounded-full bg-white shadow-md transition-transform duration-200"
+                    style={{ 
+                      width: '27px', 
+                      height: '27px',
+                      left: '2px',
+                      transform: preferences.notifications ? 'translateX(20px)' : 'translateX(0px)'
+                    }}
+                  />
+                </button>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
                   <h3 className="text-base font-semibold text-foreground-light dark:text-foreground-dark">Sound Effects</h3>
                   <p className="text-sm text-subtle-light dark:text-subtle-dark">Play sounds for notifications and interactions</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={preferences.soundEffects}
-                    onChange={(e) => handlePreferenceChange('soundEffects', e.target.checked)}
-                    className="sr-only peer"
+                <button
+                  type="button"
+                  onClick={() => handlePreferenceChange('soundEffects', !preferences.soundEffects)}
+                  className="shrink-0 relative"
+                  style={{ width: '51px', height: '31px' }}
+                >
+                  <div 
+                    className="absolute inset-0 rounded-full transition-colors duration-200"
+                    style={{ backgroundColor: preferences.soundEffects ? '#3b82f6' : '#d1d5db' }}
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                </label>
+                  <div 
+                    className="absolute top-[2px] rounded-full bg-white shadow-md transition-transform duration-200"
+                    style={{ 
+                      width: '27px', 
+                      height: '27px',
+                      left: '2px',
+                      transform: preferences.soundEffects ? 'translateX(20px)' : 'translateX(0px)'
+                    }}
+                  />
+                </button>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
                   <h3 className="text-base font-semibold text-foreground-light dark:text-foreground-dark">Haptic Feedback</h3>
                   <p className="text-sm text-subtle-light dark:text-subtle-dark">Vibrate on touch interactions</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={preferences.hapticFeedback}
-                    onChange={(e) => handlePreferenceChange('hapticFeedback', e.target.checked)}
-                    className="sr-only peer"
+                <button
+                  type="button"
+                  onClick={() => handlePreferenceChange('hapticFeedback', !preferences.hapticFeedback)}
+                  className="shrink-0 relative"
+                  style={{ width: '51px', height: '31px' }}
+                >
+                  <div 
+                    className="absolute inset-0 rounded-full transition-colors duration-200"
+                    style={{ backgroundColor: preferences.hapticFeedback ? '#3b82f6' : '#d1d5db' }}
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                </label>
+                  <div 
+                    className="absolute top-[2px] rounded-full bg-white shadow-md transition-transform duration-200"
+                    style={{ 
+                      width: '27px', 
+                      height: '27px',
+                      left: '2px',
+                      transform: preferences.hapticFeedback ? 'translateX(20px)' : 'translateX(0px)'
+                    }}
+                  />
+                </button>
               </div>
             </div>
           </div>
@@ -167,20 +200,31 @@ const AppPreferences: React.FC = () => {
             <h2 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-4">Data & Sync</h2>
             
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
                   <h3 className="text-base font-semibold text-foreground-light dark:text-foreground-dark">Auto Sync</h3>
                   <p className="text-sm text-subtle-light dark:text-subtle-dark">Automatically sync data when connected</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={preferences.autoSync}
-                    onChange={(e) => handlePreferenceChange('autoSync', e.target.checked)}
-                    className="sr-only peer"
+                <button
+                  type="button"
+                  onClick={() => handlePreferenceChange('autoSync', !preferences.autoSync)}
+                  className="shrink-0 relative"
+                  style={{ width: '51px', height: '31px' }}
+                >
+                  <div 
+                    className="absolute inset-0 rounded-full transition-colors duration-200"
+                    style={{ backgroundColor: preferences.autoSync ? '#3b82f6' : '#d1d5db' }}
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                </label>
+                  <div 
+                    className="absolute top-[2px] rounded-full bg-white shadow-md transition-transform duration-200"
+                    style={{ 
+                      width: '27px', 
+                      height: '27px',
+                      left: '2px',
+                      transform: preferences.autoSync ? 'translateX(20px)' : 'translateX(0px)'
+                    }}
+                  />
+                </button>
               </div>
 
               <div>

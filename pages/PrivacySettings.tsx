@@ -24,30 +24,43 @@ const PrivacySettings: React.FC = () => {
   };
 
   const PrivacyToggle = ({ 
-    key, 
+    settingKey, 
     title, 
     description, 
     enabled 
   }: { 
-    key: string; 
+    settingKey: string; 
     title: string; 
     description: string; 
     enabled: boolean; 
   }) => (
-    <div className="flex items-center justify-between">
-      <div className="flex-1">
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex-1 min-w-0">
         <h3 className="text-base font-semibold text-foreground-light dark:text-foreground-dark">{title}</h3>
         <p className="text-sm text-subtle-light dark:text-subtle-dark">{description}</p>
       </div>
-      <label className="relative inline-flex items-center cursor-pointer">
-        <input
-          type="checkbox"
-          checked={enabled}
-          onChange={(e) => handleSettingChange(key, e.target.checked)}
-          className="sr-only peer"
+      <button
+        type="button"
+        onClick={() => handleSettingChange(settingKey, !enabled)}
+        className="shrink-0 relative"
+        style={{ width: '51px', height: '31px' }}
+      >
+        {/* Track */}
+        <div 
+          className="absolute inset-0 rounded-full transition-colors duration-200"
+          style={{ backgroundColor: enabled ? '#3b82f6' : '#d1d5db' }}
         />
-        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-      </label>
+        {/* Knob */}
+        <div 
+          className="absolute top-[2px] rounded-full bg-white shadow-md transition-transform duration-200"
+          style={{ 
+            width: '27px', 
+            height: '27px',
+            left: '2px',
+            transform: enabled ? 'translateX(20px)' : 'translateX(0px)'
+          }}
+        />
+      </button>
     </div>
   );
 
@@ -63,21 +76,21 @@ const PrivacySettings: React.FC = () => {
             
             <div className="space-y-4">
               <PrivacyToggle
-                key="dataCollection"
+                settingKey="dataCollection"
                 title="Essential Data Collection"
                 description="Collect data necessary for app functionality"
                 enabled={privacySettings.dataCollection}
               />
               
               <PrivacyToggle
-                key="analytics"
+                settingKey="analytics"
                 title="Analytics & Usage Data"
                 description="Help us improve the app by sharing usage statistics"
                 enabled={privacySettings.analytics}
               />
               
               <PrivacyToggle
-                key="crashReporting"
+                settingKey="crashReporting"
                 title="Crash Reporting"
                 description="Automatically report crashes to help fix issues"
                 enabled={privacySettings.crashReporting}
@@ -91,7 +104,7 @@ const PrivacySettings: React.FC = () => {
             
             <div className="space-y-4">
               <PrivacyToggle
-                key="locationTracking"
+                settingKey="locationTracking"
                 title="Location Tracking"
                 description="Track location for weather alerts and local vet recommendations"
                 enabled={privacySettings.locationTracking}
@@ -105,14 +118,14 @@ const PrivacySettings: React.FC = () => {
             
             <div className="space-y-4">
               <PrivacyToggle
-                key="healthDataSharing"
+                settingKey="healthDataSharing"
                 title="Health Data Sharing"
                 description="Share anonymized health data for research purposes"
                 enabled={privacySettings.healthDataSharing}
               />
               
               <PrivacyToggle
-                key="marketingData"
+                settingKey="marketingData"
                 title="Marketing Data"
                 description="Use data for personalized marketing and recommendations"
                 enabled={privacySettings.marketingData}
@@ -126,7 +139,7 @@ const PrivacySettings: React.FC = () => {
             
             <div className="space-y-4">
               <PrivacyToggle
-                key="thirdPartySharing"
+                settingKey="thirdPartySharing"
                 title="Third Party Data Sharing"
                 description="Share data with trusted partners for enhanced services"
                 enabled={privacySettings.thirdPartySharing}

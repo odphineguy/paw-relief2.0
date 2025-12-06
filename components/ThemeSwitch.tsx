@@ -1,26 +1,32 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
-import { SunIcon, MoonIcon } from './icons';
 
 const ThemeSwitch: React.FC = () => {
     const { theme, toggleTheme } = useTheme();
+    const isDark = theme === 'dark';
 
     return (
         <button
+            type="button"
             onClick={toggleTheme}
-            className="relative inline-flex items-center h-6 rounded-full w-11 transition-colors bg-gray-200 dark:bg-gray-700 focus:outline-none flex-shrink-0"
+            className="shrink-0 relative"
+            style={{ width: '51px', height: '31px' }}
         >
-            <span
-                className={`${
-                    theme === 'light' ? 'translate-x-1' : 'translate-x-[26px]'
-                } inline-block w-4 h-4 transform bg-white rounded-full transition-transform flex items-center justify-center`}
-            >
-                {theme === 'light' ? (
-                    <SunIcon className="w-3 h-3 text-yellow-500" />
-                ) : (
-                    <MoonIcon className="w-3 h-3 text-blue-300" />
-                )}
-            </span>
+            {/* Track */}
+            <div 
+                className="absolute inset-0 rounded-full transition-colors duration-200"
+                style={{ backgroundColor: isDark ? '#3b82f6' : '#d1d5db' }}
+            />
+            {/* Knob */}
+            <div 
+                className="absolute top-[2px] rounded-full bg-white shadow-md transition-transform duration-200"
+                style={{ 
+                    width: '27px', 
+                    height: '27px',
+                    left: '2px',
+                    transform: isDark ? 'translateX(20px)' : 'translateX(0px)'
+                }}
+            />
         </button>
     );
 };

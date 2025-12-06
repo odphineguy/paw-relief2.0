@@ -25,30 +25,43 @@ const NotificationSettings: React.FC = () => {
   };
 
   const NotificationToggle = ({ 
-    key, 
+    settingKey, 
     title, 
     description, 
     enabled 
   }: { 
-    key: string; 
+    settingKey: string; 
     title: string; 
     description: string; 
     enabled: boolean; 
   }) => (
-    <div className="flex items-center justify-between">
-      <div className="flex-1">
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex-1 min-w-0">
         <h3 className="text-base font-semibold text-foreground-light dark:text-foreground-dark">{title}</h3>
         <p className="text-sm text-subtle-light dark:text-subtle-dark">{description}</p>
       </div>
-      <label className="relative inline-flex items-center cursor-pointer">
-        <input
-          type="checkbox"
-          checked={enabled}
-          onChange={(e) => handleNotificationChange(key, e.target.checked)}
-          className="sr-only peer"
+      <button
+        type="button"
+        onClick={() => handleNotificationChange(settingKey, !enabled)}
+        className="shrink-0 relative"
+        style={{ width: '51px', height: '31px' }}
+      >
+        {/* Track */}
+        <div 
+          className="absolute inset-0 rounded-full transition-colors duration-200"
+          style={{ backgroundColor: enabled ? '#3b82f6' : '#d1d5db' }}
         />
-        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-      </label>
+        {/* Knob */}
+        <div 
+          className="absolute top-[2px] rounded-full bg-white shadow-md transition-transform duration-200"
+          style={{ 
+            width: '27px', 
+            height: '27px',
+            left: '2px',
+            transform: enabled ? 'translateX(20px)' : 'translateX(0px)'
+          }}
+        />
+      </button>
     </div>
   );
 
@@ -64,35 +77,35 @@ const NotificationSettings: React.FC = () => {
             
             <div className="space-y-4">
               <NotificationToggle
-                key="medicationReminders"
+                settingKey="medicationReminders"
                 title="Medication Reminders"
                 description="Get notified when it's time for medication"
                 enabled={notifications.medicationReminders}
               />
               
               <NotificationToggle
-                key="appointmentReminders"
+                settingKey="appointmentReminders"
                 title="Appointment Reminders"
                 description="Reminders for vet appointments and checkups"
                 enabled={notifications.appointmentReminders}
               />
               
               <NotificationToggle
-                key="healthAlerts"
+                settingKey="healthAlerts"
                 title="Health Alerts"
                 description="Important health notifications and warnings"
                 enabled={notifications.healthAlerts}
               />
               
               <NotificationToggle
-                key="weeklyReports"
+                settingKey="weeklyReports"
                 title="Weekly Health Reports"
                 description="Weekly summary of your dog's health data"
                 enabled={notifications.weeklyReports}
               />
               
               <NotificationToggle
-                key="emergencyAlerts"
+                settingKey="emergencyAlerts"
                 title="Emergency Alerts"
                 description="Critical health alerts and emergency notifications"
                 enabled={notifications.emergencyAlerts}
@@ -106,14 +119,14 @@ const NotificationSettings: React.FC = () => {
             
             <div className="space-y-4">
               <NotificationToggle
-                key="systemUpdates"
+                settingKey="systemUpdates"
                 title="System Updates"
                 description="Notifications about app updates and new features"
                 enabled={notifications.systemUpdates}
               />
               
               <NotificationToggle
-                key="marketingEmails"
+                settingKey="marketingEmails"
                 title="Marketing & Tips"
                 description="Helpful tips and promotional content"
                 enabled={notifications.marketingEmails}
@@ -127,21 +140,21 @@ const NotificationSettings: React.FC = () => {
             
             <div className="space-y-4">
               <NotificationToggle
-                key="pushNotifications"
+                settingKey="pushNotifications"
                 title="Push Notifications"
                 description="Receive notifications on your device"
                 enabled={notifications.pushNotifications}
               />
               
               <NotificationToggle
-                key="emailNotifications"
+                settingKey="emailNotifications"
                 title="Email Notifications"
                 description="Receive notifications via email"
                 enabled={notifications.emailNotifications}
               />
               
               <NotificationToggle
-                key="smsNotifications"
+                settingKey="smsNotifications"
                 title="SMS Notifications"
                 description="Receive notifications via text message"
                 enabled={notifications.smsNotifications}

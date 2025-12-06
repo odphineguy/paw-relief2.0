@@ -26,6 +26,10 @@ export const PlusCircleIcon: React.FC<{ className?: string }> = ({ className = "
     <Icon className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></Icon>
 );
 
+export const TrashIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <Icon className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></Icon>
+);
+
 export const PawIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
     <Icon className={className}>
         <circle cx="11" cy="4" r="2" />

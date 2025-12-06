@@ -285,6 +285,18 @@ export const updateSymptomLog = async (logId: string, updates: Partial<SymptomLo
   };
 };
 
+export const deleteSymptomLog = async (logId: string): Promise<void> => {
+  const { error } = await supabase
+    .from('symptom_logs')
+    .delete()
+    .eq('id', logId);
+
+  if (error) {
+    console.error('Error deleting symptom log:', error);
+    throw error;
+  }
+};
+
 // ===== REMINDER FUNCTIONS =====
 
 export const getReminders = async (dogId: string): Promise<Reminder[]> => {

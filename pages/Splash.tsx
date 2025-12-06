@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react';
-import pawLoaderAnimation from '../public/assets/animations/Paw Loader.json';
+import pawLoaderAnimation from '../assets/animations/Paw Loader.json';
 import { useTheme } from '../context/ThemeContext';
 
 const Splash: React.FC = () => {

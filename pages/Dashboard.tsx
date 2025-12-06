@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDogs } from '../context/DogContext';
 import Header from '../components/Header';
-import { SymptomLog, Reminder, SymptomType, ReminderType } from '../types';
-import { getSymptomLogs, getReminders } from '../services/api';
+import { SymptomLog, Reminder, SymptomType, ReminderType, TriggerLog, TriggerType } from '../types';
+import { getSymptomLogs, getReminders, getTriggerLogs } from '../services/api';
 import { format } from 'date-fns';
 import { PieChart, Pie, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 import { useTheme } from '../context/ThemeContext';
@@ -68,6 +68,7 @@ const Dashboard: React.FC = () => {
   const { selectedDog, dogs, setSelectedDog } = useDogs();
   const { theme } = useTheme();
   const [logs, setLogs] = useState<SymptomLog[]>([]);
+  const [triggerLogs, setTriggerLogs] = useState<TriggerLog[]>([]);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [location, setLocation] = useState<LocationData | null>(null);
   const [weather, setWeather] = useState<WeatherData | null>(null);
@@ -80,11 +81,13 @@ const Dashboard: React.FC = () => {
       const fetchData = async () => {
         setLoading(true);
         try {
-          const [logsData, remindersData] = await Promise.all([
+          const [logsData, triggerLogsData, remindersData] = await Promise.all([
             getSymptomLogs(selectedDog.id),
+            getTriggerLogs(selectedDog.id),
             getReminders(selectedDog.id),
           ]);
           setLogs(logsData);
+          setTriggerLogs(triggerLogsData);
           setReminders(remindersData.filter(r => !r.completed));
         } catch (error) {
           console.error("Failed to fetch dashboard data", error);
@@ -268,10 +271,10 @@ const Dashboard: React.FC = () => {
     </div>
   );
 
-  const RecommendationCard = ({ icon: Icon, text }: {
+  const RecommendationCard: React.FC<{
     icon: React.ElementType;
     text: string;
-  }) => (
+  }> = ({ icon: Icon, text }) => (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-4 flex items-center shadow-sm border border-gray-200 dark:border-gray-700">
       <div className="bg-blue-500 dark:bg-blue-600 p-3 rounded-lg mr-3">
         <Icon className="w-6 h-6 text-white" />
@@ -289,6 +292,30 @@ const Dashboard: React.FC = () => {
     name,
     value,
   }));
+
+  // Calculate trigger patterns (last 30 days)
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  
+  const recentTriggerLogs = triggerLogs.filter(log => 
+    new Date(log.loggedDate) >= thirtyDaysAgo
+  );
+  
+  const triggerCounts: Record<string, number> = recentTriggerLogs.reduce((acc, log) => {
+    acc[log.triggerType] = (acc[log.triggerType] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const sortedTriggers = Object.entries(triggerCounts)
+    .sort(([, a], [, b]) => (b as number) - (a as number))
+    .map(([trigger, count]) => ({
+      trigger: trigger as TriggerType,
+      count: count as number,
+    }));
+
+  const totalTriggers = Object.values(triggerCounts).reduce((sum, count) => sum + count, 0);
+  const topTrigger = sortedTriggers[0];
+  const topTriggerPercentage = topTrigger ? Math.round((topTrigger.count / totalTriggers) * 100) : 0;
 
   const tooltipStyle = {
     backgroundColor: theme === 'dark' ? '#1e293b' : '#fffefb',
@@ -578,36 +605,94 @@ const Dashboard: React.FC = () => {
               Identified Patterns
             </h2>
             <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-700 p-6 rounded-xl border border-gray-200 dark:border-gray-600">
-              {/* Header */}
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    Trigger vs. Symptoms
-                  </h3>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-gray-900 dark:text-white">High</span>
-                    <span className="text-sm font-semibold text-green-600 dark:text-green-400">+15%</span>
+              {totalTriggers === 0 ? (
+                // Empty state when no trigger data
+                <div className="text-center py-6">
+                  <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <ChartCombinedIcon className="w-8 h-8 text-blue-500 dark:text-blue-400" />
                   </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    No Patterns Yet
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    Start logging triggers to discover patterns in your dog's allergies.
+                  </p>
+                  <button
+                    onClick={() => navigate('/log-entry')}
+                    className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Log a Trigger
+                  </button>
                 </div>
-                <span className="text-xs text-cyan-600 dark:text-cyan-400 font-medium">Last 30 Days</span>
-              </div>
+              ) : (
+                <>
+                  {/* Header with real data */}
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                        Top Trigger
+                      </h3>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                          {topTrigger?.trigger || 'N/A'}
+                        </span>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                          {topTriggerPercentage}%
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-xs text-cyan-600 dark:text-cyan-400 font-medium">Last 30 Days</span>
+                  </div>
 
-              {/* Static Graph Visualization */}
-              <div className="mb-4">
-                <img
-                  src="/assets/trigger-graph.png"
-                  alt="Trigger correlation graph"
-                  className="w-full h-auto"
-                />
-              </div>
+                  {/* Dynamic Bar Chart */}
+                  <div className="space-y-3 mb-4">
+                    {sortedTriggers.slice(0, 4).map(({ trigger, count }, index) => {
+                      const percentage = Math.round((count / totalTriggers) * 100);
+                      const colors = ['#3b82f6', '#10b981', '#a855f7', '#f97316'];
+                      const color = colors[index % colors.length];
+                      
+                      return (
+                        <div key={trigger}>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">{trigger}</span>
+                            <span className="text-gray-500 dark:text-gray-400">{count} ({percentage}%)</span>
+                          </div>
+                          <div className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                            <div
+                              className="h-full rounded-full transition-all duration-500"
+                              style={{ width: `${percentage}%`, backgroundColor: color }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
 
-              {/* Action Button */}
-              <button
-                onClick={() => navigate('/trigger-analysis')}
-                className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm"
-              >
-                View Detailed Analysis
-              </button>
+                  {/* Stats row */}
+                  <div className="flex gap-4 mb-4">
+                    <div className="flex-1 bg-white/50 dark:bg-gray-700/50 rounded-lg p-3 text-center">
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalTriggers}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Total Triggers</p>
+                    </div>
+                    <div className="flex-1 bg-white/50 dark:bg-gray-700/50 rounded-lg p-3 text-center">
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">{sortedTriggers.length}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Trigger Types</p>
+                    </div>
+                    <div className="flex-1 bg-white/50 dark:bg-gray-700/50 rounded-lg p-3 text-center">
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">{logs.length}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Symptoms</p>
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <button
+                    onClick={() => navigate('/trigger-analysis')}
+                    className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm"
+                  >
+                    View Detailed Analysis
+                  </button>
+                </>
+              )}
             </div>
           </section>
 
