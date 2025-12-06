@@ -568,6 +568,232 @@ export const addTriggerLog = async (triggerLog: Omit<TriggerLog, 'id' | 'created
   };
 };
 
+// ===== USER PROFILE FUNCTIONS =====
+
+export interface UserProfile {
+  id: string;
+  userId: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  phone: string | null;
+  subscriptionTier: 'free' | 'premium' | 'trial';
+  subscriptionExpiresAt: string | null;
+  // Privacy Settings
+  essentialDataCollection: boolean;
+  analyticsUsageData: boolean;
+  crashReporting: boolean;
+  locationTracking: boolean;
+  healthDataSharing: boolean;
+  marketingData: boolean;
+  thirdPartySharing: boolean;
+  // Notification Settings
+  pushNotifications: boolean;
+  emailNotifications: boolean;
+  medicationReminders: boolean;
+  allergenAlerts: boolean;
+  weeklySummary: boolean;
+  // App Preferences
+  preferredUnits: 'imperial' | 'metric';
+  theme: 'light' | 'dark' | 'system';
+  language: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const getUserProfile = async (): Promise<UserProfile | null> => {
+  const userId = await getCurrentUserId();
+
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      // Profile doesn't exist, create one
+      return createUserProfile();
+    }
+    console.error('Error fetching user profile:', error);
+    throw error;
+  }
+
+  return mapProfileFromDb(data);
+};
+
+export const createUserProfile = async (): Promise<UserProfile> => {
+  const userId = await getCurrentUserId();
+  const { data: userData } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .insert([{
+      user_id: userId,
+      display_name: userData.user?.user_metadata?.full_name || userData.user?.email,
+    }])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating user profile:', error);
+    throw error;
+  }
+
+  return mapProfileFromDb(data);
+};
+
+export const updateUserProfile = async (updates: Partial<UserProfile>): Promise<UserProfile> => {
+  const userId = await getCurrentUserId();
+
+  const updateData: any = {};
+  if (updates.displayName !== undefined) updateData.display_name = updates.displayName;
+  if (updates.avatarUrl !== undefined) updateData.avatar_url = updates.avatarUrl;
+  if (updates.phone !== undefined) updateData.phone = updates.phone;
+  if (updates.subscriptionTier !== undefined) updateData.subscription_tier = updates.subscriptionTier;
+  if (updates.subscriptionExpiresAt !== undefined) updateData.subscription_expires_at = updates.subscriptionExpiresAt;
+  // Privacy settings
+  if (updates.essentialDataCollection !== undefined) updateData.essential_data_collection = updates.essentialDataCollection;
+  if (updates.analyticsUsageData !== undefined) updateData.analytics_usage_data = updates.analyticsUsageData;
+  if (updates.crashReporting !== undefined) updateData.crash_reporting = updates.crashReporting;
+  if (updates.locationTracking !== undefined) updateData.location_tracking = updates.locationTracking;
+  if (updates.healthDataSharing !== undefined) updateData.health_data_sharing = updates.healthDataSharing;
+  if (updates.marketingData !== undefined) updateData.marketing_data = updates.marketingData;
+  if (updates.thirdPartySharing !== undefined) updateData.third_party_sharing = updates.thirdPartySharing;
+  // Notification settings
+  if (updates.pushNotifications !== undefined) updateData.push_notifications = updates.pushNotifications;
+  if (updates.emailNotifications !== undefined) updateData.email_notifications = updates.emailNotifications;
+  if (updates.medicationReminders !== undefined) updateData.medication_reminders = updates.medicationReminders;
+  if (updates.allergenAlerts !== undefined) updateData.allergen_alerts = updates.allergenAlerts;
+  if (updates.weeklySummary !== undefined) updateData.weekly_summary = updates.weeklySummary;
+  // App preferences
+  if (updates.preferredUnits !== undefined) updateData.preferred_units = updates.preferredUnits;
+  if (updates.theme !== undefined) updateData.theme = updates.theme;
+  if (updates.language !== undefined) updateData.language = updates.language;
+  
+  updateData.updated_at = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .update(updateData)
+    .eq('user_id', userId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating user profile:', error);
+    throw error;
+  }
+
+  return mapProfileFromDb(data);
+};
+
+const mapProfileFromDb = (data: any): UserProfile => ({
+  id: data.id,
+  userId: data.user_id,
+  displayName: data.display_name,
+  avatarUrl: data.avatar_url,
+  phone: data.phone,
+  subscriptionTier: data.subscription_tier,
+  subscriptionExpiresAt: data.subscription_expires_at,
+  essentialDataCollection: data.essential_data_collection,
+  analyticsUsageData: data.analytics_usage_data,
+  crashReporting: data.crash_reporting,
+  locationTracking: data.location_tracking,
+  healthDataSharing: data.health_data_sharing,
+  marketingData: data.marketing_data,
+  thirdPartySharing: data.third_party_sharing,
+  pushNotifications: data.push_notifications,
+  emailNotifications: data.email_notifications,
+  medicationReminders: data.medication_reminders,
+  allergenAlerts: data.allergen_alerts,
+  weeklySummary: data.weekly_summary,
+  preferredUnits: data.preferred_units,
+  theme: data.theme,
+  language: data.language,
+  createdAt: data.created_at,
+  updatedAt: data.updated_at,
+});
+
+// ===== DATA EXPORT FUNCTION (GDPR Compliance) =====
+
+export interface UserDataExport {
+  exportDate: string;
+  user: {
+    email: string;
+    createdAt: string;
+  };
+  profile: UserProfile | null;
+  dogs: Dog[];
+  symptomLogs: SymptomLog[];
+  triggerLogs: TriggerLog[];
+  reminders: Reminder[];
+}
+
+export const exportUserData = async (): Promise<UserDataExport> => {
+  const userId = await getCurrentUserId();
+  const { data: userData } = await supabase.auth.getUser();
+
+  // Get all user data
+  const [profile, dogs] = await Promise.all([
+    getUserProfile().catch(() => null),
+    getDogs(),
+  ]);
+
+  // Get all logs and reminders for all dogs
+  const allSymptomLogs: SymptomLog[] = [];
+  const allTriggerLogs: TriggerLog[] = [];
+  const allReminders: Reminder[] = [];
+
+  for (const dog of dogs) {
+    const [symptoms, triggers, reminders] = await Promise.all([
+      getSymptomLogs(dog.id),
+      getTriggerLogs(dog.id),
+      getReminders(dog.id),
+    ]);
+    allSymptomLogs.push(...symptoms);
+    allTriggerLogs.push(...triggers);
+    allReminders.push(...reminders);
+  }
+
+  return {
+    exportDate: new Date().toISOString(),
+    user: {
+      email: userData.user?.email || '',
+      createdAt: userData.user?.created_at || '',
+    },
+    profile,
+    dogs,
+    symptomLogs: allSymptomLogs,
+    triggerLogs: allTriggerLogs,
+    reminders: allReminders,
+  };
+};
+
+// ===== DELETE USER DATA (GDPR Right to be Forgotten) =====
+
+export const deleteAllUserData = async (): Promise<void> => {
+  const userId = await getCurrentUserId();
+
+  // Delete all dogs (which cascades to symptom_logs, trigger_logs, reminders)
+  const dogs = await getDogs();
+  for (const dog of dogs) {
+    await deleteDog(dog.id);
+  }
+
+  // Delete user profile
+  const { error: profileError } = await supabase
+    .from('user_profiles')
+    .delete()
+    .eq('user_id', userId);
+
+  if (profileError) {
+    console.error('Error deleting user profile:', profileError);
+  }
+
+  // Note: The auth.users record should be deleted via Supabase dashboard or admin API
+  console.log('User data deleted. Auth account must be deleted separately via Supabase dashboard.');
+};
+
 // Legacy localStorage functions - keeping for backwards compatibility
 export const saveDogs = async (dogs: Dog[]): Promise<void> => {
   console.warn('saveDogs is deprecated - data now stored in Supabase');

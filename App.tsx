@@ -27,6 +27,7 @@ import LoginSignup from './pages/LoginSignup';
 import Onboarding from './pages/Onboarding';
 import Welcome from './pages/Welcome';
 import Subscription from './pages/Subscription';
+import ResetPassword from './pages/ResetPassword';
 import BottomNav from './components/BottomNav';
 import ProtectedRoute from './components/ProtectedRoute';
 import { DogProvider } from './context/DogContext';
@@ -50,6 +51,7 @@ const App: React.FC = () => {
                                     <Route path="/onboarding" element={<Onboarding />} />
                                     <Route path="/welcome" element={<Welcome />} />
                                     <Route path="/subscription" element={<Subscription />} />
+                                    <Route path="/reset-password" element={<ResetPassword />} />
                                     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                                     <Route path="/logs" element={<ProtectedRoute><Logs /></ProtectedRoute>} />
                                     <Route path="/meds" element={<ProtectedRoute><Meds /></ProtectedRoute>} />

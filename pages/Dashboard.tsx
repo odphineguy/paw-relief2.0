@@ -758,26 +758,212 @@ const Dashboard: React.FC = () => {
           </section>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-64 px-6">
-          <div className="text-center mb-6">
-            <div className="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-12 h-12 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
+        <div className="px-4 pb-8 overflow-y-auto">
+          {/* Your Paws Section - Empty State */}
+          <section className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight">
+                Your Paws
+              </h2>
+              <button
+                onClick={() => navigate('/create-dog-profile')}
+                className="w-10 h-10 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
             </div>
-            <h3 className="text-xl font-bold text-foreground-light dark:text-foreground-dark mb-2">
-              Add Your First Pet
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Start tracking your dog's allergies and symptoms
-            </p>
+            {/* Empty state card for adding first pet */}
             <button
               onClick={() => navigate('/create-dog-profile')}
-              className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+              className="w-full bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-700 border-2 border-dashed border-blue-300 dark:border-blue-600 rounded-xl p-6 flex flex-col items-center justify-center hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
             >
-              Add Your Dog
+              <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-3">
+                <svg className="w-8 h-8 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </div>
+              <span className="font-semibold text-gray-900 dark:text-white">Add Your First Pet</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Tap to get started</span>
             </button>
-          </div>
+          </section>
+
+          {/* Allergen Alerts - Always shows */}
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight">
+                Allergen Alerts
+              </h2>
+            </div>
+
+            {/* Location Section */}
+            <div className="relative rounded-xl overflow-hidden shadow-lg mb-6">
+              {allergenLoading ? (
+                <div className="w-full h-60 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                  <div className="text-white">Loading location...</div>
+                </div>
+              ) : (
+                <>
+                  {location?.lat && location?.lon && (
+                    <div className="relative h-60 w-full">
+                      <img
+                        src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+3b82f6(${location.lon},${location.lat})/${location.lon},${location.lat},12,0/600x300@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw`}
+                        alt="Location Map"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          const zoom = 12;
+                          const x = Math.floor((location.lon + 180) / 360 * Math.pow(2, zoom));
+                          const y = Math.floor((1 - Math.log(Math.tan(location.lat * Math.PI / 180) + 1 / Math.cos(location.lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom));
+                          target.src = `https://tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full">
+                        <svg className="w-10 h-10 text-blue-500 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 0C7.802 0 4.403 3.403 4.403 7.602c0 6.243 7.597 16.398 7.597 16.398s7.597-10.155 7.597-16.398C19.597 3.403 16.198 0 12 0zm0 11.25c-2.07 0-3.75-1.68-3.75-3.75S9.93 3.75 12 3.75s3.75 1.68 3.75 3.75-1.68 3.75-3.75 3.75z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <h2 className="text-2xl font-bold drop-shadow-md">{location?.city || 'Your Location'}</h2>
+                        <p className="text-white/90 text-sm drop-shadow">
+                          {location?.country ? `${location.country.toUpperCase()}` : 'Current Location'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="bg-black/50 backdrop-blur-md rounded-lg p-3 flex items-center gap-3 border border-white/20">
+                      <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          {weather?.description === 'Clear' || weather?.description === 'Sunny' ? (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                          ) : (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                          )}
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-white drop-shadow-lg">{weather?.temp || '--'}°F</p>
+                        <p className="text-white/90 text-sm drop-shadow">{weather?.description || 'Loading...'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Today's Allergens */}
+            <div className="space-y-4 mb-6">
+              <h3 className="text-lg font-semibold text-foreground-light dark:text-foreground-dark">Today's Allergens</h3>
+              {weather && (
+                <>
+                  <AllergenCard
+                    icon={PollenIcon}
+                    title={(() => {
+                      const pollenLevel = Math.min(10, Math.round((weather.aqi / 15) * 1.2));
+                      if (pollenLevel >= 7) return "High Pollen";
+                      if (pollenLevel >= 4) return "Moderate Pollen";
+                      return "Low Pollen";
+                    })()}
+                    subtitle={`Estimated from air quality`}
+                    level={Math.min(10, Math.round((weather.aqi / 15) * 1.2))}
+                    maxLevel={10}
+                    colorClass={(() => {
+                      const pollenLevel = Math.min(10, Math.round((weather.aqi / 15) * 1.2));
+                      if (pollenLevel >= 7) return "bg-red-500";
+                      if (pollenLevel >= 4) return "bg-yellow-500";
+                      return "bg-green-500";
+                    })()}
+                  />
+                  <AllergenCard
+                    icon={AirQualityIcon}
+                    title={(() => {
+                      if (weather.aqi >= 100) return "Unhealthy Air Quality";
+                      if (weather.aqi >= 50) return "Moderate Air Quality";
+                      return "Good Air Quality";
+                    })()}
+                    subtitle={`AQI: ${weather.aqi}`}
+                    level={weather.aqi}
+                    maxLevel={150}
+                    colorClass={(() => {
+                      if (weather.aqi >= 100) return "bg-red-500";
+                      if (weather.aqi >= 50) return "bg-yellow-500";
+                      return "bg-green-500";
+                    })()}
+                  />
+                </>
+              )}
+            </div>
+          </section>
+
+          {/* Identified Patterns - Empty State */}
+          <section className="mb-8">
+            <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
+              Identified Patterns
+            </h2>
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-700 p-6 rounded-xl border border-gray-200 dark:border-gray-600">
+              <div className="text-center py-6">
+                <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ChartCombinedIcon className="w-8 h-8 text-blue-500 dark:text-blue-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  No Patterns Yet
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Add a pet and start logging to discover patterns.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Symptom Distribution - Empty State */}
+          <section className="mb-8">
+            <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
+              Symptom Distribution
+            </h2>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  No Symptoms Logged
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Symptom data will appear here once you start logging.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Upcoming Reminders - Empty State */}
+          <section className="mb-8">
+            <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight mb-4">
+              Upcoming Reminders
+            </h2>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+              <div className="text-center py-6">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  No Reminders Set
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Add medications and treatments to see reminders here.
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
       )}
     </div>

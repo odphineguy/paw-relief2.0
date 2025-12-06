@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
+import { exportUserData, UserDataExport } from '../services/api';
 
 const ExportData: React.FC = () => {
+  const navigate = useNavigate();
   const [exportSettings, setExportSettings] = useState({
     includeHealthData: true,
     includeMedicationHistory: true,
@@ -13,20 +16,103 @@ const ExportData: React.FC = () => {
   });
 
   const [isExporting, setIsExporting] = useState(false);
+  const [exportComplete, setExportComplete] = useState(false);
 
   const handleSettingChange = (key: string, value: any) => {
     setExportSettings(prev => ({ ...prev, [key]: value }));
   };
 
+  const downloadFile = (data: UserDataExport, format: string) => {
+    let content: string;
+    let mimeType: string;
+    let fileExtension: string;
+
+    if (format === 'JSON') {
+      content = JSON.stringify(data, null, 2);
+      mimeType = 'application/json';
+      fileExtension = 'json';
+    } else if (format === 'CSV') {
+      // Convert to CSV format
+      content = convertToCSV(data);
+      mimeType = 'text/csv';
+      fileExtension = 'csv';
+    } else {
+      // For PDF, we'll just use JSON for now (PDF generation would need a library)
+      content = JSON.stringify(data, null, 2);
+      mimeType = 'application/json';
+      fileExtension = 'json';
+    }
+
+    // Create blob and download
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `paw-relief-data-${new Date().toISOString().split('T')[0]}.${fileExtension}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const convertToCSV = (data: UserDataExport): string => {
+    const lines: string[] = [];
+    
+    // User info
+    lines.push('=== USER INFO ===');
+    lines.push(`Email,${data.user.email}`);
+    lines.push(`Account Created,${data.user.createdAt}`);
+    lines.push(`Export Date,${data.exportDate}`);
+    lines.push('');
+
+    // Dogs
+    lines.push('=== PETS ===');
+    lines.push('Name,Breed,Age,Weight,Birthday,Known Allergies');
+    data.dogs.forEach(dog => {
+      lines.push(`${dog.name},${dog.breed},${dog.age},${dog.weight},${dog.birthday},"${(dog.knownAllergies || []).join(', ')}"`);
+    });
+    lines.push('');
+
+    // Symptom Logs
+    lines.push('=== SYMPTOM LOGS ===');
+    lines.push('Date,Symptom Type,Severity,Notes');
+    data.symptomLogs.forEach(log => {
+      lines.push(`${log.createdAt},${log.symptomType},${log.severity},"${log.notes || ''}"`);
+    });
+    lines.push('');
+
+    // Trigger Logs
+    lines.push('=== TRIGGER LOGS ===');
+    lines.push('Date,Trigger Type,Location,Weather,Pollen Level,Notes');
+    data.triggerLogs.forEach(log => {
+      lines.push(`${log.loggedDate},${log.triggerType},${log.location || ''},${log.weatherConditions || ''},${log.pollenLevel || ''},"${log.notes || ''}"`);
+    });
+    lines.push('');
+
+    // Reminders
+    lines.push('=== MEDICATIONS & REMINDERS ===');
+    lines.push('Name,Type,Dosage,Next Due,Repeat Interval,Completed');
+    data.reminders.forEach(reminder => {
+      lines.push(`${reminder.name},${reminder.type},${reminder.dosage || ''},${reminder.nextDue},${reminder.repeatInterval || 'none'},${reminder.completed}`);
+    });
+
+    return lines.join('\n');
+  };
+
   const handleExport = async () => {
     setIsExporting(true);
-    console.log('Exporting data with settings:', exportSettings);
+    setExportComplete(false);
     
-    // Simulate export process
-    setTimeout(() => {
+    try {
+      const data = await exportUserData();
+      downloadFile(data, exportSettings.format);
+      setExportComplete(true);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Export failed. Please try again.');
+    } finally {
       setIsExporting(false);
-      alert('Export completed! Your data has been prepared for download.');
-    }, 2000);
+    }
   };
 
   const DataOption = ({ 
@@ -206,6 +292,20 @@ const ExportData: React.FC = () => {
             </div>
           </div>
 
+          {exportComplete && (
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-4">
+              <div className="flex items-center gap-3">
+                <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <h3 className="text-sm font-semibold text-green-800 dark:text-green-200">Export Complete!</h3>
+                  <p className="text-xs text-green-700 dark:text-green-300">Your data has been downloaded to your device.</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex gap-4">
             <button
               onClick={handleExport}
@@ -217,14 +317,22 @@ const ExportData: React.FC = () => {
                   <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
-                  Preparing Export...
+                  Downloading...
                 </div>
               ) : (
-                'Start Export'
+                <>
+                  <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download My Data
+                </>
               )}
             </button>
-            <button className="flex-1 bg-card-light dark:bg-card-dark text-foreground-light dark:text-foreground-dark border border-border-light dark:border-border-dark font-bold py-3 px-4 rounded-lg hover:bg-background-light dark:hover:bg-background-dark transition-colors">
-              Cancel
+            <button 
+              onClick={() => navigate(-1)}
+              className="flex-1 bg-card-light dark:bg-card-dark text-foreground-light dark:text-foreground-dark border border-border-light dark:border-border-dark font-bold py-3 px-4 rounded-lg hover:bg-background-light dark:hover:bg-background-dark transition-colors"
+            >
+              Back
             </button>
           </div>
         </div>
