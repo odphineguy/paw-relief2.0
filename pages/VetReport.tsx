@@ -186,13 +186,21 @@ const VetReport: React.FC = () => {
 
                     // Checkbox style
                     pdf.setDrawColor(203, 213, 225); // Slate-300
-                    pdf.setFillColor(isActive ? 16, 185, 129 : 255, 255, 255); // Emerald-500 if active
+                    if (isActive) {
+                        pdf.setFillColor(16, 185, 129); // Emerald-500
+                    } else {
+                        pdf.setFillColor(255, 255, 255); // White
+                    }
                     pdf.roundedRect(20, yPos - 4, 4, 4, 1, 1, 'FD');
 
                     // Trigger name
                     pdf.setFontSize(10);
                     pdf.setFont('helvetica', isActive ? 'bold' : 'normal');
-                    pdf.setTextColor(isActive ? 15, 23, 42 : 100, 116, 139);
+                    if (isActive) {
+                        pdf.setTextColor(15, 23, 42); // Slate-900
+                    } else {
+                        pdf.setTextColor(100, 116, 139); // Slate-500
+                    }
                     pdf.text(triggerType, 30, yPos);
 
                     yPos += 8;

@@ -167,61 +167,69 @@ const Dashboard: React.FC = () => {
             </div>
         ) : (
             <>
-                {/* Status Cards Grid */}
+                    {/* Status Cards Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                    {/* Environmental Status */}
-                    <div className="col-span-2 sm:col-span-1 bg-white dark:bg-card-dark p-4 rounded-xl border border-border-light dark:border-border-dark shadow-soft">
-                        <div className="flex justify-between items-start mb-2">
-                            <h3 className="text-sm font-semibold text-subtle-light dark:text-subtle-dark uppercase tracking-wider">Environment</h3>
+                    {/* Environment Vital */}
+                    <div className="col-span-2 sm:col-span-1 bg-white dark:bg-card-dark p-4 rounded-lg border border-border-light dark:border-border-dark shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${getPollenRisk(weather?.aqi || 0).bg.replace('/10', '')}`}></div>
+                        <div className="flex justify-between items-start mb-2 pl-2">
+                            <h3 className="text-xs font-bold text-subtle-light dark:text-subtle-dark uppercase tracking-widest">Environment</h3>
                             {weather && (
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPollenRisk(weather.aqi).bg} ${getPollenRisk(weather.aqi).color}`}>
-                                    {getPollenRisk(weather.aqi).label} Risk
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${getPollenRisk(weather.aqi).bg} ${getPollenRisk(weather.aqi).color}`}>
+                                    {getPollenRisk(weather.aqi).label}
                                 </span>
                             )}
                         </div>
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-2xl font-bold text-foreground-light dark:text-foreground-dark">
-                                {weather ? `${weather.temp}°F` : '--'}
-                            </span>
-                            <span className="text-sm text-subtle-light dark:text-subtle-dark">
-                                {location?.city || 'Unknown'}
-                            </span>
-                        </div>
-                        <div className="mt-3 flex items-center gap-2 text-xs text-subtle-light dark:text-subtle-dark">
-                            <div className="w-2 h-2 rounded-full bg-warning"></div>
-                            <span>Pollen Est: {weather ? Math.round(weather.aqi / 10) : '-'} / 10</span>
+                        <div className="pl-2">
+                             <div className="flex items-baseline gap-2">
+                                <span className="text-3xl font-display font-bold text-foreground-light dark:text-foreground-dark">
+                                    {weather ? `${weather.temp}°` : '--'}
+                                </span>
+                                <span className="text-sm text-subtle-light dark:text-subtle-dark font-medium">
+                                    F in {location?.city || 'Unknown'}
+                                </span>
+                            </div>
+                            <div className="mt-2 text-xs text-subtle-light dark:text-subtle-dark flex items-center gap-2">
+                                <span className="font-medium">AQI: {weather?.aqi || '--'}</span>
+                                <span className="text-border-dark/20 dark:text-border-light/20">|</span>
+                                <span className="font-medium">Pollen: {weather ? Math.round(weather.aqi / 10) : '-'}</span>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Next Med Reminder */}
-                    <div className="col-span-2 sm:col-span-1 bg-white dark:bg-card-dark p-4 rounded-xl border border-border-light dark:border-border-dark shadow-soft">
-                        <div className="flex justify-between items-start mb-2">
-                            <h3 className="text-sm font-semibold text-subtle-light dark:text-subtle-dark uppercase tracking-wider">Next Dose</h3>
-                            {upcomingReminders.length > 0 && (
-                                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-                                    Today
+                    {/* Medication Vital */}
+                    <div className="col-span-2 sm:col-span-1 bg-white dark:bg-card-dark p-4 rounded-lg border border-border-light dark:border-border-dark shadow-sm flex flex-col justify-between relative overflow-hidden">
+                         <div className={`absolute left-0 top-0 bottom-0 w-1 ${upcomingReminders.length > 0 ? 'bg-blue-500' : 'bg-slate-300'}`}></div>
+                        <div className="flex justify-between items-start mb-2 pl-2">
+                            <h3 className="text-xs font-bold text-subtle-light dark:text-subtle-dark uppercase tracking-widest">Next Dose</h3>
+                             {upcomingReminders.length > 0 && (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                                    Due Soon
                                 </span>
                             )}
                         </div>
-                        {upcomingReminders.length > 0 ? (
-                            <>
-                                <p className="text-lg font-bold text-foreground-light dark:text-foreground-dark truncate">
-                                    {upcomingReminders[0].name}
-                                </p>
-                                <p className="text-sm text-subtle-light dark:text-subtle-dark">
-                                    {upcomingReminders[0].nextDue ? format(new Date(upcomingReminders[0].nextDue), 'h:mm a') : 'Anytime'}
-                                </p>
-                            </>
-                        ) : (
-                            <div className="h-full flex items-center text-subtle-light text-sm">
-                                No upcoming meds
-                            </div>
-                        )}
+                        <div className="pl-2">
+                            {upcomingReminders.length > 0 ? (
+                                <>
+                                    <p className="text-lg font-bold text-foreground-light dark:text-foreground-dark truncate leading-tight">
+                                        {upcomingReminders[0].name}
+                                    </p>
+                                    <p className="text-sm text-subtle-light dark:text-subtle-dark mt-1">
+                                        {upcomingReminders[0].nextDue ? format(new Date(upcomingReminders[0].nextDue), 'h:mm a') : 'Anytime'}
+                                    </p>
+                                </>
+                            ) : (
+                                <div className="h-full flex flex-col justify-center">
+                                    <p className="text-foreground-light dark:text-foreground-dark font-medium">All Clear</p>
+                                    <p className="text-xs text-subtle-light">No meds due</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
                 {/* Quick Actions Row */}
-                <div className="flex gap-3 overflow-x-auto py-1 hide-scrollbar">
+                <div className="grid grid-cols-3 gap-3">
                     <ActionButton 
                         label="Log Symptom" 
                         icon={<ClipboardListIcon className="w-5 h-5" />} 
@@ -290,14 +298,14 @@ const Dashboard: React.FC = () => {
                                     <span className="text-sm text-subtle-light">Most Frequent</span>
                                     <span className="text-sm font-medium text-foreground-light">Pollen (Est.)</span>
                                 </div>
-                                <div className="w-full bg-background-light dark:bg-background-dark rounded-full h-2">
+                                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
                                     <div className="bg-primary h-2 rounded-full" style={{ width: '75%' }}></div>
                                 </div>
                                 <button 
                                     onClick={() => navigate('/trigger-analysis')}
-                                    className="w-full mt-2 text-center text-sm text-primary font-medium hover:underline"
+                                    className="w-full mt-2 text-center text-xs text-subtle-light hover:text-primary font-medium transition-colors"
                                 >
-                                    View Full Analysis
+                                    View Full Analysis &rarr;
                                 </button>
                             </div>
                         ) : (
@@ -318,10 +326,12 @@ const Dashboard: React.FC = () => {
 const ActionButton: React.FC<{ label: string; icon: React.ReactNode; onClick: () => void }> = ({ label, icon, onClick }) => (
     <button 
         onClick={onClick}
-        className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl shadow-sm hover:bg-background-light transition-colors whitespace-nowrap"
+        className="flex flex-col items-center justify-center gap-2 p-3 bg-white dark:bg-card-dark border border-border-light dark:border-border-dark rounded-lg shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors h-full"
     >
-        <span className="text-primary">{icon}</span>
-        <span className="text-sm font-medium text-foreground-light dark:text-foreground-dark">{label}</span>
+        <div className="text-primary bg-primary/10 p-2 rounded-full">
+            {icon}
+        </div>
+        <span className="text-xs font-semibold text-foreground-light dark:text-foreground-dark text-center">{label}</span>
     </button>
 );
 

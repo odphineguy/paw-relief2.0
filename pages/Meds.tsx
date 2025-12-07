@@ -55,48 +55,55 @@ const Meds: React.FC = () => {
                 <div className="flex justify-center items-center h-64"><PawIcon className="w-10 h-10 animate-spin text-primary" /></div>
             ) : selectedDog ? (
                 <div className="flex-1 p-4 space-y-6 pb-24 overflow-y-auto">
-                    {/* Summary Block */}
-                    <div className="bg-white dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark p-4 shadow-soft">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h2 className="text-lg font-display font-bold text-foreground-light dark:text-foreground-dark">Treatment Plan</h2>
-                                <p className="text-sm text-subtle-light dark:text-subtle-dark">{selectedDog.name}'s schedule</p>
+                    {/* Summary Block - Medical Chart Style */}
+                    <div className="bg-white dark:bg-card-dark rounded-lg border border-border-light dark:border-border-dark overflow-hidden">
+                        <div className="bg-slate-50 dark:bg-slate-800/50 px-4 py-3 border-b border-border-light dark:border-border-dark flex justify-between items-center">
+                            <h2 className="text-sm font-bold text-foreground-light dark:text-foreground-dark uppercase tracking-wider">Treatment Plan</h2>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Active</span>
+                            </div>
+                        </div>
+                        <div className="p-4 flex items-center justify-between">
+                             <div>
+                                <p className="text-xs text-subtle-light dark:text-subtle-dark uppercase tracking-wide mb-1">Patient</p>
+                                <p className="font-bold text-foreground-light dark:text-foreground-dark text-lg">{selectedDog.name}</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-2xl font-bold text-primary">{upcomingReminders.length}</span>
-                                <p className="text-xs text-subtle-light dark:text-subtle-dark">Active</p>
+                                <p className="text-xs text-subtle-light dark:text-subtle-dark uppercase tracking-wide mb-1">Scheduled</p>
+                                <p className="font-bold text-primary text-xl">{upcomingReminders.length} <span className="text-sm text-subtle-light font-normal">items</span></p>
                             </div>
                         </div>
                     </div>
 
                     {/* Upcoming Section */}
                     <div>
-                        <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-sm font-semibold text-subtle-light dark:text-subtle-dark uppercase tracking-wider">Upcoming</h3>
+                        <div className="flex items-center justify-between mb-2 px-1">
+                            <h3 className="text-xs font-bold text-subtle-light dark:text-subtle-dark uppercase tracking-wider">Upcoming Doses</h3>
                         </div>
                         {upcomingReminders.length > 0 ? (
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 {upcomingReminders.map(r => <ReminderCard key={r.id} reminder={r} onToggle={handleToggleComplete} />)}
                             </div>
                         ) : (
-                            <div className="bg-white dark:bg-card-dark rounded-xl p-8 border border-border-light dark:border-border-dark border-dashed text-center">
-                                <p className="text-subtle-light dark:text-subtle-dark">No upcoming medications.</p>
+                            <div className="bg-white dark:bg-card-dark rounded-lg p-6 border border-border-light dark:border-border-dark border-dashed text-center">
+                                <p className="text-sm text-subtle-light dark:text-subtle-dark">No upcoming medications scheduled.</p>
                             </div>
                         )}
                     </div>
 
                     {/* Completed Section */}
                     <div>
-                        <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-sm font-semibold text-subtle-light dark:text-subtle-dark uppercase tracking-wider">Completed</h3>
+                        <div className="flex items-center justify-between mb-2 px-1">
+                            <h3 className="text-xs font-bold text-subtle-light dark:text-subtle-dark uppercase tracking-wider">History</h3>
                         </div>
                         {completedReminders.length > 0 ? (
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 {completedReminders.map(r => <ReminderCard key={r.id} reminder={r} onToggle={handleToggleComplete} />)}
                             </div>
                         ) : (
-                            <div className="text-center py-4 text-sm text-subtle-light">
-                                No completed history yet.
+                            <div className="text-center py-4 text-xs text-subtle-light italic">
+                                No completed history for today.
                             </div>
                         )}
                     </div>
@@ -160,62 +167,60 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onToggle }) => {
     };
 
     return (
-        <div className={`bg-white dark:bg-card-dark rounded-xl p-4 border transition-all duration-200 ${
+        <div className={`bg-white dark:bg-card-dark rounded-lg p-3 border transition-colors duration-200 flex items-center gap-3 ${
             reminder.completed 
-                ? 'border-border-light dark:border-border-dark opacity-75' 
-                : 'border-border-light dark:border-border-dark shadow-soft hover:border-primary/30'
+                ? 'border-border-light dark:border-border-dark opacity-60 bg-slate-50 dark:bg-slate-900/50' 
+                : 'border-border-light dark:border-border-dark hover:border-primary/50'
         }`}>
-            <div className="flex items-center gap-4">
-                {/* Icon */}
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                    reminder.completed
-                        ? 'bg-background-light dark:bg-background-dark text-subtle-light'
-                        : 'bg-primary/10 text-primary'
-                }`}>
-                    {getIcon()}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                    <h3 className={`font-semibold ${
-                        reminder.completed
-                            ? 'line-through text-subtle-light'
-                            : 'text-foreground-light dark:text-foreground-dark'
-                    }`}>
-                        {reminder.name}
-                    </h3>
-                    <div className="flex items-center gap-2 text-xs">
-                        <span className={`${
-                            reminder.completed
-                                ? 'text-subtle-light'
-                                : 'text-subtle-light dark:text-subtle-dark'
-                        }`}>
-                            {reminder.dosage || reminder.type}
-                        </span>
-                        {reminder.nextDue && !reminder.completed && (
-                             <span className="text-warning font-medium">
-                                • Due {format(new Date(reminder.nextDue), 'h:mm a')}
-                             </span>
-                        )}
-                    </div>
-                </div>
-
-                {/* Checkbox (Custom) */}
-                <button
-                    onClick={() => onToggle(reminder.id, reminder.completed)}
-                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        reminder.completed 
-                            ? 'bg-success border-success text-white' 
-                            : 'border-subtle-light hover:border-primary'
-                    }`}
-                >
-                    {reminder.completed && (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                    )}
-                </button>
+            {/* Icon */}
+            <div className={`w-10 h-10 rounded flex items-center justify-center flex-shrink-0 border ${
+                reminder.completed
+                    ? 'bg-white dark:bg-card-dark border-border-light dark:border-border-dark text-subtle-light'
+                    : 'bg-white dark:bg-card-dark border-border-light dark:border-border-dark text-primary'
+            }`}>
+                {getIcon()}
             </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+                <h3 className={`text-sm font-bold truncate ${
+                    reminder.completed
+                        ? 'text-subtle-light dark:text-subtle-dark line-through'
+                        : 'text-foreground-light dark:text-foreground-dark'
+                }`}>
+                    {reminder.name}
+                </h3>
+                <div className="flex items-center gap-2 text-xs">
+                     <span className={`${
+                        reminder.completed
+                            ? 'text-subtle-light'
+                            : 'text-subtle-light dark:text-subtle-dark'
+                    }`}>
+                        {reminder.dosage || reminder.type}
+                    </span>
+                    {reminder.nextDue && !reminder.completed && (
+                            <span className="text-warning font-semibold">
+                            • Due {format(new Date(reminder.nextDue), 'h:mm a')}
+                            </span>
+                    )}
+                </div>
+            </div>
+
+            {/* Checkbox (Custom) */}
+            <button
+                onClick={() => onToggle(reminder.id, reminder.completed)}
+                className={`w-6 h-6 rounded border flex items-center justify-center transition-colors ${
+                    reminder.completed 
+                        ? 'bg-emerald-500 border-emerald-500 text-white' 
+                        : 'bg-white dark:bg-card-dark border-subtle-light hover:border-primary'
+                }`}
+            >
+                {reminder.completed && (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                )}
+            </button>
         </div>
     );
 };
