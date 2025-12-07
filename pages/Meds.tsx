@@ -48,64 +48,66 @@ const Meds: React.FC = () => {
     const completedReminders = reminders.filter(r => r.completed && r.type !== ReminderType.BIRTHDAY);
 
     return (
-        <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
-            <Header title="" showBackButton={false} />
+        <div className="flex flex-col h-full bg-background-light dark:bg-background-dark font-body">
+            <Header title="Medications" showBackButton={false} />
+            
             {loading ? (
                 <div className="flex justify-center items-center h-64"><PawIcon className="w-10 h-10 animate-spin text-primary" /></div>
             ) : selectedDog ? (
-                <div className="flex-1 p-4 space-y-6 pb-24">
-                    {/* Hero */}
-                    <div className="rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-600 text-white p-4 shadow-sm">
-                        <div className="flex items-center justify-between gap-3">
+                <div className="flex-1 p-4 space-y-6 pb-24 overflow-y-auto">
+                    {/* Summary Block */}
+                    <div className="bg-white dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark p-4 shadow-soft">
+                        <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm text-white/80">Medication plan</p>
-                                <h2 className="text-xl font-semibold">{selectedDog.name}</h2>
-                                <p className="text-white/80 text-sm">{upcomingReminders.length} active reminders</p>
+                                <h2 className="text-lg font-display font-bold text-foreground-light dark:text-foreground-dark">Treatment Plan</h2>
+                                <p className="text-sm text-subtle-light dark:text-subtle-dark">{selectedDog.name}'s schedule</p>
                             </div>
-                            <button
-                                onClick={() => setShowMedicationModal(true)}
-                                className="px-4 py-2 bg-white/15 hover:bg-white/25 rounded-lg text-sm font-semibold transition-colors"
-                            >
-                                New Medication
-                            </button>
+                            <div className="text-right">
+                                <span className="text-2xl font-bold text-primary">{upcomingReminders.length}</span>
+                                <p className="text-xs text-subtle-light dark:text-subtle-dark">Active</p>
+                            </div>
                         </div>
                     </div>
 
                     {/* Upcoming Section */}
                     <div>
-                        <h2 className="text-xl text-gray-900 dark:text-white mb-4">Upcoming</h2>
+                        <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-sm font-semibold text-subtle-light dark:text-subtle-dark uppercase tracking-wider">Upcoming</h3>
+                        </div>
                         {upcomingReminders.length > 0 ? (
                             <div className="space-y-3">
                                 {upcomingReminders.map(r => <ReminderCard key={r.id} reminder={r} onToggle={handleToggleComplete} />)}
                             </div>
                         ) : (
-                            <div className="bg-card-light dark:bg-card-dark rounded-xl p-6 shadow-sm">
-                                <p className="text-gray-500 dark:text-gray-400 text-center">No upcoming reminders.</p>
+                            <div className="bg-white dark:bg-card-dark rounded-xl p-8 border border-border-light dark:border-border-dark border-dashed text-center">
+                                <p className="text-subtle-light dark:text-subtle-dark">No upcoming medications.</p>
                             </div>
                         )}
                     </div>
 
                     {/* Completed Section */}
                     <div>
-                        <h2 className="text-xl text-gray-900 dark:text-white mb-4">Completed</h2>
+                        <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-sm font-semibold text-subtle-light dark:text-subtle-dark uppercase tracking-wider">Completed</h3>
+                        </div>
                         {completedReminders.length > 0 ? (
                             <div className="space-y-3">
                                 {completedReminders.map(r => <ReminderCard key={r.id} reminder={r} onToggle={handleToggleComplete} />)}
                             </div>
                         ) : (
-                            <div className="bg-card-light dark:bg-card-dark rounded-xl p-6 shadow-sm">
-                                <p className="text-gray-500 dark:text-gray-400 text-center">No completed reminders.</p>
+                            <div className="text-center py-4 text-sm text-subtle-light">
+                                No completed history yet.
                             </div>
                         )}
                     </div>
                 </div>
             ) : (
-                <div className="p-4 text-center space-y-3">
-                    <PawIcon className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto" />
+                <div className="p-4 text-center space-y-3 mt-10">
+                    <PawIcon className="w-12 h-12 text-subtle-light mx-auto" />
                     <p className="text-foreground-light dark:text-foreground-dark">Add a pet to manage medications.</p>
                     <button
                         onClick={() => navigate('/create-dog-profile')}
-                        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                        className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors shadow-soft"
                     >
                         Add Pet
                     </button>
@@ -115,10 +117,10 @@ const Meds: React.FC = () => {
             {/* Floating Action Button */}
             <button
                 onClick={() => setShowMedicationModal(true)}
-                className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 transition-colors z-10"
+                className="fixed bottom-24 right-4 bg-primary hover:bg-primary-hover text-white p-4 rounded-full shadow-lg transition-transform hover:scale-105 z-10"
+                aria-label="Add Medication"
             >
-                <PlusCircleIcon className="w-5 h-5" />
-                <span className="font-medium">New Medication</span>
+                <PlusCircleIcon className="w-6 h-6" />
             </button>
 
             {/* Medication Modal */}
@@ -141,74 +143,79 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onToggle }) => {
     const getIcon = () => {
         switch (reminder.type) {
             case ReminderType.MEDICATION:
-                return <PillBottleIcon className="w-6 h-6" />;
+                return <PillBottleIcon className="w-5 h-5" />;
             case ReminderType.TOPICAL_TREATMENT:
-                return <SyringeIcon className="w-6 h-6" />;
+                return <SyringeIcon className="w-5 h-5" />;
             case ReminderType.EAR_CLEANING:
-                return <EarIcon className="w-6 h-6" />;
+                return <EarIcon className="w-5 h-5" />;
             case ReminderType.PAW_WIPES:
-                return <BowlIcon className="w-6 h-6" />;
+                return <BowlIcon className="w-5 h-5" />;
             case ReminderType.VET_VISIT:
-                return <CalendarIcon className="w-6 h-6" />;
+                return <CalendarIcon className="w-5 h-5" />;
             case ReminderType.BIRTHDAY:
-                return <CalendarIcon className="w-6 h-6" />;
+                return <CalendarIcon className="w-5 h-5" />;
             default:
-                return <PillBottleIcon className="w-6 h-6" />;
+                return <PillBottleIcon className="w-5 h-5" />;
         }
     };
 
     return (
-        <div className="bg-card-light dark:bg-card-dark rounded-xl p-4 shadow-sm flex items-center gap-4">
-            {/* Icon */}
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                reminder.completed
-                    ? 'bg-gray-100 dark:bg-gray-700'
-                    : 'bg-blue-500 dark:bg-blue-600'
-            }`}>
-                <div className={reminder.completed ? 'text-gray-400' : 'text-white'}>
+        <div className={`bg-white dark:bg-card-dark rounded-xl p-4 border transition-all duration-200 ${
+            reminder.completed 
+                ? 'border-border-light dark:border-border-dark opacity-75' 
+                : 'border-border-light dark:border-border-dark shadow-soft hover:border-primary/30'
+        }`}>
+            <div className="flex items-center gap-4">
+                {/* Icon */}
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                    reminder.completed
+                        ? 'bg-background-light dark:bg-background-dark text-subtle-light'
+                        : 'bg-primary/10 text-primary'
+                }`}>
                     {getIcon()}
                 </div>
-            </div>
 
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-                <h3 className={`font-semibold ${
-                    reminder.completed
-                        ? 'line-through text-gray-400 dark:text-gray-500'
-                        : 'text-gray-900 dark:text-white'
-                }`}>
-                    {reminder.name}
-                </h3>
-                <p className={`text-sm ${
-                    reminder.completed
-                        ? 'text-gray-400 dark:text-gray-500'
-                        : 'text-gray-500 dark:text-gray-400'
-                }`}>
-                    {reminder.dosage || reminder.type}
-                </p>
-            </div>
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                    <h3 className={`font-semibold ${
+                        reminder.completed
+                            ? 'line-through text-subtle-light'
+                            : 'text-foreground-light dark:text-foreground-dark'
+                    }`}>
+                        {reminder.name}
+                    </h3>
+                    <div className="flex items-center gap-2 text-xs">
+                        <span className={`${
+                            reminder.completed
+                                ? 'text-subtle-light'
+                                : 'text-subtle-light dark:text-subtle-dark'
+                        }`}>
+                            {reminder.dosage || reminder.type}
+                        </span>
+                        {reminder.nextDue && !reminder.completed && (
+                             <span className="text-warning font-medium">
+                                • Due {format(new Date(reminder.nextDue), 'h:mm a')}
+                             </span>
+                        )}
+                    </div>
+                </div>
 
-            {/* Toggle Switch */}
-            <button
-                type="button"
-                onClick={() => onToggle(reminder.id, reminder.completed)}
-                className="shrink-0 relative"
-                style={{ width: '51px', height: '31px' }}
-            >
-                <div 
-                    className="absolute inset-0 rounded-full transition-colors duration-200"
-                    style={{ backgroundColor: reminder.completed ? '#3b82f6' : '#d1d5db' }}
-                />
-                <div 
-                    className="absolute top-[2px] rounded-full bg-white shadow-md transition-transform duration-200"
-                    style={{ 
-                        width: '27px', 
-                        height: '27px',
-                        left: '2px',
-                        transform: reminder.completed ? 'translateX(20px)' : 'translateX(0px)'
-                    }}
-                />
-            </button>
+                {/* Checkbox (Custom) */}
+                <button
+                    onClick={() => onToggle(reminder.id, reminder.completed)}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        reminder.completed 
+                            ? 'bg-success border-success text-white' 
+                            : 'border-subtle-light hover:border-primary'
+                    }`}
+                >
+                    {reminder.completed && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                    )}
+                </button>
+            </div>
         </div>
     );
 };

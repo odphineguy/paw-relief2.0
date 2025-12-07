@@ -20,17 +20,24 @@
     <meta name="twitter:title" content="Paw Relief - Pet Health Management">
     <meta name="twitter:description" content="Track your pet's health, medications, symptoms, and more. Keep your furry friends healthy and happy!">
     <meta name="twitter:image" content="/assets/og-socialcard.png">
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         .font-display {
             font-family: 'Epilogue', sans-serif;
         }
+        .font-body {
+            font-family: 'Inter', sans-serif;
+        }
         
         body {
             min-height: max(884px, 100dvh);
+            background-color: #f8fafc; /* Fallback */
+        }
+        .dark body {
+            background-color: #0f172a; /* Fallback */
         }
 
         @keyframes scan-animation {
@@ -42,37 +49,6 @@
             animation: scan-animation 2s alternate infinite ease-in-out;
         }
     </style>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#1990e6",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#111a21",
-                        "foreground-light": "#0e151b",
-                        "foreground-dark": "#f0f2f3",
-                        "subtle-light": "#4e7997",
-                        "subtle-dark": "#a0b4c3",
-                        "card-light": "#ffffff",
-                        "card-dark": "#1a252f",
-                        "border-light": "#e7eef3",
-                        "border-dark": "#2c3b4a"
-                    },
-                    fontFamily: {
-                        "display": ["Epilogue", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.5rem",
-                        "lg": "1rem",
-                        "xl": "1.5rem",
-                        "full": "9999px",
-                    },
-                },
-            },
-        }
-    </script>
 <script type="importmap">
 {
   "imports": {
