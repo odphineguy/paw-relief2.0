@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDogs } from '../context/DogContext';
 import Header from '../components/Header';
 import MedicationModal from '../components/MedicationModal';
 import { Reminder, ReminderType } from '../types';
 import { getReminders, updateReminder } from '../services/api';
-import { format, isToday } from 'date-fns';
-import { PawIcon, PillBottleIcon, SyringeIcon, PlusCircleIcon, EarIcon, ToiletIcon, CalendarIcon, UserIcon, BowlIcon } from '../components/icons';
+import { format } from 'date-fns';
+import { PawIcon, PillBottleIcon, SyringeIcon, PlusCircleIcon, EarIcon, ToiletIcon, CalendarIcon, BowlIcon } from '../components/icons';
 
 const Meds: React.FC = () => {
     const { selectedDog } = useDogs();
+    const navigate = useNavigate();
     const [reminders, setReminders] = useState<Reminder[]>([]);
     const [loading, setLoading] = useState(true);
     const [showMedicationModal, setShowMedicationModal] = useState(false);
@@ -52,6 +54,23 @@ const Meds: React.FC = () => {
                 <div className="flex justify-center items-center h-64"><PawIcon className="w-10 h-10 animate-spin text-primary" /></div>
             ) : selectedDog ? (
                 <div className="flex-1 p-4 space-y-6 pb-24">
+                    {/* Hero */}
+                    <div className="rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-600 text-white p-4 shadow-sm">
+                        <div className="flex items-center justify-between gap-3">
+                            <div>
+                                <p className="text-sm text-white/80">Medication plan</p>
+                                <h2 className="text-xl font-semibold">{selectedDog.name}</h2>
+                                <p className="text-white/80 text-sm">{upcomingReminders.length} active reminders</p>
+                            </div>
+                            <button
+                                onClick={() => setShowMedicationModal(true)}
+                                className="px-4 py-2 bg-white/15 hover:bg-white/25 rounded-lg text-sm font-semibold transition-colors"
+                            >
+                                New Medication
+                            </button>
+                        </div>
+                    </div>
+
                     {/* Upcoming Section */}
                     <div>
                         <h2 className="text-xl text-gray-900 dark:text-white mb-4">Upcoming</h2>
@@ -81,8 +100,15 @@ const Meds: React.FC = () => {
                     </div>
                 </div>
             ) : (
-                <div className="p-4 text-center">
-                    <p className="text-foreground-light dark:text-foreground-dark">Please select a dog to view medications.</p>
+                <div className="p-4 text-center space-y-3">
+                    <PawIcon className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto" />
+                    <p className="text-foreground-light dark:text-foreground-dark">Add a pet to manage medications.</p>
+                    <button
+                        onClick={() => navigate('/create-dog-profile')}
+                        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                    >
+                        Add Pet
+                    </button>
                 </div>
             )}
 

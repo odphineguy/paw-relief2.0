@@ -335,47 +335,90 @@ const Dashboard: React.FC = () => {
           <div className="text-foreground-light dark:text-foreground-dark">Loading...</div>
         </div>
       ) : selectedDog ? (
-        <div className="px-4 pb-8 overflow-y-auto">
+        <div className="px-4 pb-8 overflow-y-auto space-y-8">
+          {/* Hero + quick stats */}
+          <section className="pt-3 space-y-4">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white p-5 shadow-md">
+              <div className="absolute -right-10 -top-10 w-36 h-36 bg-white/10 rounded-full blur-2xl"></div>
+              <div className="absolute -left-8 bottom-0 w-28 h-28 bg-white/10 rounded-full blur-xl"></div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-white/60 shadow-lg">
+                  <img src={selectedDog.photoUrl} alt={selectedDog.name} className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-white/80">Today with</p>
+                  <h3 className="text-2xl font-bold leading-tight">{selectedDog.name}</h3>
+                  <p className="text-sm text-white/75 capitalize">{selectedDog.breed}</p>
+                </div>
+                <div className="bg-white/15 text-white px-3 py-2 rounded-lg text-xs font-semibold backdrop-blur-sm border border-white/20">
+                  Healthy routine
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mt-4">
+                <StatPill label="Symptoms" value={logs.length} />
+                <StatPill label="Triggers" value={totalTriggers} />
+                <StatPill label="Reminders" value={upcomingReminders.length} />
+              </div>
+            </div>
+
+            {/* Quick actions */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: 'Log Symptom', onClick: () => navigate('/log-entry'), accent: 'from-blue-500 to-indigo-500' },
+                { label: 'Log Trigger', onClick: () => navigate('/trigger-detective'), accent: 'from-cyan-500 to-blue-500' },
+                { label: 'New Medication', onClick: () => navigate('/meds'), accent: 'from-emerald-500 to-teal-500' },
+                { label: 'Profile & Tools', onClick: () => navigate('/profile'), accent: 'from-slate-600 to-slate-800' },
+              ].map((action) => (
+                <button
+                  key={action.label}
+                  onClick={action.onClick}
+                  className="rounded-xl bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark p-4 text-left hover:-translate-y-0.5 hover:shadow-lg transition-all relative overflow-hidden"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-r ${action.accent} opacity-10`} />
+                  <div className="relative">
+                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-blue-500/90 text-white mb-3">
+                      <span className="text-lg font-bold">+</span>
+                    </span>
+                    <p className="font-semibold text-foreground-light dark:text-foreground-dark">{action.label}</p>
+                    <p className="text-xs text-subtle-light dark:text-subtle-dark mt-1">Quick access</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+
           {/* Your Paws Section */}
-          <section className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight">
-                Your Paws
-              </h2>
+          <section className="space-y-3">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl text-foreground-light dark:text-foreground-dark tracking-tight">Your Paws</h2>
               <button
                 onClick={() => navigate('/create-dog-profile')}
-                className="w-10 h-10 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
+                className="px-3 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
+                Add Pet
               </button>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="flex gap-3 overflow-x-auto pb-1">
               {dogs.map((dog) => (
                 <button
                   key={dog.id}
                   onClick={() => setSelectedDog(dog)}
-                  className={`flex flex-col items-center gap-2 transition-all ${
-                    selectedDog?.id === dog.id ? 'scale-105' : 'opacity-70 hover:opacity-100'
-                  }`}
+                  className={`flex-shrink-0 w-24 rounded-2xl border ${
+                    selectedDog?.id === dog.id
+                      ? 'border-blue-500 bg-blue-50/60 dark:border-blue-400 dark:bg-blue-900/20'
+                      : 'border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark'
+                  } p-2 flex flex-col items-center gap-2 transition-all`}
                 >
-                  <div className={`w-20 h-20 rounded-full overflow-hidden border-4 ${
-                    selectedDog?.id === dog.id
-                      ? 'border-blue-500 dark:border-blue-400'
-                      : 'border-gray-300 dark:border-gray-600'
-                  }`}>
-                    <img
-                      src={dog.photoUrl}
-                      alt={dog.name}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white dark:border-gray-700 shadow-sm">
+                    <img src={dog.photoUrl} alt={dog.name} className="w-full h-full object-cover" />
                   </div>
-                  <span className={`text-sm font-medium ${
-                    selectedDog?.id === dog.id
-                      ? 'text-blue-500 dark:text-blue-400'
-                      : 'text-gray-700 dark:text-gray-300'
-                  }`}>
+                  <span
+                    className={`text-sm font-semibold ${
+                      selectedDog?.id === dog.id ? 'text-blue-600 dark:text-blue-400' : 'text-foreground-light dark:text-foreground-dark'
+                    }`}
+                  >
                     {dog.name}
                   </span>
                 </button>
@@ -481,7 +524,12 @@ const Dashboard: React.FC = () => {
 
             {/* Today's Allergens */}
             <div className="space-y-4 mb-6">
-              <h3 className="text-lg font-semibold text-foreground-light dark:text-foreground-dark">Today's Allergens</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-foreground-light dark:text-foreground-dark">Today's Allergens</h3>
+                <span className="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+                  Live updates
+                </span>
+              </div>
 
               {weather && (
                 <>
@@ -969,5 +1017,12 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
+
+const StatPill: React.FC<{ label: string; value: number }> = ({ label, value }) => (
+  <div className="text-center">
+    <p className="text-xs text-white/70">{label}</p>
+    <p className="text-lg font-bold">{value}</p>
+  </div>
+);
 
 export default Dashboard;

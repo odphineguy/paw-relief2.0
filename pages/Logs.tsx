@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDogs } from '../context/DogContext';
 import Header from '../components/Header';
 import { SymptomLog } from '../types';
@@ -32,6 +33,7 @@ const LOGS_PER_PAGE = 10;
 
 const Logs: React.FC = () => {
     const { selectedDog } = useDogs();
+    const navigate = useNavigate();
     const [logs, setLogs] = useState<SymptomLog[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedLog, setExpandedLog] = useState<string | null>(null);
@@ -114,6 +116,25 @@ const Logs: React.FC = () => {
                 <div className="flex justify-center items-center h-64"><PawIcon className="w-10 h-10 animate-spin text-primary" /></div>
             ) : selectedDog ? (
                 <div className="flex-1 overflow-y-auto pb-24">
+                    {/* Hero card */}
+                    <div className="px-4 pt-3 pb-4">
+                        <div className="rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 shadow-sm">
+                            <div className="flex items-center justify-between gap-3">
+                                <div>
+                                    <p className="text-sm text-white/80">Tracking for</p>
+                                    <h2 className="text-xl font-semibold">{selectedDog.name}</h2>
+                                    <p className="text-white/80 text-sm">{logs.length} symptom{logs.length !== 1 ? 's' : ''}</p>
+                                </div>
+                                <button
+                                    onClick={() => navigate('/log-entry')}
+                                    className="px-4 py-2 bg-white/15 hover:bg-white/25 rounded-lg text-sm font-semibold transition-colors"
+                                >
+                                    Log Symptom
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     {logs.length > 0 ? (
                         <>
                             {/* Header with count and clear button */}
@@ -262,10 +283,16 @@ const Logs: React.FC = () => {
                 </div>
             ) : (
                 <div className="flex-1 flex items-center justify-center p-8">
-                    <div className="text-center">
-                        <PawIcon className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No dog selected</h3>
-                        <p className="text-gray-500 dark:text-gray-400">Please select a dog to view their symptom logs.</p>
+                    <div className="text-center space-y-3">
+                        <PawIcon className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto" />
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">No dog selected</h3>
+                        <p className="text-gray-500 dark:text-gray-400">Add a pet to start tracking symptoms.</p>
+                        <button
+                            onClick={() => navigate('/create-dog-profile')}
+                            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                        >
+                            Add Pet
+                        </button>
                     </div>
                 </div>
             )}

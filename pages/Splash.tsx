@@ -9,9 +9,9 @@ const Splash: React.FC = () => {
     const { theme } = useTheme();
 
     useEffect(() => {
-        // Auto-navigate to testimonials after 3.5 seconds
+        // Auto-navigate to auth entry after 3.5 seconds
         const timer = setTimeout(() => {
-            navigate('/testimonials');
+            navigate('/login');
         }, 3500);
 
         return () => clearTimeout(timer);

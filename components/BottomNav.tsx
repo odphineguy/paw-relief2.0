@@ -7,7 +7,7 @@ const BottomNav: React.FC = () => {
     const location = useLocation();
 
     // Hide bottom nav on onboarding pages
-    const onboardingRoutes = ['/splash', '/testimonials', '/login', '/onboarding', '/welcome', '/subscription'];
+    const onboardingRoutes = ['/splash', '/login', '/onboarding', '/welcome', '/subscription'];
     if (onboardingRoutes.includes(location.pathname)) {
         return null;
     }

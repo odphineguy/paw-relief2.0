@@ -38,6 +38,28 @@ const Profile: React.FC = () => {
             <div className="flex flex-col h-full">
                 <Header title="" showBackButton={false} />
                 <div className="p-4 space-y-6 overflow-y-auto pb-24">
+                    {/* Hero */}
+                    <div className="rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white p-5 shadow-md relative overflow-hidden">
+                        <div className="absolute -right-10 -top-10 w-36 h-36 bg-white/10 rounded-full blur-2xl" />
+                        <div className="absolute -left-8 bottom-0 w-28 h-28 bg-white/10 rounded-full blur-xl" />
+                        <div className="flex items-center gap-3 relative">
+                            <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/60 shadow-lg">
+                                <img src={selectedDog?.photoUrl} alt={selectedDog?.name} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm text-white/80">Profile & tools</p>
+                                <h2 className="text-2xl font-bold leading-tight">{selectedDog?.name || 'Your pet'}</h2>
+                                {selectedDog?.breed && <p className="text-white/75 text-sm capitalize">{selectedDog.breed}</p>}
+                            </div>
+                            <button
+                                onClick={() => navigate('/create-dog-profile')}
+                                className="px-3 py-2 rounded-lg bg-white/15 hover:bg-white/25 text-xs font-semibold backdrop-blur-sm border border-white/20"
+                            >
+                                Manage Pets
+                            </button>
+                        </div>
+                    </div>
+
                     {/* Pet Profiles Section */}
                     <InfoCard title="My Pets">
                         {loading ? (
@@ -98,12 +120,12 @@ const Profile: React.FC = () => {
 
                     {/* Veterinarian Tools Card */}
                     <InfoCard title="Veterinarian Tools">
-                        <div className="space-y-2">
-                            <Link to="/report" className="flex justify-between items-center p-2 text-left bg-background-light dark:bg-background-dark rounded-lg hover:bg-primary/10 dark:hover:bg-primary/10">
+                        <div className="space-y-3">
+                            <Link to="/report" className="flex justify-between items-center p-3 text-left bg-background-light dark:bg-background-dark rounded-lg border border-border-light dark:border-border-dark hover:bg-primary/5 dark:hover:bg-primary/10">
                                 <span className="text-sm font-medium text-primary">Veterinarian Report</span>
                                 <ChevronRightIcon className="w-4 h-4 text-gray-400"/>
                             </Link>
-                            <button onClick={() => setIsScannerOpen(true)} className="w-full flex justify-between items-center p-2 text-left bg-background-light dark:bg-background-dark rounded-lg hover:bg-primary/10 dark:hover:bg-primary/10">
+                            <button onClick={() => setIsScannerOpen(true)} className="w-full flex justify-between items-center p-3 text-left bg-background-light dark:bg-background-dark rounded-lg border border-border-light dark:border-border-dark hover:bg-primary/5 dark:hover:bg-primary/10">
                                 <span className="text-sm font-medium text-primary">Food Ingredient Checker</span>
                                 <ChevronRightIcon className="w-4 h-4 text-gray-400"/>
                             </button>
@@ -113,14 +135,22 @@ const Profile: React.FC = () => {
                     {/* Settings Card */}
                     <InfoCard title="Settings">
                         <div className="space-y-2">
-                            <Link to="/app-settings" className="flex justify-between items-center p-2 text-left bg-background-light dark:bg-background-dark rounded-lg hover:bg-primary/10 dark:hover:bg-primary/10">
-                                <span className="text-sm font-medium text-primary">App Settings</span>
-                                <ChevronRightIcon className="w-4 h-4 text-gray-400"/>
-                            </Link>
-                            <div className="flex justify-between items-center p-2 bg-background-light dark:bg-background-dark rounded-lg">
-                                <span className="text-sm font-medium text-foreground-light dark:text-foreground-dark">Appearance</span>
+                            <div className="flex justify-between items-center p-2 bg-background-light dark:bg-background-dark rounded-lg border border-border-light dark:border-border-dark">
+                                <div>
+                                    <p className="text-sm font-medium text-foreground-light dark:text-foreground-dark">Appearance</p>
+                                    <p className="text-xs text-subtle-light dark:text-subtle-dark">Switch between light and dark</p>
+                                </div>
                                 <ThemeSwitch />
                             </div>
+                            <a
+                                href="https://pawrelief.app"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex justify-between items-center p-2 text-left bg-background-light dark:bg-background-dark rounded-lg border border-border-light dark:border-border-dark hover:bg-primary/5 dark:hover:bg-primary/10"
+                            >
+                                <span className="text-sm font-medium text-primary">Help Center & Policies</span>
+                                <ChevronRightIcon className="w-4 h-4 text-gray-400"/>
+                            </a>
                         </div>
                     </InfoCard>
 
