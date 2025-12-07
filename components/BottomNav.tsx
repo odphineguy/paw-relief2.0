@@ -38,7 +38,7 @@ const BottomNav: React.FC = () => {
                 <div className="flex-1 h-full relative flex justify-center">
                     <button
                         onClick={() => navigate('/log-entry')}
-                        className="absolute -top-6 w-14 h-14 bg-primary hover:bg-primary-hover text-white rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95 ring-4 ring-white dark:ring-card-dark"
+                        className="absolute -top-8 w-16 h-16 bg-primary hover:bg-primary-hover text-white rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95 ring-4 ring-white dark:ring-card-dark z-50"
                         aria-label="New Entry"
                     >
                         <PlusCircleIcon className="w-8 h-8" />

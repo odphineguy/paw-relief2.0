@@ -28,8 +28,8 @@ const App: React.FC = () => {
                 <DogProvider>
                     <HashRouter>
                     <div className="min-h-screen bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark flex flex-col font-display">
-                        <main className="flex-grow pb-20">
-                            <div className="max-w-md mx-auto bg-background-light dark:bg-background-dark h-full min-h-screen">
+                        <main className="flex-grow pb-24 relative z-0">
+                            <div className="max-w-md mx-auto bg-background-light dark:bg-background-dark h-full min-h-screen relative">
                                 <Routes>
                                     <Route path="/" element={<Navigate to="/splash" replace />} />
                                     <Route path="/splash" element={<Splash />} />

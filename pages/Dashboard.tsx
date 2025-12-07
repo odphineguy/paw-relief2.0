@@ -129,7 +129,13 @@ const Dashboard: React.FC = () => {
                 {format(new Date(), 'EEEE, MMMM d')}
             </p>
         </div>
-        <div className="flex -space-x-2 overflow-hidden">
+        <div className="flex -space-x-2 overflow-hidden items-center">
+            <button
+                onClick={() => navigate('/profile')}
+                className="mr-3 text-primary"
+            >
+                <PawIcon className="w-8 h-8" />
+            </button>
             {dogs.map((dog) => (
                 <button 
                     key={dog.id}
@@ -156,13 +162,18 @@ const Dashboard: React.FC = () => {
                  <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
              </div>
         ) : !selectedDog ? (
-            <div className="text-center py-12">
-                <p className="text-subtle-light dark:text-subtle-dark">Please select or add a pet to view their health dashboard.</p>
+            <div className="text-center py-12 flex flex-col items-center justify-center h-[60vh]">
+                <PawIcon className="w-16 h-16 text-subtle-light/50 mb-4" />
+                <h2 className="text-xl font-bold text-foreground-light dark:text-foreground-dark mb-2">Welcome to Paw Relief</h2>
+                <p className="text-subtle-light dark:text-subtle-dark max-w-xs mx-auto mb-8">
+                    Please select or add a pet to view their health dashboard.
+                </p>
                 <button 
                     onClick={() => navigate('/create-dog-profile')}
-                    className="mt-4 px-6 py-2 bg-primary text-white rounded-lg font-medium shadow-soft"
+                    className="px-8 py-3 bg-primary text-white rounded-full font-bold shadow-lg hover:bg-primary-hover transition-all flex items-center gap-2"
                 >
-                    Add Pet
+                    <PlusCircleIcon className="w-5 h-5" />
+                    <span>Add Your First Pet</span>
                 </button>
             </div>
         ) : (
