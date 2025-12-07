@@ -13,37 +13,52 @@ const BottomNav: React.FC = () => {
     }
 
     const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
-        `flex flex-col items-center justify-center space-y-1 transition-colors duration-200 ${
+        `flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors duration-200 ${
             isActive ? 'text-primary' : 'text-subtle-light dark:text-subtle-dark hover:text-primary'
         }`;
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto h-16 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-t border-border-light dark:border-border-dark flex items-center justify-around shadow-up">
-            <NavLink to="/dashboard" className={navLinkClasses}>
-                <DashboardIcon />
-                <span className="text-xs font-semibold">Dashboard</span>
-            </NavLink>
-            <NavLink to="/logs" className={navLinkClasses}>
-                <ClipboardListIcon />
-                <span className="text-xs font-semibold">Logs</span>
-            </NavLink>
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-card-dark border-t border-border-light dark:border-border-dark pb-safe-area shadow-up">
+            <div className="flex items-center justify-between max-w-md mx-auto h-16 px-2 relative">
+                <div className="flex-1 h-full">
+                    <NavLink to="/dashboard" className={navLinkClasses}>
+                        <DashboardIcon className="w-6 h-6" />
+                        <span className="text-[10px] font-medium">Home</span>
+                    </NavLink>
+                </div>
+                
+                <div className="flex-1 h-full">
+                    <NavLink to="/logs" className={navLinkClasses}>
+                        <ClipboardListIcon className="w-6 h-6" />
+                        <span className="text-[10px] font-medium">Logs</span>
+                    </NavLink>
+                </div>
 
-            <button
-                onClick={() => navigate('/log-entry')}
-                className="flex items-center justify-center w-16 h-16 -mt-8 bg-primary rounded-full text-white shadow-lg hover:bg-primary/90 transition-colors"
-                aria-label="Log new entry"
-            >
-                <PlusCircleIcon className="w-10 h-10" />
-            </button>
+                {/* Floating Center Button */}
+                <div className="flex-1 h-full relative flex justify-center">
+                    <button
+                        onClick={() => navigate('/log-entry')}
+                        className="absolute -top-6 w-14 h-14 bg-primary hover:bg-primary-hover text-white rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95 ring-4 ring-white dark:ring-card-dark"
+                        aria-label="New Entry"
+                    >
+                        <PlusCircleIcon className="w-8 h-8" />
+                    </button>
+                </div>
 
-            <NavLink to="/meds" className={navLinkClasses}>
-                <PillBottleIcon />
-                <span className="text-xs font-semibold">Meds</span>
-            </NavLink>
-            <NavLink to="/profile" className={navLinkClasses}>
-                <PawIcon />
-                <span className="text-xs font-semibold">Profile</span>
-            </NavLink>
+                <div className="flex-1 h-full">
+                    <NavLink to="/meds" className={navLinkClasses}>
+                        <PillBottleIcon className="w-6 h-6" />
+                        <span className="text-[10px] font-medium">Meds</span>
+                    </NavLink>
+                </div>
+
+                <div className="flex-1 h-full">
+                    <NavLink to="/profile" className={navLinkClasses}>
+                        <PawIcon className="w-6 h-6" />
+                        <span className="text-[10px] font-medium">Profile</span>
+                    </NavLink>
+                </div>
+            </div>
         </div>
     );
 };

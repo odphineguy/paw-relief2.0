@@ -4,26 +4,26 @@ import { useDogs } from '../context/DogContext';
 import { SymptomType, TriggerType } from '../types';
 import { ALL_SYMPTOMS } from '../constants';
 import { addSymptomLog, addTriggerLog } from '../services/api';
-import { XIcon, EarIcon, ScanEyeIcon, ToiletIcon, PawPrintIcon, AlertTriangleIcon, FlameIcon } from '../components/icons';
+import { XIcon, EarIcon, ScanEyeIcon, ToiletIcon, PawPrintIcon, AlertTriangleIcon, FlameIcon, PlusCircleIcon } from '../components/icons';
 
 // Function to get icon for each symptom type
 const getSymptomIcon = (symptom: SymptomType) => {
     switch (symptom) {
         case SymptomType.EAR_INFECTIONS:
-            return <EarIcon className="w-5 h-5" />;
+            return <EarIcon className="w-6 h-6" />;
         case SymptomType.WATERY_EYES:
-            return <ScanEyeIcon className="w-5 h-5" />;
+            return <ScanEyeIcon className="w-6 h-6" />;
         case SymptomType.DIGESTIVE_ISSUES:
-            return <ToiletIcon className="w-5 h-5" />;
+            return <ToiletIcon className="w-6 h-6" />;
         case SymptomType.PAW_LICKING:
-            return <PawPrintIcon className="w-5 h-5" />;
+            return <PawPrintIcon className="w-6 h-6" />;
         case SymptomType.HOT_SPOTS:
-            return <FlameIcon className="w-5 h-5" />;
+            return <FlameIcon className="w-6 h-6" />;
         case SymptomType.EXCESSIVE_SCRATCHING:
         case SymptomType.RED_IRRITATED_SKIN:
         case SymptomType.SNEEZING:
         default:
-            return <AlertTriangleIcon className="w-5 h-5" />;
+            return <AlertTriangleIcon className="w-6 h-6" />;
     }
 };
 
@@ -49,8 +49,7 @@ const LogEntry: React.FC = () => {
         {
             id: 'food',
             type: TriggerType.FOOD,
-            title: 'Food Eaten',
-            description: 'Record what your dog ate today',
+            title: 'Food',
             icon: (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
@@ -60,8 +59,7 @@ const LogEntry: React.FC = () => {
         {
             id: 'location',
             type: TriggerType.WALK_LOCATION,
-            title: 'Walking Locations',
-            description: 'Note where you walked your dog',
+            title: 'Location',
             icon: (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -72,8 +70,7 @@ const LogEntry: React.FC = () => {
         {
             id: 'weather',
             type: TriggerType.WEATHER,
-            title: 'Weather Conditions',
-            description: 'Track weather conditions during walks',
+            title: 'Weather',
             icon: (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -83,8 +80,7 @@ const LogEntry: React.FC = () => {
         {
             id: 'pollen',
             type: TriggerType.POLLEN,
-            title: 'Pollen Levels',
-            description: 'Monitor pollen levels in your area',
+            title: 'Pollen',
             icon: (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -94,8 +90,7 @@ const LogEntry: React.FC = () => {
         {
             id: 'products',
             type: TriggerType.HOUSEHOLD_PRODUCT,
-            title: 'Household Products',
-            description: 'List household products used',
+            title: 'Product',
             icon: (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
@@ -105,11 +100,10 @@ const LogEntry: React.FC = () => {
         {
             id: 'environment',
             type: TriggerType.ENVIRONMENTAL_CHANGE,
-            title: 'Environmental Changes',
-            description: 'Document environmental changes',
+            title: 'Environment',
             icon: (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 01-1 1h2a1 1 0 01 1 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
             )
         }
@@ -209,65 +203,71 @@ const LogEntry: React.FC = () => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center z-50">
-            <div className="bg-white dark:bg-gray-900 rounded-t-3xl w-full max-w-md h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-50">
+            <div className="bg-white dark:bg-card-dark rounded-t-3xl w-full max-w-md h-[90vh] flex flex-col shadow-2xl animate-slide-up">
                 {/* Header */}
-                <div className="p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
-                    <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                        <XIcon />
+                <div className="px-6 py-4 flex justify-between items-center border-b border-border-light dark:border-border-dark">
+                    <button 
+                        onClick={() => navigate(-1)} 
+                        className="p-2 -ml-2 text-subtle-light hover:text-foreground-light dark:hover:text-foreground-dark rounded-full hover:bg-background-light dark:hover:bg-background-dark transition-colors"
+                    >
+                        <XIcon className="w-6 h-6" />
                     </button>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white text-center flex-1">New Entry</h2>
-                    <div className="w-6"></div>
+                    <h2 className="text-lg font-display font-bold text-foreground-light dark:text-foreground-dark">New Entry</h2>
+                    <div className="w-10"></div> {/* Spacer for balance */}
                 </div>
 
                 {/* Tabs */}
-                <div className="flex border-b border-gray-200 dark:border-gray-700">
+                <div className="flex p-2 mx-4 mt-4 bg-background-light dark:bg-background-dark rounded-xl">
                     <button
                         onClick={() => setActiveTab('symptom')}
-                        className={`flex-1 py-3 text-center font-semibold transition-all ${
+                        className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
                             activeTab === 'symptom'
-                                ? 'text-white bg-blue-600 dark:bg-blue-500 border-b-2 border-blue-600 dark:border-blue-500'
-                                : 'text-gray-500 dark:text-gray-400 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800'
+                                ? 'bg-white dark:bg-card-dark text-primary shadow-sm'
+                                : 'text-subtle-light dark:text-subtle-dark hover:text-foreground-light dark:hover:text-foreground-dark'
                         }`}
                     >
-                        Log Symptom
+                        Symptom
                     </button>
                     <button
                         onClick={() => setActiveTab('trigger')}
-                        className={`flex-1 py-3 text-center font-semibold transition-all ${
+                        className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
                             activeTab === 'trigger'
-                                ? 'text-white bg-blue-600 dark:bg-blue-500 border-b-2 border-blue-600 dark:border-blue-500'
-                                : 'text-gray-500 dark:text-gray-400 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800'
+                                ? 'bg-white dark:bg-card-dark text-primary shadow-sm'
+                                : 'text-subtle-light dark:text-subtle-dark hover:text-foreground-light dark:hover:text-foreground-dark'
                         }`}
                     >
-                        Log Trigger
+                        Trigger
                     </button>
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto p-6">
                     {activeTab === 'symptom' ? (
-                        <form onSubmit={handleSymptomSubmit} className="p-6 space-y-6">
+                        <form onSubmit={handleSymptomSubmit} className="space-y-8">
                             {/* Symptoms Section */}
                             <div>
-                                <div className="grid grid-cols-2 gap-3">
+                                <label className="block text-sm font-semibold text-foreground-light dark:text-foreground-dark mb-3 uppercase tracking-wider">
+                                    What did you notice?
+                                </label>
+                                <div className="grid grid-cols-3 gap-3">
                                     {ALL_SYMPTOMS.map(symptom => (
                                         <button
                                             key={symptom}
                                             type="button"
                                             onClick={() => handleSymptomToggle(symptom)}
-                                            className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-all ${
+                                            className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 h-28 ${
                                                 selectedSymptoms.has(symptom)
-                                                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 ring-2 ring-gray-300 dark:ring-gray-600 scale-105'
-                                                    : 'bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700'
+                                                    ? 'bg-primary/10 border-primary text-primary'
+                                                    : 'bg-white dark:bg-card-dark border-border-light dark:border-border-dark text-subtle-light hover:border-primary/50'
                                             }`}
                                         >
-                                            <div className={`flex-shrink-0 ${
-                                                selectedSymptoms.has(symptom) ? 'text-gray-600 dark:text-gray-400' : 'text-white'
-                                            }`}>
+                                            <div className={`mb-2 ${selectedSymptoms.has(symptom) ? 'text-primary' : 'text-subtle-light'}`}>
                                                 {getSymptomIcon(symptom)}
                                             </div>
-                                            <span className="font-medium text-sm text-center">{symptom}</span>
+                                            <span className="text-xs font-medium text-center leading-tight">
+                                                {symptom}
+                                            </span>
                                         </button>
                                     ))}
                                 </div>
@@ -275,19 +275,31 @@ const LogEntry: React.FC = () => {
 
                             {/* Severity Section */}
                             <div>
-                                <div className="flex justify-between items-center mb-3">
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Severity</h3>
-                                    <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{severity}/5</span>
+                                <div className="flex justify-between items-center mb-4">
+                                    <label className="text-sm font-semibold text-foreground-light dark:text-foreground-dark uppercase tracking-wider">Severity</label>
+                                    <span className="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-full">{severity}/5</span>
                                 </div>
-                                <input
-                                    type="range"
-                                    min="1"
-                                    max="5"
-                                    value={severity}
-                                    onChange={(e) => setSeverity(Number(e.target.value))}
-                                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                                />
-                                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                <div className="relative h-2 bg-background-light dark:bg-background-dark rounded-full">
+                                    <div 
+                                        className="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-200"
+                                        style={{ width: `${((severity - 1) / 4) * 100}%` }}
+                                    />
+                                    <input
+                                        type="range"
+                                        min="1"
+                                        max="5"
+                                        value={severity}
+                                        onChange={(e) => setSeverity(Number(e.target.value))}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    />
+                                    {/* Steps */}
+                                    <div className="absolute top-1/2 left-0 w-full flex justify-between -translate-y-1/2 pointer-events-none px-1">
+                                        {[1, 2, 3, 4, 5].map((step) => (
+                                            <div key={step} className={`w-3 h-3 rounded-full ${step <= severity ? 'bg-primary' : 'bg-border-light dark:bg-border-dark'}`} />
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="flex justify-between text-xs text-subtle-light mt-2 font-medium">
                                     <span>Mild</span>
                                     <span>Moderate</span>
                                     <span>Severe</span>
@@ -296,163 +308,147 @@ const LogEntry: React.FC = () => {
 
                             {/* Notes Section */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Notes</h3>
+                                <label className="block text-sm font-semibold text-foreground-light dark:text-foreground-dark mb-3 uppercase tracking-wider">Notes</label>
                                 <textarea
                                     value={symptomNotes}
                                     onChange={(e) => setSymptomNotes(e.target.value)}
-                                    placeholder="Add notes about your dog's symptoms"
-                                    rows={4}
-                                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                    placeholder="Describe the symptoms..."
+                                    rows={3}
+                                    className="w-full p-4 border border-border-light dark:border-border-dark rounded-xl bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-subtle-light focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none transition-all"
                                 />
                             </div>
 
                             {/* Photos Section */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Photos</h3>
-                                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center">
-                                    <div className="flex flex-col items-center space-y-3">
-                                        <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                        <div>
-                                            <p className="font-semibold text-gray-900 dark:text-white">Add Photos</p>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">Capture images of your dog's symptoms for better tracking.</p>
+                                <label className="block text-sm font-semibold text-foreground-light dark:text-foreground-dark mb-3 uppercase tracking-wider">Photos</label>
+                                <div className="grid grid-cols-3 gap-3">
+                                    {photos.map((photo, index) => (
+                                        <div key={index} className="relative aspect-square rounded-xl overflow-hidden group">
+                                            <img
+                                                src={URL.createObjectURL(photo)}
+                                                alt={`Evidence ${index + 1}`}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => removePhoto(index)}
+                                                className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <XIcon className="w-4 h-4" />
+                                            </button>
                                         </div>
+                                    ))}
+                                    <label className="aspect-square rounded-xl border-2 border-dashed border-border-light dark:border-border-dark flex flex-col items-center justify-center text-subtle-light hover:text-primary hover:border-primary hover:bg-primary/5 cursor-pointer transition-all">
+                                        <PlusCircleIcon className="w-8 h-8 mb-1" />
+                                        <span className="text-xs font-medium">Add Photo</span>
                                         <input
                                             type="file"
                                             accept="image/*"
                                             multiple
                                             onChange={handlePhotoChange}
                                             className="hidden"
-                                            id="photo-upload"
                                         />
-                                        <label
-                                            htmlFor="photo-upload"
-                                            className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-lg font-medium cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
-                                        >
-                                            Upload from Device
-                                        </label>
-                                    </div>
+                                    </label>
                                 </div>
-
-                                {photos.length > 0 && (
-                                    <div className="mt-4 grid grid-cols-2 gap-2">
-                                        {photos.map((photo, index) => (
-                                            <div key={index} className="relative">
-                                                <img
-                                                    src={URL.createObjectURL(photo)}
-                                                    alt={`Symptom photo ${index + 1}`}
-                                                    className="w-full h-24 object-cover rounded-lg"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removePhoto(index)}
-                                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600 transition-colors"
-                                                >
-                                                    ×
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
                             </div>
 
-                            {/* Save Button */}
-                            <div className="pt-4">
-                                <button
-                                    type="submit"
-                                    disabled={isSymptomSubmitting || selectedSymptoms.size === 0}
-                                    className="w-full bg-blue-500 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-600 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
-                                >
-                                    {isSymptomSubmitting ? 'Saving...' : 'Save Symptom Log'}
-                                </button>
-                            </div>
+                            {/* Submit Button Spacer */}
+                            <div className="h-20"></div>
                         </form>
                     ) : (
-                        <form onSubmit={handleTriggerSubmit} className="p-6 space-y-6">
+                        <form onSubmit={handleTriggerSubmit} className="space-y-8">
                             {/* Trigger Type Selection */}
                             <div>
+                                <label className="block text-sm font-semibold text-foreground-light dark:text-foreground-dark mb-3 uppercase tracking-wider">
+                                    Potential Trigger
+                                </label>
                                 <div className="grid grid-cols-2 gap-3">
                                     {triggerTypes.map((trigger) => (
                                         <button
                                             key={trigger.id}
                                             type="button"
                                             onClick={() => handleTriggerToggle(trigger.type)}
-                                            className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-all ${
+                                            className={`flex items-center gap-3 p-4 rounded-xl border transition-all duration-200 ${
                                                 selectedTriggerType === trigger.type
-                                                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 ring-2 ring-gray-300 dark:ring-gray-600 scale-105'
-                                                    : 'bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700'
+                                                    ? 'bg-primary/10 border-primary text-primary'
+                                                    : 'bg-white dark:bg-card-dark border-border-light dark:border-border-dark text-subtle-light hover:border-primary/50'
                                             }`}
                                         >
-                                            <div className={`flex-shrink-0 ${
-                                                selectedTriggerType === trigger.type ? 'text-gray-600 dark:text-gray-400' : 'text-white'
-                                            }`}>
+                                            <div className={`${selectedTriggerType === trigger.type ? 'text-primary' : 'text-subtle-light'}`}>
                                                 {trigger.icon}
                                             </div>
-                                            <span className="font-medium text-sm text-center">{trigger.title}</span>
+                                            <span className="font-medium text-sm">{trigger.title}</span>
                                         </button>
                                     ))}
                                 </div>
                             </div>
 
-                            {/* Location Field (if needed) */}
+                            {/* Location Field */}
                             {selectedTriggerType && (selectedTriggerType === TriggerType.WALK_LOCATION || selectedTriggerType === TriggerType.ENVIRONMENTAL_CHANGE) && (
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                                        Location {selectedTriggerType === TriggerType.WALK_LOCATION ? '(Required)' : '(Optional)'}
+                                    <label className="block text-sm font-semibold text-foreground-light dark:text-foreground-dark mb-3 uppercase tracking-wider">
+                                        Location {selectedTriggerType === TriggerType.WALK_LOCATION && '*'}
                                     </label>
                                     <input
                                         type="text"
                                         value={triggerLocation}
                                         onChange={(e) => setTriggerLocation(e.target.value)}
-                                        placeholder="e.g., City Park, Backyard"
+                                        placeholder="e.g., City Park"
                                         required={selectedTriggerType === TriggerType.WALK_LOCATION}
-                                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full p-4 border border-border-light dark:border-border-dark rounded-xl bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-subtle-light focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                                     />
                                 </div>
                             )}
 
                             {/* Notes */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                                    Notes (Optional)
-                                </label>
+                                <label className="block text-sm font-semibold text-foreground-light dark:text-foreground-dark mb-3 uppercase tracking-wider">Details</label>
                                 <textarea
                                     value={triggerNotes}
                                     onChange={(e) => setTriggerNotes(e.target.value)}
-                                    placeholder="Add any additional details..."
-                                    rows={4}
-                                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                    placeholder="Add any additional context..."
+                                    rows={3}
+                                    className="w-full p-4 border border-border-light dark:border-border-dark rounded-xl bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-subtle-light focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none transition-all"
                                 />
                             </div>
 
-                            {/* Info text based on trigger type */}
+                            {/* Info Box */}
                             {selectedTriggerType && (
-                                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl">
-                                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                                        {selectedTriggerType === TriggerType.FOOD && "Record what food your dog ate that may have triggered symptoms."}
-                                        {selectedTriggerType === TriggerType.WALK_LOCATION && "Note where you walked your dog to track location-based patterns."}
-                                        {selectedTriggerType === TriggerType.WEATHER && "Log current weather conditions that may affect your dog."}
-                                        {selectedTriggerType === TriggerType.POLLEN && "Track pollen exposure to identify seasonal patterns."}
-                                        {selectedTriggerType === TriggerType.HOUSEHOLD_PRODUCT && "Record household products used near your dog."}
-                                        {selectedTriggerType === TriggerType.ENVIRONMENTAL_CHANGE && "Note any environmental changes in your home or area."}
-                                    </p>
+                                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800">
+                                    <div className="flex gap-3">
+                                        <div className="text-primary shrink-0 mt-0.5">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        </div>
+                                        <p className="text-sm text-subtle-light dark:text-blue-200">
+                                            {selectedTriggerType === TriggerType.FOOD && "Logging food helps identify dietary allergies."}
+                                            {selectedTriggerType === TriggerType.WALK_LOCATION && "Track location to find environmental hotspots."}
+                                            {selectedTriggerType === TriggerType.WEATHER && "Weather changes can affect skin and respiratory health."}
+                                            {selectedTriggerType === TriggerType.POLLEN && "High pollen counts are a common cause of itching."}
+                                            {selectedTriggerType === TriggerType.HOUSEHOLD_PRODUCT && "Chemicals in cleaning products can be irritants."}
+                                            {selectedTriggerType === TriggerType.ENVIRONMENTAL_CHANGE && "New furniture or bedding can introduce allergens."}
+                                        </p>
+                                    </div>
                                 </div>
                             )}
 
-                            {/* Save Button */}
-                            <div className="pt-4">
-                                <button
-                                    type="submit"
-                                    disabled={isTriggerSubmitting || !selectedTriggerType}
-                                    className="w-full bg-blue-500 text-white font-bold py-4 px-6 rounded-xl hover:bg-blue-600 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
-                                >
-                                    {isTriggerSubmitting ? 'Saving...' : 'Save Trigger Log'}
-                                </button>
-                            </div>
+                            {/* Spacer */}
+                            <div className="h-20"></div>
                         </form>
                     )}
+                </div>
+
+                {/* Footer Actions */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-white dark:bg-card-dark border-t border-border-light dark:border-border-dark rounded-t-2xl">
+                    <button
+                        onClick={activeTab === 'symptom' ? handleSymptomSubmit : handleTriggerSubmit}
+                        disabled={activeTab === 'symptom' ? (isSymptomSubmitting || selectedSymptoms.size === 0) : (isTriggerSubmitting || !selectedTriggerType)}
+                        className="w-full bg-primary text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:bg-primary-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                    >
+                        {activeTab === 'symptom' 
+                            ? (isSymptomSubmitting ? 'Saving...' : 'Save Symptom Log')
+                            : (isTriggerSubmitting ? 'Saving...' : 'Save Trigger Log')
+                        }
+                    </button>
                 </div>
             </div>
         </div>
